@@ -17,10 +17,6 @@ for cxx in builder.targets:
     os.path.join(builder.sourcePath, 'jansson', 'include'),
   ]
 
-  binary.compiler.defines += [
-    'CURL_STATICLIB',
-  ]
-
   if binary.compiler.family == 'gcc' or binary.compiler.family == 'clang':
     binary.compiler.cxxflags += ['-fno-rtti']
   elif binary.compiler.family == 'msvc':
