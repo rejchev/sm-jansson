@@ -27,3 +27,15 @@ script:
   - mkdir $TRAVIS_BUILD_DIR/build && cd $TRAVIS_BUILD_DIR/build
   - python3 ../configure.py --enable-optimize --targets=$TARGET_ARCHS --sdks csgo
   - ambuild
+  
+ before_deploy:
+  - tar -czf sm-jansson-${TRAVIS_TAG}-${TRAVIS_OS_NAME}.tar.gz -C package/ addons/
+
+deploy:
+  provider: releases
+  api_key:
+    secure: AAAAB3NzaC1yc2EAAAADAQABAAACAQDA3MSmHQerqe7+0S6QzbNvvD8TFogcraN5pk6NlWbm0UW4+wWljmr8aI3eIpP7liRqvDMf4EllGvcPsgQZRdYwOevtcxbbwM+ohFZaLUlY3rmKuhcoHafEvQaxPV7NyYqRa51iavla2ylyi8xTEXmLNq/EUo/1MUQoihQsC0TAbFTNHCHiCgYjzi0GPoFANnhgnp+4W+ufbyeQ8NxfBSBTR7NL6aonfpTpDsAIzeGWnBaF1XBSqJhL3uD/o1Y0qLOdXaMq2fGJMUjtqPLRwxh7Yzsd9nyl540tgyGQ7tYPFd5eGRwG2qYJDGRNn2fFFgTYFj99fArZ7+1kboXkuv8XNatM6dlfZ/JQFn1Mn/Sf965jugU80wD4iK3p1FY+iOMe6cyuSWck3ctZwQVjnEcF0IgfFi3ohm6VgEyAr9ZhmzxqPBBPIefPCBV0oRLTW/ff/C5b6JMIQK5zMLuqrJ0tyt8pGhaiKycCxe+0sKg0WTwWykavoh5qt1NN6VG9oF175FQ8PrvB5as0BsFQDbBvbbtuTnpYggCTrHgB6QMk1H3f3C8yRz+4jdUrsoBVJ7WtQ9s5mVHZG+NEpkSleQbEgLaFJtys9X7DBnDNX8uJqcSERoL7/3hhrzqXoIq03w9m6W4gsBX5LsfawGKcX4JphYPPmkrkySd51ZFTNZbJ4w=
+  file: sm-jansson-${TRAVIS_TAG}-${TRAVIS_OS_NAME}.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
