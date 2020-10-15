@@ -25,6 +25,6 @@ install:
 
 script:
   - mkdir $TRAVIS_BUILD_DIR/build && cd $TRAVIS_BUILD_DIR/build
-  - python3 ../configure.py --enable-optimize --targets=$TARGET_ARCHS --sdks csgo
+  - python3 ../configure.py --enable-optimize --targets=$TARGET_ARCHS
   - ambuild
  
