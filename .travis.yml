@@ -1,30 +1,36 @@
+git:
+  depth: 3
+
 language: cpp
-compiler:
-  - clang
-
-os:
-  - linux
-
-addons:
-  apt:
-    packages:
-      - g++-multilib
-      - lib32z1-dev
-      - python3-pip
+os: linux
 
 env:
   global:
     - SOURCEMOD_VERSION=1.10-dev
-    - TARGET_ARCHS=x86,x86_64
+    - TARGET_ARCH=x86,x86_64
+
+jobs:
+  include:
+    - name: "Linux clang"
+      compiler: clang
+      python: 3.8
+      os: linux
+      addons:
+        apt:
+          packages:
+            - g++-multilib
+            - lib32z1-dev
 
 install:
+  - pip install --upgrade pip
+  - pip install setuptools
   - git clone https://github.com/alliedmodders/sourcemod.git -b $SOURCEMOD_VERSION --depth 1 -j8 --recurse-submodules --shallow-submodules $TRAVIS_BUILD_DIR/../sourcemod
-  - git clone https://github.com/alliedmodders/ambuild.git --depth 1 $TRAVIS_BUILD_DIR/../ambuild
-  - python3 -m pip install --upgrade pip setuptools
-  - python3 -m pip install $TRAVIS_BUILD_DIR/../ambuild
+  - bash $TRAVIS_BUILD_DIR/travis/checkout-deps
+
+before_script:
+  - mkdir $TRAVIS_BUILD_DIR/build && cd $TRAVIS_BUILD_DIR/build
 
 script:
-  - mkdir $TRAVIS_BUILD_DIR/build && cd $TRAVIS_BUILD_DIR/build
-  - python3 ../configure.py --enable-optimize --targets=$TARGET_ARCHS
+  - python ../configure.py --enable-optimize --targets=$TARGET_ARCH
   - ambuild
  

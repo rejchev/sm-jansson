@@ -9,6 +9,10 @@ builder.SetBuildFolder('package')
 folder_list = [
   'addons/sourcemod/extensions',
   'addons/sourcemod/scripting/include',
+  #'addons/sourcemod/scripting/include/jansson',
+  #'addons/sourcemod/gamedata',
+  #'addons/sourcemod/configs',
+  #'addons/sourcemod/configs/ripext',
 ]
 
 if 'x86_64' in Extension.target_archs:
@@ -49,9 +53,7 @@ CopyFiles('pawn/scripting/include', 'addons/sourcemod/scripting/include',
 #  'otherconfig.cfg,
 #  ]
 #)
-# CopyFiles(builder.buildPath, 'addons/sourcemod/configs/ripext',
-#   [ 'ca-bundle.crt' ]
-# )
+#
 
 # Copy binaries.
 for cxx_task in Extension.extensions:

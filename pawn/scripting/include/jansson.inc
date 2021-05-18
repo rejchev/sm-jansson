@@ -3,6 +3,7 @@
 #endif
 #define _jansson_included_
 
+
 // Decoding flags
 enum
 {
@@ -404,9 +405,12 @@ methodmap JSONArray < JSON
 	}
 };
 
+/**
+ * Do not edit below this line!
+ */
 public Extension __ext_jansson =
 {
-	name = "Jansson",
+	name = "Jansson in Pawn",
 	file = "jansson.ext",
 #if defined AUTOLOAD_EXTENSIONS
 	autoload = 1,

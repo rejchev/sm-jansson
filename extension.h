@@ -117,6 +117,7 @@ public:
 	 * @return				True to succeed, false to fail.
 	 */
 	//virtual bool SDK_OnMetamodPauseChange(bool paused, char *error, size_t maxlength);
+
 #endif
 };
 
