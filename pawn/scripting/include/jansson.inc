@@ -230,7 +230,7 @@ methodmap JsonObject < Json
     public native bool Clear();
 
     // Returns an iterator for the object's keys. See JSONObjectKeys.
-    public native JSONKeys Keys();
+    public native JsonKeys Keys();
 
     // Retrieves the size of the object.
     property int Size {
