@@ -26,7 +26,7 @@ static json_t *GetJSONFromHandle(IPluginContext *pContext, Handle_t hndl)
     HandleError err;
     json_t *object = NULL;
     HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
-    if((err = handlesys->ReadHandle(hndl, htJSON, &sec, (void **)&object)) == HandleError_None)
+    if((err = handlesys->ReadHandle(hndl, htJSON, &sec, (void **)&object)) != HandleError_None)
         pContext->ThrowNativeError(
             "JSON(ReadHandle: %d): Invalid (%x) handle", err, hndl);
 
