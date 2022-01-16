@@ -43,7 +43,7 @@ bool Jansson::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	haJSON.access[HandleAccess_Read] = 0;
 
 	htJSON = handlesys->CreateType("JSON", &g_JSONHandler, 0, NULL, &haJSON, myself->GetIdentity(), NULL);
-	htJSONObjectKeys = handlesys->CreateType("JSONObjectKeys", &g_JSONObjectKeysHandler, 0, NULL, NULL, myself->GetIdentity(), NULL);
+	htJSONObjectKeys = handlesys->CreateType("JSONKeys", &g_JSONObjectKeysHandler, 0, NULL, NULL, myself->GetIdentity(), NULL);
 
 	return true;
 }
