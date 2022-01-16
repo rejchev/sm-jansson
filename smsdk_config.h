@@ -30,10 +30,10 @@
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"Jansson-re"
 #define SMEXT_CONF_DESCRIPTION	"Provides JSON natives for plugins"
-#define SMEXT_CONF_VERSION		"1.1.0"
+#define SMEXT_CONF_VERSION		"1.2.0"
 #define SMEXT_CONF_AUTHOR		"rej.chev"
 #define SMEXT_CONF_URL			"https://discord.gg/cFZ97Mzrjy"
-#define SMEXT_CONF_LOGTAG		"JSON"
+#define SMEXT_CONF_LOGTAG		"Json"
 #define SMEXT_CONF_LICENSE		"GPL"
 #define SMEXT_CONF_DATESTRING	__DATE__
 
