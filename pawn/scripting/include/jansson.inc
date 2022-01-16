@@ -3,10 +3,7 @@
 #endif
 #define _jansson_included_
 
-#define asJSON(%1)  view_as<JSON>(%1)
-#define asJSONO(%1) view_as<JSONObject>(%1)
-#define asJSONA(%1) view_as<JSONArray>(%1)
-#define asJSONK(%1) view_as<JSONKeys>(%1)
+
 
 // Decoding flags
 enum
@@ -50,21 +47,6 @@ stock int JSON_INDENT(int n)
     return n & JSON_MAX_INDENT;
 }
 
-stock bool JSON_TYPE_EQUAL(JSON o, JSONType t) 
-{
-    return o.Type & t;
-}
-
-stock bool JSONO_TYPE_EQUAL(JSON o, const char[] k, JSONType t)
-{
-    return asJSONO(o).GetType(k) & t;
-}
-
-stock bool JSONA_TYPE_EQUAL(JSON o, const int i, JSONType t)
-{
-    return asJSONO(o).GetType(i) & t;
-}
-
 stock bool JSON_TYPE_BOOLEAN(JSONType t)
 {
     return (t & JSON_TRUE) || (t & JSON_FALSE);
@@ -72,7 +54,7 @@ stock bool JSON_TYPE_BOOLEAN(JSONType t)
 
 stock bool JSON_IS_NULL(JSONType t)
 {
-    return t & JSON_NULL;
+    return t == JSON_NULL;
 }
 
 // Output floats with at most n digits of precision
@@ -168,6 +150,12 @@ methodmap JSONObject < JSON
     // @param maxlength  Maximum length of the string buffer.
     // @return           True on success. False if the key was not found, or the value is not a string.
     public native bool GetString(const char[] key, char[] buffer, int maxlength);
+    
+    // Retrieves an item type from the array.
+    //
+    // @param key        Key string
+    // @return           JSONType.
+    public native JSONType GetType(const char[] key);
 
     // Returns whether or not a key exists in the object.
     //
@@ -241,14 +229,8 @@ methodmap JSONObject < JSON
     // @return           True on success, false on failure.
     public native bool Clear();
 
-    // Retrieves an item type from the array.
-    //
-    // @param key        Key string
-    // @return           JSONType.
-    public native JSONType GetType(const char[] key);
-
     // Returns an iterator for the object's keys. See JSONObjectKeys.
-    public native JSONObjectKeys Keys();
+    public native JSONKeys Keys();
 
     // Retrieves the size of the object.
     property int Size {
@@ -435,6 +417,26 @@ methodmap JSONArray < JSON
         public native get();
     }
 };
+
+#define asJSON(%1)  view_as<JSON>(%1)
+#define asJSONO(%1) view_as<JSONObject>(%1)
+#define asJSONA(%1) view_as<JSONArray>(%1)
+#define asJSONK(%1) view_as<JSONKeys>(%1)
+
+stock bool JSON_TYPE_EQUAL(JSON o, JSONType t) 
+{
+    return o.Type == t;
+}
+
+stock bool JSONO_TYPE_EQUAL(JSON o, const char[] k, JSONType t)
+{
+    return asJSONO(o).GetType(k) == t;
+}
+
+stock bool JSONA_TYPE_EQUAL(JSON o, const int i, JSONType t)
+{
+    return asJSONA(o).GetType(i) == t;
+}
 
 /**
  * Do not edit below this line!
