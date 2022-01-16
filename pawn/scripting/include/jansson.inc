@@ -80,7 +80,7 @@ methodmap JSON < Handle
     // @param flags      Encoding flags.
     // @return           JSON handle or NULL
     // @exception        Invalid syntax
-    public native JSON JSONF(const char[] path, int flags = 0);
+    public static native JSON JSONF(const char[] path, int flags = 0);
 
     // Writes the JSON string representation to a file.
     //
