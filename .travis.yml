@@ -34,3 +34,22 @@ script:
   - python ../configure.py --enable-optimize --targets=$TARGET_ARCH
   - ambuild
  
+
+before_deploy:
+    - cd $TRAVIS_BUILD_DIR/build/package
+    - zip -r jansson-${TRAVIS_OS_NAME}-${TRAVIS_BUILD_NUMBER}.zip *
+    - mkdir $TRAVIS_BUILD_DIR/deploy
+    - cp $TRAVIS_BUILD_DIR/build/package/jansson-${TRAVIS_OS_NAME}-${TRAVIS_BUILD_NUMBER}.zip $TRAVIS_BUILD_DIR/deploy
+
+deploy:
+  provider: releases
+  token:
+    secure: KdMit5Evgnnyh3WwKpaB4X0pdrgoGJQpm0m6U8MriGnTBk06lqwQvFsitsXZaUKG4E+FZNkhOgqC6yJgxnUb1u1UymR604Yux/U0bmqXleJgWS4yCW6SjwMXPA44Ha8l7g8y4z1aWGw4CLzVrU6fwjhCVRtYY2gRW+fYxBLDe33YNZ3cykdLnFlQGvFM0EHoRz6IHKpfXq+1/C4d3wYXVAhdjfeqUCfg7mN3zgpg4GaiLK7I2dY+mQvJyFKy554/JoB9755QevHE1DtCUvt44sBqHOOALaOMPrdw/JTBzDOAP4vZm5bsSkRIX4DN8/rBN7YSRNpdIOaT7GzNxvw/LlhpgsuaH+qEZHfOJlzebqAFcFDXZTNZh/RQiwQKiC4LGF6UqiQw0aHNRE+J806h3YNipNQI8tqpNYF9GUaDmLw76ON89AggcJ5p2yOAC+nztCzaAHusrGnAifrH/lleLt5aBosHtvjGYWhByMVkIARc0UeXePdNIEAPj+UTxbeNAb3ccsWoGYyzXX04l+SqLW7BDLfQpHnUoZJ+mMuOQyqUHu19JO84ecC4xZlgQ/d2fxo8wLcOIaJJIzuAMy0sZwq1aqDs8jp99DIFsqnDVlB5YZIuA0xesNSnaZg1R2ZyuMGu6ZkKjm88kxuBCEG2XJgD9E0HNXb87RmArskEUZM=
+  file_glob: true
+  file: $TRAVIS_BUILD_DIR/deploy/*
+  skip_cleanup: true
+  on:
+    tags: true
+  
+notifications:
+    email: false
