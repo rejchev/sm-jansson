@@ -26,7 +26,7 @@ enum
     JSON_EMBED        = 0x10000		/**< Omit opening and closing braces of the top-level object */
 };
 
-enum JSONType
+enum JsonType
 {
     JSON_OBJECT = 0,
     JSON_ARRAY,
@@ -47,12 +47,12 @@ stock int JSON_INDENT(int n)
     return n & JSON_MAX_INDENT;
 }
 
-stock bool JSON_TYPE_BOOLEAN(JSONType t)
+stock bool JSON_TYPE_BOOLEAN(JsonType t)
 {
     return (t & JSON_TRUE) || (t & JSON_FALSE);
 }
 
-stock bool JSON_IS_NULL(JSONType t)
+stock bool JSON_IS_NULL(JsonType t)
 {
     return t == JSON_NULL;
 }
@@ -64,7 +64,7 @@ stock int JSON_REAL_PRECISION(int n)
 }
 
 // Generic type for encoding JSON.
-methodmap JSON < Handle
+methodmap Json < Handle
 {
     // Create JSON handle from string
     //
@@ -72,7 +72,7 @@ methodmap JSON < Handle
     // @param flags      Encoding flags.
     // @return           JSON handle or NULL.
     // @error            Invalid syntax
-    public native JSON(const char[] value, int flags = 0);
+    public native Json(const char[] value, int flags = 0);
 
     // Create JSON handle from path
     //
@@ -80,7 +80,7 @@ methodmap JSON < Handle
     // @param flags      Encoding flags.
     // @return           JSON handle or NULL
     // @exception        Invalid syntax
-    public static native JSON JSONF(const char[] path, int flags = 0);
+    public static native Json JsonF(const char[] path, int flags = 0);
 
     // Writes the JSON string representation to a file.
     //
@@ -98,12 +98,12 @@ methodmap JSON < Handle
     public native bool ToString(char[] buffer, int maxlength, int flags = 0);
 
     // Retrieves the type of current object
-    property JSONType Type {
+    property JsonType Type {
         public native get();
     }
 };
 
-methodmap JSONObject < JSON
+methodmap JsonObject < Json
 {
     // Retrieves a JSON value from the object 
     //
@@ -112,7 +112,7 @@ methodmap JSONObject < JSON
     // @param key        Key string.
     // @return           Value read (can be JSON_NULL).
     // @error            Invalid key.
-    public native JSON Get(const char[] key);
+    public native Json Get(const char[] key);
 
     // Retrieves a boolean value from the object.
     //
@@ -154,8 +154,8 @@ methodmap JSONObject < JSON
     // Retrieves an item type from the array.
     //
     // @param key        Key string
-    // @return           JSONType.
-    public native JSONType GetType(const char[] key);
+    // @return           JsonType.
+    public native JsonType GetType(const char[] key);
 
     // Returns whether or not a key exists in the object.
     //
@@ -168,7 +168,7 @@ methodmap JSONObject < JSON
     // @param key        Key string.
     // @param value      Value to store at this key (can be NULL to store JSON_NULL).
     // @return           True on success, false on failure.
-    public native bool Set(const char[] key, JSON value);
+    public native bool Set(const char[] key, Json value);
 
     // Sets a boolean value in the object, either inserting a new entry or replacing an old one.
     //
@@ -202,12 +202,12 @@ methodmap JSONObject < JSON
     //
     // @param key        Key string.
     // @return           True on success, false on failure.
-    #pragma deprecated Use JSONObject.Set() instead
+    #pragma deprecated Use JsonObject.Set() instead
     public bool SetNull(const char[] key) {
         return this.Set(key, null);
     }
 
-    #pragma deprecated Use JSONObject.GetType() instead
+    #pragma deprecated Use JsonObject.GetType() instead
     public bool IsNull(const char[] key) {
         return JSON_IS_NULL(this.GetType(key));
     }
@@ -243,7 +243,7 @@ methodmap JSONObject < JSON
  * object to be iterated. The JSONObjectKeys must be freed with delete or
  * CloseHandle().
  */
-methodmap JSONKeys < Handle
+methodmap JsonKeys < Handle
 {
     // Reads an object key, then advances to the next key if any.
     //
@@ -253,7 +253,7 @@ methodmap JSONKeys < Handle
     public native bool Next(char[] buffer, int maxlength);
 };
 
-methodmap JSONArray < JSON
+methodmap JsonArray < Json
 {
     // Retrieves an array or object value from the array.
     //
@@ -262,7 +262,7 @@ methodmap JSONArray < JSON
     // @param index      Index in the array.
     // @return           Value read (can be JSON_NULL).
     // @error            Invalid index.
-    public native JSON Get(int index);
+    public native Json Get(int index);
 
     // Retrieves a boolean value from the array.
     //
@@ -305,15 +305,15 @@ methodmap JSONArray < JSON
     // Retrieves an item type from the array.
     //
     // @param index      Index in the array.
-    // @return           JSONType.
-    public native JSONType GetType(int index);
+    // @return           JsonType.
+    public native JsonType GetType(int index);
 
     // Sets an array or object value in the array.
     //
     // @param index      Index in the array.
     // @param value      Value to set (can be NULL to store JSON_NULL).
     // @return           True on success, false on failure.
-    public native bool Set(int index, JSON value);
+    public native bool Set(int index, Json value);
 
     // Sets a boolean value in the array.
     //
@@ -347,7 +347,7 @@ methodmap JSONArray < JSON
     //
     // @param index      Index in the array.
     // @return           True on success, false on failure.
-    #pragma deprecated Use JSONArray.Set() instead
+    #pragma deprecated Use JsonArray.Set() instead
     public bool SetNull(int index) {
         return this.Set(index, null);
     }
@@ -363,7 +363,7 @@ methodmap JSONArray < JSON
     //
     // @param value      Value to push (can be NULL to store JSON_NULL).
     // @return           True on success, false on failure.
-    public native bool Push(JSON value);
+    public native bool Push(Json value);
 
     // Pushes a boolean value onto the end of the array, adding a new index.
     //
@@ -391,7 +391,7 @@ methodmap JSONArray < JSON
 
     // Pushes a null value onto the end of the array, adding a new index.
     // @return           True on success, false on failure.
-    #pragma deprecated Use JSONArray.Push() instead
+    #pragma deprecated Use JsonArray.Push() instead
     public bool PushNull() {
         return this.Push(null);
     }
@@ -418,22 +418,22 @@ methodmap JSONArray < JSON
     }
 };
 
-#define asJSON(%1)  view_as<JSON>(%1)
-#define asJSONO(%1) view_as<JSONObject>(%1)
-#define asJSONA(%1) view_as<JSONArray>(%1)
-#define asJSONK(%1) view_as<JSONKeys>(%1)
+#define asJSON(%1)  view_as<Json>(%1)
+#define asJSONO(%1) view_as<JsonObject>(%1)
+#define asJSONA(%1) view_as<JsonArray>(%1)
+#define asJSONK(%1) view_as<JsonKeys>(%1)
 
-stock bool JSON_TYPE_EQUAL(JSON o, JSONType t) 
+stock bool JSON_TYPE_EQUAL(Json o, JsonType t) 
 {
     return o.Type == t;
 }
 
-stock bool JSONO_TYPE_EQUAL(JSON o, const char[] k, JSONType t)
+stock bool JSONO_TYPE_EQUAL(Json o, const char[] k, JsonType t)
 {
     return asJSONO(o).GetType(k) == t;
 }
 
-stock bool JSONA_TYPE_EQUAL(JSON o, const int i, JSONType t)
+stock bool JSONA_TYPE_EQUAL(Json o, const int i, JsonType t)
 {
     return asJSONA(o).GetType(i) == t;
 }
