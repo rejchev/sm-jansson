@@ -37,7 +37,7 @@ static Handle_t CreateJSONHandle(IPluginContext *pContext, json_t *object)
 {
     Handle_t hndl;
     HandleError *err = NULL;
-    if((hndl = handlesys->CreateHandle(htJSON, object, pContext->GetIdentity(), myself->GetIdentity(), err)) == NULL 
+    if((hndl = handlesys->CreateHandle(htJSON, object, pContext->GetIdentity(), myself->GetIdentity(), err)) == BAD_HANDLE 
         || err != NULL) 
     {
         json_decref(object);
@@ -45,7 +45,7 @@ static Handle_t CreateJSONHandle(IPluginContext *pContext, json_t *object)
             "JSON(CreateHandle: %d): Could not create handle.", *err);
     }
 
-    if(err && hndl)
+    if(err && hndl != BAD_HANDLE)
         hndl = BAD_HANDLE;
         
     return hndl;
@@ -56,14 +56,15 @@ static Handle_t CreateJSONHandleEx(IPluginContext *pContext, json_t *object)
     Handle_t hndl;
     HandleError *err = NULL;	
     HandleSecurity sec(pContext->GetIdentity(), myself->GetIdentity());
-    if((hndl = handlesys->CreateHandleEx(htJSON, object, &sec, NULL, err)) == NULL 
+    if((hndl = handlesys->CreateHandleEx(htJSON, object, &sec, NULL, err)) == BAD_HANDLE 
         || err != NULL) 
     {
         pContext->ThrowNativeError(
             "JSON(CreateHandleEx: %d): Could not create handle.", *err);
     }
 
-    if(err && hndl)
+    // ?
+    if(err && hndl != BAD_HANDLE)
         hndl = BAD_HANDLE;
 
     if(hndl != BAD_HANDLE)
@@ -324,7 +325,7 @@ static cell_t ObjectSet(IPluginContext *pContext, const cell_t *params)
     pContext->LocalToString(params[2], &key);
 
     json_t *value;
-    value = (((Handle_t) params[3]) == NULL)
+    value = (((Handle_t) params[3]) == BAD_HANDLE)
                     ? json_null()
                     : GetJSONFromHandle(pContext, params[3]);
 
@@ -598,7 +599,7 @@ static cell_t ArraySet(IPluginContext *pContext, const cell_t *params)
         return 0;
 
     json_t *value;
-    value = (((Handle_t) params[3]) == NULL)
+    value = (((Handle_t) params[3]) == BAD_HANDLE)
                     ? json_null()
                     : GetJSONFromHandle(pContext, params[3]);
 
@@ -674,7 +675,7 @@ static cell_t ArrayPush(IPluginContext *pContext, const cell_t *params)
         return 0;
 
     json_t *value;
-    value = (((Handle_t) params[2]) == NULL)
+    value = (((Handle_t) params[2]) == BAD_HANDLE)
                     ? json_null()
                     : GetJSONFromHandle(pContext, params[2]);
 
