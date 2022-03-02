@@ -25,6 +25,14 @@
 #include <jansson.h>
 #include "smsdk_ext.h"
 
+enum JsonUpdateType
+{
+	JSON_UPDATE = 0, 
+    JSON_UPDATE_EXISTING,
+    JSON_UPDATE_MISSING,
+    JSON_UPDATE_RECURSIVE
+};
+
 struct JSONObjectKeys {
 	JSONObjectKeys(json_t *object) : object(object), iter(json_object_iter(object)) {}
 

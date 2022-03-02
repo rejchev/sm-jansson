@@ -167,6 +167,20 @@ static cell_t JSONToFile(IPluginContext *pContext, const cell_t *params)
     return (json_dump_file(object, realpath, flags) == 0);
 }
 
+// JSON.Equal(Json o);
+static cell_t JSONEqual(IPluginContext *pContext, const cell_t *params)
+{
+    json_t *object;
+    if((object = GetJSONFromHandle(pContext, params[1])) == NULL)
+        return 0;
+
+    json_t *o;
+    if((o = GetJSONFromHandle(pContext, params[2])) == NULL)
+        return 0;
+    
+    return (json_equal(object, o));
+}
+
 // JSON.Type.get()
 static cell_t JSONGetType(IPluginContext *pContext, const cell_t *params)
 {
@@ -418,6 +432,30 @@ static cell_t ObjectRemoveKey(IPluginContext *pContext, const cell_t *params)
     pContext->LocalToString(params[2], &key);
 
     return (json_object_del(object, key) == 0);
+}
+
+// JsonObject.Update(Json, JsonUpdateType)
+static cell_t ObjectUpdate(IPluginContext *pContext, const cell_t *params)
+{
+    json_t *object;
+    if((object = GetJSONFromHandle(pContext, params[1])) == NULL)
+        return 0;
+
+    json_t *other;
+    if((other = GetJSONFromHandle(pContext, params[2])) == NULL)
+        return 0;
+    
+    JsonUpdateType type = (JsonUpdateType) params[3];
+
+    int ret = (!type)
+            ? json_object_update(object, other)
+            : (type == JSON_UPDATE_EXISTING)
+                ? json_object_update_existing(object, other)
+                : (type == JSON_UPDATE_MISSING)
+                    ? json_object_update_missing(object, other)
+                    : json_object_update_recursive(object, other);
+
+    return ret;
 }
 
 // JSONObject.Clear()
@@ -779,6 +817,7 @@ const sp_nativeinfo_t json_natives[] =
     {"Json.JsonF", 						JSONCreateF},
     {"Json.ToString",					JSONToString},
     {"Json.ToFile",						JSONToFile},
+    {"Json.Equal",						JSONEqual},
     {"Json.Type.get",					JSONGetType},
 
     {"JsonObject.Get",					ObjectGet},
@@ -795,6 +834,7 @@ const sp_nativeinfo_t json_natives[] =
     {"JsonObject.SetInt64",				ObjectSetInt64},
     {"JsonObject.SetString",			ObjectSetString},
     {"JsonObject.HasKey",				IsObjectKeyValid},
+    {"JsonObject.Update",               ObjectUpdate},
     {"JsonObject.Remove",				ObjectRemoveKey},
     {"JsonObject.Clear",				ObjectClear},
     {"JsonObject.Size.get",				ObjectSize},

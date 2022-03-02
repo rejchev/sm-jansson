@@ -38,6 +38,14 @@ enum JsonType
     JSON_NULL
 };
 
+enum JsonUpdateType
+{
+    JSON_UPDATE = 0, 
+    JSON_UPDATE_EXISTING,
+    JSON_UPDATE_MISSING,
+    JSON_UPDATE_RECURSIVE
+};
+
 // Maximum indentation
 static const int JSON_MAX_INDENT = 0x1F;
 
@@ -88,6 +96,12 @@ methodmap Json < Handle
     // @param flags      Encoding flags.
     // @return           True on success, false on failure.
     public native bool ToFile(const char[] path, int flags = 0);
+
+    // Is JSON equals
+    // 
+    // @param obj       Another object
+    // @return          True on success
+    public native bool Equal(Json obj);
 
     // Retrieves the JSON string representation.
     //
@@ -224,6 +238,13 @@ methodmap JsonObject < Json
     // @param key        Key string.
     // @return           True on success, false if the key was not found.
     public native bool Remove(const char[] key);
+
+    // Update an object keys.
+    //
+    // @param   obj       Another object
+    // @param   updType   Update type (see JsonUpdateType enum)
+    // @return            True on success
+    public native bool Update(JsonObject obj, JsonUpdateType updType = 0);
 
     // Clears the object of all entries.
     // @return           True on success, false on failure.
