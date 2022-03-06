@@ -512,7 +512,7 @@ static cell_t ReadObjectKey(IPluginContext *pContext, const cell_t *params)
         return pContext->ThrowNativeError("JSON(Keys): Invalid object keys handle %x (error %d)", hndlKeys, err);
 
     const char *key;
-    if ((key = keys->GetKey()) != NULL)
+    if ((key = keys->GetKey()) == NULL)
         return 0;
 
     pContext->StringToLocalUTF8(params[2], params[3], key, NULL);
