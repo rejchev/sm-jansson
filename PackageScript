@@ -9,7 +9,7 @@ builder.SetBuildFolder('package')
 folder_list = [
   'addons/sourcemod/extensions',
   'addons/sourcemod/scripting/include',
-  #'addons/sourcemod/scripting/include/jansson',
+  'addons/sourcemod/scripting/include/jansson',
   #'addons/sourcemod/gamedata',
   #'addons/sourcemod/configs',
   #'addons/sourcemod/configs/ripext',
@@ -39,6 +39,11 @@ def CopyFiles(src, dest, files):
 CopyFiles('pawn/scripting/include', 'addons/sourcemod/scripting/include',
   [ 'jansson.inc' ]
 )
+
+CopyFiles('pawn/scripting/include/jansson', 'addons/sourcemod/scripting/include/jansson',
+  [ 'enums.inc', 'stocks.inc', 'builder.inc', ]
+)
+
 
 # GameData files
 #CopyFiles('gamedata', 'addons/sourcemod/gamedata',
