@@ -3,73 +3,7 @@
 #endif
 #define _jansson_included_
 
-
-
-// Decoding flags
-enum
-{
-    JSON_REJECT_DUPLICATES  = 0x1,		/**< Error if any JSON object contains duplicate keys */
-    JSON_DISABLE_EOF_CHECK  = 0x2,		/**< Allow extra data after a valid JSON array or object */
-    JSON_DECODE_ANY         = 0x4,		/**< Decode any value */
-    JSON_DECODE_INT_AS_REAL = 0x8,		/**< Interpret all numbers as floats */
-    JSON_ALLOW_NUL          = 0x10		/**< Allow \u0000 escape inside string values */
-};
-
-// Encoding flags
-enum
-{
-    JSON_COMPACT      = 0x20,		/**< Compact representation */
-    JSON_ENSURE_ASCII = 0x40,		/**< Escape all Unicode characters outside the ASCII range */
-    JSON_SORT_KEYS    = 0x80,		/**< Sort object keys */
-    JSON_ENCODE_ANY   = 0x200,		/**< Encode any value */
-    JSON_ESCAPE_SLASH = 0x400,		/**< Escape / with \/ */
-    JSON_EMBED        = 0x10000		/**< Omit opening and closing braces of the top-level object */
-};
-
-enum JsonType
-{
-    JSON_OBJECT = 0,
-    JSON_ARRAY,
-    JSON_STRING,
-    JSON_INTEGER,
-    JSON_REAL,
-    JSON_TRUE,
-    JSON_FALSE,
-    JSON_NULL
-};
-
-enum JsonUpdateType
-{
-    JSON_UPDATE = 0, 
-    JSON_UPDATE_EXISTING,
-    JSON_UPDATE_MISSING,
-    JSON_UPDATE_RECURSIVE
-};
-
-// Maximum indentation
-static const int JSON_MAX_INDENT = 0x1F;
-
-// Pretty-print the result, indenting with n spaces
-stock int JSON_INDENT(int n)
-{
-    return n & JSON_MAX_INDENT;
-}
-
-stock bool JSON_TYPE_BOOLEAN(JsonType t)
-{
-    return (t & JSON_TRUE) || (t & JSON_FALSE);
-}
-
-stock bool JSON_IS_NULL(JsonType t)
-{
-    return t == JSON_NULL;
-}
-
-// Output floats with at most n digits of precision
-stock int JSON_REAL_PRECISION(int n)
-{
-    return (n & 0x1F) << 11;
-}
+#include "jansson/enums.inc"
 
 // Generic type for encoding JSON.
 methodmap Json < Handle
@@ -212,20 +146,6 @@ methodmap JsonObject < Json
     // @return           True on success, false on failure.
     public native bool SetInt64(const char[] key, const char[] value);
 
-    // Sets a null value in the object, either inserting a new entry or replacing an old one.
-    //
-    // @param key        Key string.
-    // @return           True on success, false on failure.
-    #pragma deprecated Use JsonObject.Set() instead
-    public bool SetNull(const char[] key) {
-        return this.Set(key, null);
-    }
-
-    #pragma deprecated Use JsonObject.GetType() instead
-    public bool IsNull(const char[] key) {
-        return JSON_IS_NULL(this.GetType(key));
-    }
-
     // Sets a string value in the object, either inserting a new entry or replacing an old one.
     //
     // @param key        Key string.
@@ -244,7 +164,7 @@ methodmap JsonObject < Json
     // @param   obj       Another object
     // @param   updType   Update type (see JsonUpdateType enum)
     // @return            True on success
-    public native bool Update(JsonObject obj, JsonUpdateType updType = 0);
+    public native bool Update(JsonObject obj, JsonUpdateType updType = JSON_UPDATE);
 
     // Clears the object of all entries.
     // @return           True on success, false on failure.
@@ -364,15 +284,6 @@ methodmap JsonArray < Json
     // @return           True on success, false on failure.
     public native bool SetInt64(int index, const char[] value);
 
-    // Sets a null value in the array.
-    //
-    // @param index      Index in the array.
-    // @return           True on success, false on failure.
-    #pragma deprecated Use JsonArray.Set() instead
-    public bool SetNull(int index) {
-        return this.Set(index, null);
-    }
-
     // Sets a string value in the array.
     //
     // @param index      Index in the array.
@@ -410,13 +321,6 @@ methodmap JsonArray < Json
     // @return           True on success, false on failure.
     public native bool PushInt64(const char[] value);
 
-    // Pushes a null value onto the end of the array, adding a new index.
-    // @return           True on success, false on failure.
-    #pragma deprecated Use JsonArray.Push() instead
-    public bool PushNull() {
-        return this.Push(null);
-    }
-
     // Pushes a string value onto the end of the array, adding a new index.
     //
     // @param value      String value to push.
@@ -439,145 +343,8 @@ methodmap JsonArray < Json
     }
 };
 
-#define asJSON(%1)  view_as<Json>(%1)
-#define asJSONO(%1) view_as<JsonObject>(%1)
-#define asJSONA(%1) view_as<JsonArray>(%1)
-#define asJSONK(%1) view_as<JsonKeys>(%1)
-
-stock bool JSON_TYPE_EQUAL(Json o, JsonType t) 
-{
-    return o.Type == t;
-}
-
-stock bool JSONO_TYPE_EQUAL(Json o, const char[] k, JsonType t)
-{
-    return asJSONO(o).GetType(k) == t;
-}
-
-stock bool JSONA_TYPE_EQUAL(Json o, const int i, JsonType t)
-{
-    return asJSONA(o).GetType(i) == t;
-}
-
-methodmap JsonBuilder < Json
-{
-    public JsonBuilder(const char[] str)
-    {
-        return view_as<JsonBuilder>(new Json(str));
-    }
-
-    public JsonBuilder SetString(const char[] k, const char[] v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).SetString(k, v);
-
-        return this;
-    }
-
-    public JsonBuilder Set(const char[] k, Json v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).Set(k, v);
-
-        return this;
-    }
-
-    public JsonBuilder SetInt(const char[] k, int v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).SetInt(k, v);
-
-        return this;
-    }
-
-    public JsonBuilder SetBool(const char[] k, bool v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).SetBool(k, v);
-
-        return this;
-    }
-
-    public JsonBuilder SetInt64(const char[] k, const char[] v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).SetInt64(k, v);
-
-        return this;
-    }
-
-    public JsonBuilder SetFloat(const char[] k, float v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).SetFloat(k, v);
-
-        return this;
-    }
-
-    public JsonBuilder PushString(const char[] v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).PushString(v);
-
-        return this;
-    }
-
-    public JsonBuilder PushInt(int v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).PushInt(v);
-
-        return this;
-    }
-
-    public JsonBuilder PushInt64(const char[] v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).PushInt64(v);
-
-        return this;
-    }
-
-    public JsonBuilder PushBool(bool v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).PushBool(v);
-
-        return this;
-    }
-
-    public JsonBuilder Push(Json v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).Push(v);
-
-        return this;
-    }
-
-    public JsonBuilder PushFloat(float v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).PushFloat(v);
-
-        return this;
-    }
-
-    public JsonBuilder Clear()
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).Clear();
-        
-        else if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).Clear();
-
-        return this;
-    }
-
-    public Json Build()
-    {
-        return asJSON(this);
-    }
-}
+#include "jansson/stocks.inc"
+#include "jansson/builder.inc"
 
 /**
  * Do not edit below this line!
