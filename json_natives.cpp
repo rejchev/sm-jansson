@@ -181,6 +181,24 @@ static cell_t JSONEqual(IPluginContext *pContext, const cell_t *params)
     return (json_equal(object, o));
 }
 
+// JSON.Size(int flags = -1)
+static cell_t JSONSize(IPluginContext *pContext, const cell_t *params)
+{
+    json_t *object;
+    if((object = GetJSONFromHandle(pContext, params[1])) == NULL)
+        return -1;
+
+    char *result;
+    if ((result = json_dumps(object, (size_t) params[2])) == NULL)
+        return -1;
+    
+    size_t size = strlen(result);
+    
+    free(result);
+
+    return (cell_t) size;
+}
+
 // JSON.Type.get()
 static cell_t JSONGetType(IPluginContext *pContext, const cell_t *params)
 {
@@ -780,6 +798,20 @@ static cell_t ArrayPushString(IPluginContext *pContext, const cell_t *params)
     return (json_array_append_new(object, (json_string(val))) == 0);
 }
 
+// JSONArray.Extend(json main, json other)
+static cell_t ArrayExtend(IPluginContext *pContext, const cell_t *params)
+{
+    json_t *object;
+    if((object = GetJSONFromHandle(pContext, params[1])) == NULL)
+        return 0;
+        
+    json_t *other;
+    if((other = GetJSONFromHandle(pContext, params[2])) == NULL)
+        return 0;
+
+    return (json_array_extend(object, other) == 0);
+}
+
 // JSONArray.Remove(const int)
 static cell_t ArrayRemove(IPluginContext *pContext, const cell_t *params)
 {
@@ -800,8 +832,8 @@ static cell_t ArrayClear(IPluginContext *pContext, const cell_t *params)
     return (json_array_clear(object) == 0);
 }
 
-// JSONArray.Size.get()
-static cell_t ArraySize(IPluginContext *pContext, const cell_t *params)
+// JSONArray.Length.get()
+static cell_t ArrayLength(IPluginContext *pContext, const cell_t *params)
 {
     json_t *object;
     if((object = GetJSONFromHandle(pContext, params[1])) == NULL)
@@ -818,6 +850,7 @@ const sp_nativeinfo_t json_natives[] =
     {"Json.ToString",					JSONToString},
     {"Json.ToFile",						JSONToFile},
     {"Json.Equal",						JSONEqual},
+    {"Json.Size",						JSONSize},
     {"Json.Type.get",					JSONGetType},
 
     {"JsonObject.Get",					ObjectGet},
@@ -837,9 +870,10 @@ const sp_nativeinfo_t json_natives[] =
     {"JsonObject.Update",               ObjectUpdate},
     {"JsonObject.Remove",				ObjectRemoveKey},
     {"JsonObject.Clear",				ObjectClear},
-    {"JsonObject.Size.get",				ObjectSize},
+    {"JsonObject.Size.get",				ObjectSize}, // will be removed; deprecated
+    {"JsonObject.Elements.get",         ObjectSize},
     
-    {"JsonObject.Keys",					ObjectKeys},
+    {"JsonObject.KeysIterator",			ObjectKeys},
     {"JsonKeys.Next",			        ReadObjectKey},
 
     {"JsonArray.Get",					ArrayGet},
@@ -861,9 +895,11 @@ const sp_nativeinfo_t json_natives[] =
     {"JsonArray.PushInt",				ArrayPushInt},
     {"JsonArray.PushInt64",				ArrayPushInt64},
     {"JsonArray.PushString",			ArrayPushString},
+    {"JsonArray.Extend",				ArrayExtend},
     {"JsonArray.Remove",				ArrayRemove},
     {"JsonArray.Clear",					ArrayClear},
-    {"JsonArray.Length.get",			ArraySize},
+    {"JsonArray.Length.get",			ArrayLength},
+    
 
     {NULL,								NULL}
 };

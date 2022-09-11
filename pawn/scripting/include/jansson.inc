@@ -37,6 +37,12 @@ methodmap Json < Handle
     // @return          True on success
     public native bool Equal(Json obj);
 
+    // Json size in bytes (try it before using ToString if u need)
+    // 
+    // @param obj       Another object
+    // @return          size in bytes or -1 on failure
+    public native int Size(int flags = 0);
+
     // Retrieves the JSON string representation.
     //
     // @param buffer     String buffer to write to.
@@ -171,9 +177,22 @@ methodmap JsonObject < Json
     public native bool Clear();
 
     // Returns an iterator for the object's keys. See JSONObjectKeys.
-    public native JsonKeys Keys();
+    public native JsonKeys KeysIterator();
+
+    // deprecated; will be removed at next update
+    // use KeysIterator instead
+    public JsonKeys Keys()
+    {
+        return this.KeysIterator();
+    }
 
     // Retrieves the size of the object.
+    property int Elements {
+        public native get();
+    }
+
+    // deprecated; will be removed at next update
+    // use Elements instead
     property int Size {
         public native get();
     }
@@ -326,6 +345,12 @@ methodmap JsonArray < Json
     // @param value      String value to push.
     // @return           True on success, false on failure.
     public native bool PushString(const char[] value);
+
+    // Appends all elements from another array to the end of this array.
+    //
+    // @param other      An another json array
+    // @return           True on success, false on failure.
+    public native bool Extend(JsonArray another);
 
     // Removes an entry from the array.
     //
