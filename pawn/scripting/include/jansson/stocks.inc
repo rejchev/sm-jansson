@@ -84,7 +84,7 @@ stock JsonBuilder asJSONB(Handle value)
 #if !defined CLOWN_USE_JANSSON 
 
 // Find some string value int json array
-stock int FindStringValue_json(JsonArray& array, const char[] value, const int maxValueSize = 512)
+stock int FindStringValue_json(JsonArray& array, const char[] value, const int maxValueSize = 512, const bool casesens = false)
 {
     if(!array)
         return -1;
@@ -92,7 +92,7 @@ stock int FindStringValue_json(JsonArray& array, const char[] value, const int m
     char[] buffer = new char[maxValueSize];
 
     for(int i, size = array.Length; i < size; i++)
-        if(array.GetString(i, buffer, maxValueSize) && !strcmp(value, buffer))
+        if(array.GetString(i, buffer, maxValueSize) && !strcmp(value, buffer, casesens))
             return i;
 
     return -1;
