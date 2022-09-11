@@ -73,12 +73,10 @@ stock JsonKeys asJSONK(Handle value)
 }
 
 // try view as JsonBuilder
-#if defined _jansson_builder_included_
 stock JsonBuilder asJSONB(Handle value)
 {
     return view_as<JsonBuilder>(value);
 }
-#endif
 
 // CLOWN_USE_JANSSON defined in ClownCore (for backward compatibility, must be deprecated)
 #if !defined CLOWN_USE_JANSSON 
