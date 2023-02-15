@@ -68,12 +68,46 @@ methodmap JsonObject < Json
     // @error            Invalid key.
     public native Json Get(const char[] key);
 
+    // Trying to get Json value 
+    //
+    // The JSON must be freed via delete or CloseHandle().
+    //
+    // @param key        Key string
+    // @param value      Json buffer for storage value
+    // @return           True on success
+    public bool TryGet(const char[] key, Json &value)
+    {
+        delete value;
+
+        if(!this.HasKey(key))
+            return false;
+
+        value = this.Get(key);
+        return true;
+    }
+
     // Retrieves a boolean value from the object.
     //
     // @param key        Key string.
     // @return           Value read.
     // @error            Invalid key.
     public native bool GetBool(const char[] key);
+
+    // Trying to get Boolean value 
+    //
+    // @param key        Key string
+    // @param value      Bool buffer for storage value
+    // @return           True on success
+    public bool TryGetBool(const char[] key, bool &value)
+    {
+        value = false;
+
+        if(!this.HasKey(key) || !JSON_TYPE_BOOLEAN(this.GetType(key)))
+            return false;
+
+        value = this.GetBool(key);
+        return true;
+    }
 
     // Retrieves a float value from the object.
     //
@@ -82,12 +116,46 @@ methodmap JsonObject < Json
     // @error            Invalid key.
     public native float GetFloat(const char[] key);
 
+    // Trying to get Float value 
+    //
+    // @param key        Key string
+    // @param value      Float buffer for storage value
+    // @return           True on success
+    public bool TryGetFloat(const char[] key, float &value)
+    {
+        value = 0.0;
+
+        if(!this.HasKey(key) || !JSONO_TYPE_EQUAL(this, key, JSON_REAL))
+            return false;
+
+        value = this.GetFloat(key);
+        return true;
+    }
+
     // Retrieves an integer value from the object.
     //
     // @param key        Key string.
     // @return           Value read.
     // @error            Invalid key.
     public native int GetInt(const char[] key);
+
+    // Trying to get Integer value 
+    //
+    // The JSON must be freed via delete or CloseHandle().
+    //
+    // @param key        Key string
+    // @param value      Integer buffer for storage value
+    // @return           True on success
+    public bool TryGetInt(const char[] key, int &value)
+    {
+        value = 0;
+
+        if(!this.HasKey(key) || !JSONO_TYPE_EQUAL(this, key, JSON_INTEGER))
+            return false;
+
+        value = this.GetInt(key);
+        return true;
+    }
 
     // Retrieves a 64-bit integer value from the object.
     //
@@ -105,6 +173,22 @@ methodmap JsonObject < Json
     // @return           True on success. False if the key was not found, or the value is not a string.
     public native bool GetString(const char[] key, char[] buffer, int maxlength);
     
+    // Trying to get a Json value 
+    //
+    // @param key        Key string
+    // @param value      String buffer for storage value
+    // @param size       Buffer size
+    // @return           True on success
+    public bool TryGetString(const char[] key, char[] value, int size)
+    {
+        value[0] = 0;
+
+        if(!this.HasKey(key) || !JSONO_TYPE_EQUAL(this, key, JSON_STRING))
+            return false;
+
+        return this.GetString(key, value, size);
+    }
+
     // Retrieves an item type from the array.
     //
     // @param key        Key string
