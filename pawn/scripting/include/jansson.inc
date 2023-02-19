@@ -73,17 +73,16 @@ methodmap JsonObject < Json
     // The JSON must be freed via delete or CloseHandle().
     //
     // @param key        Key string
-    // @param value      Json buffer for storage value
-    // @return           True on success
-    public bool TryGet(const char[] key, Json &value)
+    // @param buffer     Json buffer where must be freed, default null
+    // @return           Json on success, null - otherwise
+    public Json TryGet(const char[] key, Json buffer = null)
     {
-        delete value;
+        delete buffer;
 
         if(!this.HasKey(key))
-            return false;
+            return null;
 
-        value = this.Get(key);
-        return true;
+        return this.Get(key);
     }
 
     // Retrieves a boolean value from the object.
