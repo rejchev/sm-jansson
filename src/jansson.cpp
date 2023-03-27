@@ -9,5 +9,5 @@ IJson *Jansson::Create(const char *str, const size_t& flags)
 
 IJson *Jansson::Create(FILE *input, const size_t &flags)
 {
-
+    return new Json(input, flags);
 }
