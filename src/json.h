@@ -30,9 +30,6 @@ namespace SourceMod
         JsonType    type() const override;
 
     public:
-//        virtual const json_t *json() const;
-
-    public:
         virtual json_t *json();
 
     private:

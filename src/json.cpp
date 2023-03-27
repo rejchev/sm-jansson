@@ -9,9 +9,6 @@ Json::Json(const char *str, const size_t &flags) :
     if((m_pJson = json_loads(str, flags, &error)) == nullptr
     || json_error_code(&error) != json_error_unknown)
         m_JsonError = error;
-
-    if(m_pJson != nullptr && IJsonError::null(*this->error()))
-        m_pJson = json_incref(m_pJson);
 }
 
 Json::Json(FILE *input, const size_t &flags) :
@@ -21,25 +18,21 @@ Json::Json(FILE *input, const size_t &flags) :
     if((m_pJson = json_loadf(input, flags, &error)) == nullptr
        || json_error_code(&error) != json_error_unknown)
         m_JsonError = error;
-
-    if(m_pJson != nullptr && IJsonError::null(*this->error()))
-        m_pJson = json_incref(m_pJson);
 }
 
 Json::Json(json_t *json) :
     m_JsonError(),
-    m_pJson(json)
+    m_pJson(nullptr)
 {
     if(json == nullptr)
         m_JsonError = JsonError {-1, -1, -1, "", ""};
     else
-        m_pJson = json_incref(m_pJson);
+        m_pJson = json_incref(json);
 }
 
 Json::~Json()
 {
-    if(m_pJson != nullptr)
-        json_decref(m_pJson);
+    json_decref(m_pJson);
 }
 
 const char *Json::dump(const size_t& decodingFlags)
@@ -63,11 +56,6 @@ IJsonError *Json::error() const
 {
     return const_cast<IJsonError *>((IJsonError *) &m_JsonError);
 }
-
-//const json_t *Json::json() const
-//{
-//    return (const json_t *) m_pJson;
-//}
 
 json_t *Json::json()
 {
