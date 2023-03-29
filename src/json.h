@@ -35,7 +35,6 @@ namespace SourceMod
     private:
         json_t *m_pJson;
         JsonError m_JsonError;
-
     };
 }
 

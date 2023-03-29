@@ -25,9 +25,16 @@ Json::Json(json_t *json) :
     m_pJson(nullptr)
 {
     if(json == nullptr)
-        m_JsonError = JsonError {-1, -1, -1, "", ""};
-    else
-        m_pJson = json_incref(json);
+        m_JsonError = JsonError {
+            -1,
+            -1,
+            -1,
+            NullValue,
+            "Json::Json(json_t*)",
+            "Json pointer is nullptr"
+    };
+
+    else m_pJson = json_incref(json);
 }
 
 Json::~Json()
@@ -40,7 +47,14 @@ const char *Json::dump(const size_t& decodingFlags)
     char *buffer = nullptr;
 
     if(IJsonError::null(*error()) && (buffer = json_dumps(m_pJson, decodingFlags)) == nullptr)
-        m_JsonError = JsonError {-1, -1, -1, "", ""};
+        m_JsonError = JsonError {
+            -1,
+            -1,
+            -1,
+            InvalidFormat,
+            "Json::dump",
+            "Invalid json format, it must be object or array"
+        };
 
     return buffer;
 }
