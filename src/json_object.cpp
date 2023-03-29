@@ -57,7 +57,7 @@ bool SourceMod::JsonObject::set(const char *key, bool value) {
     return (json_object_set_new(link.json(), key, (json_boolean(value))) == 0);
 }
 
-bool SourceMod::JsonObject::set(const char *key, int value) {
+bool SourceMod::JsonObject::set(const char *key, long long value) {
     Json& link = *((Json *)this);
 
     return (json_object_set_new(link.json(), key, (json_integer(value))) == 0);

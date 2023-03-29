@@ -177,7 +177,7 @@ namespace SourceMod
             virtual bool        set(const char *key, const char* value) =0;
             virtual bool        set(const char *key, double value) =0;
             virtual bool        set(const char *key, bool value) =0;
-            virtual bool        set(const char *key, int value) =0;
+            virtual bool        set(const char *key, long long value) =0;
             
         public:
             virtual bool        update(const IJsonObject* another, JsonObjectUpdateType type) =0;
@@ -197,14 +197,14 @@ namespace SourceMod
         virtual bool    set(const size_t& index, const char* value) =0;
         virtual bool    set(const size_t& index, double value) =0;
         virtual bool    set(const size_t& index, bool value) =0;
-        virtual bool    set(const size_t& index, int value) =0;
+        virtual bool    set(const size_t& index, long long value) =0;
 
     public:
         virtual bool    push(const IJson *value) =0;
         virtual bool    push(const char* value) =0;
         virtual bool    push(double value) =0;
         virtual bool    push(bool value) =0;
-        virtual bool    push(int value) =0;
+        virtual bool    push(long long value) =0;
 
     public:
         virtual JsonType type(const size_t& index) const =0;

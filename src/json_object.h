@@ -18,7 +18,7 @@ namespace SourceMod
         bool    set(const char *key, const char* value) override;
         bool    set(const char *key, double value) override;
         bool    set(const char *key, bool value) override;
-        bool    set(const char *key, int value) override;
+        bool    set(const char *key, long long value) override;
 
     public:
         bool update(const IJsonObject* another, JsonObjectUpdateType type) override;
