@@ -10,12 +10,12 @@ namespace SourceMod
     class JsonError : public IJsonError
     {
     public:
-        explicit JsonError(
-                int line = -1,
-                int column = -1,
-                int position = -1,
-                const char* source = nullptr,
-                const char* text = nullptr);
+        explicit JsonError(int line = -1,
+                            int column = -1,
+                            int position = -1,
+                            JsonErrorCode code = Unknown,
+                            const char* source = nullptr,
+                            const char* text = nullptr);
 
         JsonError(const json_error_t &);
 
@@ -40,6 +40,7 @@ namespace SourceMod
     
     public:
         JsonErrorCode code() const override;
+        void code(JsonErrorCode code);
 
     public:
         bool equal(const IJsonError &another) const override;

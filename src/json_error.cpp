@@ -9,6 +9,7 @@ JsonError::JsonError(const json_error_t &error) :
 JsonError::JsonError(int line,
                      int column,
                      int position,
+                     JsonErrorCode code,
                      const char *source,
                      const char *text) :
         m_error()
@@ -16,6 +17,7 @@ JsonError::JsonError(int line,
     this->line(line);
     this->column(column);
     this->position(position);
+    this->code(code);
     this->source(source);
     this->text(text);
 }
@@ -70,18 +72,34 @@ const char *JsonError::text() const
 
 void JsonError::source(const char *value)
 {
-    if(value != nullptr)
-        strcpy_s(m_error.source, value);
-    else
-        m_error.source[0] = '\0';
+    if(!value)
+    {
+        m_error.text[0] = '\0';
+        return;
+    }
+
+    size_t size = strlen(value);
+
+    if(size > JSON_ERROR_SOURCE_LENGTH)
+        size = JSON_ERROR_SOURCE_LENGTH;
+
+    strncpy(m_error.source, value, size);
 }
 
 void JsonError::text(const char *value)
 {
-    if(value != nullptr)
-        strcpy_s(m_error.text, value);
-    else
+    if(!value)
+    {
         m_error.text[0] = '\0';
+        return;
+    }
+
+    size_t size = strlen(value);
+
+    if(size > JSON_ERROR_TEXT_LENGTH - 2)
+        size = JSON_ERROR_TEXT_LENGTH - 2;
+
+    strncpy(m_error.text, value, size);
 }
 
 bool JsonError::equal(const SourceMod::IJsonError &another) const
@@ -100,4 +118,8 @@ void JsonError::clear()
     column(-1);
     text(nullptr);
     source(nullptr);
+}
+
+void JsonError::code(JsonErrorCode code) {
+    m_error.text[JSON_ERROR_TEXT_LENGTH - 1] = code;
 }
