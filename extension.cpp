@@ -20,46 +20,61 @@
  */
 
 #include "extension.h"
+//#include "natives.h"
 
-Jansson g_Jansson;		/**< Global singleton for extension's main interface */
+/**< Global singleton for extension's main interface */
+CJanssonExtension g_JanssonExtension;
 
-SMEXT_LINK(&g_Jansson);
+SMEXT_LINK(&g_JanssonExtension);
 
-JSONHandler		g_JSONHandler;
-HandleType_t		htJSON;
-
-JSONObjectKeysHandler	g_JSONObjectKeysHandler;
-HandleType_t			htJSONObjectKeys;
-
-bool Jansson::SDK_OnLoad(char *error, size_t maxlength, bool late)
+bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
-	sharesys->AddNatives(myself, json_natives);
+//	sharesys->AddNatives(myself, JSON_NATIVES);
+//    sharesys->AddNatives(myself, JSON_OBJECT_NATIVES);
+//    sharesys->AddNatives(myself, JSON_ARRAY_NATIVES);
+//    sharesys->AddNatives(myself, JSON_ERROR_NATIVES);
 	sharesys->RegisterLibrary(myself, "jansson");
 
-	/* Set up access rights for the 'JSON' handle type */
-	HandleAccess haJSON;
-	haJSON.access[HandleAccess_Clone] = 0;
-	haJSON.access[HandleAccess_Delete] = 0;
-	haJSON.access[HandleAccess_Read] = 0;
+    if(pJansson != nullptr)
+        delete (nJansson::Jansson *)pJansson;
 
-	htJSON = handlesys->CreateType("Json", &g_JSONHandler, 0, NULL, &haJSON, myself->GetIdentity(), NULL);
-	htJSONObjectKeys = handlesys->CreateType("JsonKeys", &g_JSONObjectKeysHandler, 0, NULL, NULL, myself->GetIdentity(), NULL);
+    pJansson = new nJansson::Jansson();
+
+    ((nJansson::CTypeMgr *)pJansson->GetTypeManager())->RegisterType(
+        new nJansson::CHandleType(
+                "Json",
+                new CJsonHandler(),
+                0,
+                {},
+                {},
+                nullptr)
+    );
+
+    ((nJansson::CTypeMgr *)pJansson->GetTypeManager())->RegisterType(
+        new nJansson::CHandleType(
+                "JsonKeys",
+                new CJsonObjectKeysHandler(),
+                0,
+                {},
+                {},
+                nullptr)
+    );
+
+    sharesys->AddInterface(myself, pJansson);
 
 	return true;
 }
 
-void Jansson::SDK_OnUnload()
+void CJanssonExtension::SDK_OnUnload()
 {
-	handlesys->RemoveType(htJSON, myself->GetIdentity());
-	handlesys->RemoveType(htJSONObjectKeys, myself->GetIdentity());
+    delete (nJansson::Jansson*) pJansson;
 }
 
-void JSONHandler::OnHandleDestroy(HandleType_t type, void *object)
+void CJsonHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object)
 {
-	json_decref((json_t *)object);
+    delete (nJansson::Json*) object;
 }
 
-void JSONObjectKeysHandler::OnHandleDestroy(HandleType_t type, void *object)
-{
-	delete (struct JSONObjectKeys *)object;
+void CJsonObjectKeysHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object) {
+//    delete (nJansson::Json*) object;
 }
