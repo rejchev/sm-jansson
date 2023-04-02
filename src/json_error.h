@@ -5,7 +5,7 @@
 #include <jansson.h>
 #include <cstring>
 
-namespace SourceMod
+namespace nJansson
 {
     class JsonError : public IJsonError
     {

@@ -3,7 +3,7 @@
 
 #include "json_error.h"
 
-namespace SourceMod
+namespace nJansson
 {
     class Json : public IJson 
     {

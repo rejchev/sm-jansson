@@ -1,6 +1,6 @@
 #include "json_error.h"
 
-using namespace SourceMod;
+using namespace nJansson;
 
 JsonError::JsonError(const json_error_t &error) :
     m_error(error)
@@ -102,7 +102,7 @@ void JsonError::text(const char *value)
     strncpy(m_error.text, value, size);
 }
 
-bool JsonError::equal(const SourceMod::IJsonError &another) const
+bool JsonError::equal(const IJsonError &another) const
 {
     return another.code() == code()
         && another.line() == line()

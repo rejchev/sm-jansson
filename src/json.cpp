@@ -1,6 +1,6 @@
 #include "json.h"
 
-using namespace SourceMod;
+using namespace nJansson;
 
 Json::Json(const char *str, const size_t &flags) :
     m_JsonError()
@@ -59,7 +59,7 @@ const char *Json::dump(const size_t& decodingFlags)
     return buffer;
 }
 
-bool Json::equal(const SourceMod::IJson &json) const
+bool Json::equal(const IJson &json) const
 {
     Json &link = (Json &) json;
 

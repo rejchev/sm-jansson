@@ -2,14 +2,28 @@
 #define _INCLUDE_SOURCEMOD_JANSSON_H_
 
 #include "json.h"
+#include "./types/CHandleTypeManager.h"
 
-namespace SourceMod
+namespace nJansson
 {
+
+
     class Jansson : public IJansson
     {
-        public:
-            IJson *Create(const char *,  const size_t &flags) override;
-            IJson *Create(FILE *input,   const size_t &flags) override;
+
+    public:
+        Jansson(IHandleTypeManager* manager = nullptr);
+        virtual ~Jansson();
+
+    public:
+        IJson *Create(const char *,  const size_t &flags) override;
+        IJson *Create(FILE *input,   const size_t &flags) override;
+
+    public:
+        virtual const IHandleTypeManager* GetTypeManager() const;
+
+    private:
+        IHandleTypeManager* m_pHandleTypeManager;
     };
 }
 

@@ -3,7 +3,7 @@
 
 #include "json.h"
 
-namespace SourceMod
+namespace nJansson
 {
     class JsonObject : public IJsonObject
     {

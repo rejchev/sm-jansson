@@ -1,6 +1,6 @@
 #include "json_object.h"
 
-SourceMod::IJson *SourceMod::JsonObject::get(const char* key) const {
+nJansson::IJson *nJansson::JsonObject::get(const char* key) const {
     Json& link = *((Json *)this);
 
     return (!exist(key))
@@ -8,13 +8,13 @@ SourceMod::IJson *SourceMod::JsonObject::get(const char* key) const {
         : new Json(json_object_get(link.json(), key));
 }
 
-bool SourceMod::JsonObject::exist(const char* key) const {
+bool nJansson::JsonObject::exist(const char* key) const {
     Json& link = *((Json *)this);
 
     return json_object_get(link.json(), key) != nullptr;
 }
 
-bool SourceMod::JsonObject::set(const char *key, const SourceMod::IJson* value) {
+bool nJansson::JsonObject::set(const char *key, const nJansson::IJson* value) {
     Json& link = *((Json *)this);
 
     auto set = (value->type() == JsonType::Null)
@@ -24,19 +24,19 @@ bool SourceMod::JsonObject::set(const char *key, const SourceMod::IJson* value) 
     return set(link.json(), key, ((Json *) value)->json()) == 0;
 }
 
-SourceMod::JsonType SourceMod::JsonObject::type(const char *key) const {
+nJansson::JsonType nJansson::JsonObject::type(const char *key) const {
     Json& link = *((Json *)this);
 
     return Json(json_object_get(link.json(), key)).type();
 }
 
-void SourceMod::JsonObject::clear() {
+void nJansson::JsonObject::clear() {
     Json& link = *((Json *)this);
 
     json_object_clear(link.json());
 }
 
-bool SourceMod::JsonObject::set(const char *key, const char *value) {
+bool nJansson::JsonObject::set(const char *key, const char *value) {
     Json& link = *((Json *)this);
 
     if(value == nullptr)
@@ -45,31 +45,31 @@ bool SourceMod::JsonObject::set(const char *key, const char *value) {
     return (json_object_set_new(link.json(), key, (json_string(value))) == 0);
 }
 
-bool SourceMod::JsonObject::set(const char *key, double value) {
+bool nJansson::JsonObject::set(const char *key, double value) {
     Json& link = *((Json *)this);
 
     return (json_object_set_new(link.json(), key, (json_real(value))) == 0);
 }
 
-bool SourceMod::JsonObject::set(const char *key, bool value) {
+bool nJansson::JsonObject::set(const char *key, bool value) {
     Json& link = *((Json *)this);
 
     return (json_object_set_new(link.json(), key, (json_boolean(value))) == 0);
 }
 
-bool SourceMod::JsonObject::set(const char *key, long long value) {
+bool nJansson::JsonObject::set(const char *key, long long value) {
     Json& link = *((Json *)this);
 
     return (json_object_set_new(link.json(), key, (json_integer(value))) == 0);
 }
 
-bool SourceMod::JsonObject::remove(const char *key) {
+bool nJansson::JsonObject::remove(const char *key) {
     Json& link = *((Json *)this);
 
     return (json_object_del(link.json(), key) == 0);
 }
 
-bool SourceMod::JsonObject::update(const SourceMod::IJsonObject *another, SourceMod::JsonObjectUpdateType type) {
+bool nJansson::JsonObject::update(const nJansson::IJsonObject *another, nJansson::JsonObjectUpdateType type) {
     int (*updateFunc) (json_t*, json_t*) = nullptr;
 
     switch(type)
