@@ -41,6 +41,7 @@ namespace nJansson {
 
         for(; pos < m_vecTypes.size(); pos++)
             if(type == m_vecTypes[pos]->type())
+                break;
 
         return pos;
     }
