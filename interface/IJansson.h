@@ -2,6 +2,7 @@
 #ifndef _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 #define _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 
+#include <vector>
 #include <IShareSys.h>
 #include <IHandleSys.h>
 
@@ -9,9 +10,8 @@
 #define SMINTERFACE_JANSSON_VERSION	    1
 
 
-namespace SourceMod
+namespace nJansson
 {
-
     enum JsonType
     {
         Invalid = -1,
@@ -73,26 +73,17 @@ namespace SourceMod
         Recursive
     };
 
-    struct HandleTypeDetails
-    {
-        const char *name;
+    class IHandleType;
+    class IHandle;
+    class IHandleTypeManager;
 
-        const TypeAccess *access;
-        const HandleAccess *hndlAccess;
-        const IdentityToken_t *ident;
-        
-        HandleType_t parent;
-        HandleType_t type;
-    };
-
+    // TODO: JsonObject: Update, Size, Keys, KeyIterator
     class IJson;
-
-    // TODO: Update, Size, Keys, KeyIterator
     class IJsonObject;
     class IJsonArray;
     class IJsonError;
 
-    class IJansson : SMInterface
+    class IJansson : public SourceMod::SMInterface
     {
         public:
             const char *GetInterfaceName()
@@ -104,9 +95,8 @@ namespace SourceMod
                 return SMINTERFACE_JANSSON_VERSION;
             }
 
-        // public:
-        //     virtual HandleTypeDetails JsonTypeDetails() const =0;
-        //     virtual HandleTypeDetails JsonKeysTypeDetails() const =0;
+        public:
+            virtual const IHandleTypeManager* GetTypeManager() const =0;
 
         public:
             virtual IJson *Create(const char *,  const size_t &flags)    =0;
@@ -132,7 +122,7 @@ namespace SourceMod
             virtual void clear() =0;
 
         public:
-            static bool null(const SourceMod::IJsonError &obj)
+            static bool null(const IJsonError &obj)
             {
                 return obj.code()       == JsonErrorCode::Unknown
                     && obj.line()       == -1
@@ -212,6 +202,46 @@ namespace SourceMod
         virtual bool remove(const size_t& index) =0;
         virtual size_t length() const =0;
         virtual void clear() =0;
+    };
+
+    class IHandleType
+    {
+    public:
+        virtual const char *name() const =0;
+        virtual SourceMod::IHandleTypeDispatch* dispatch() const =0;
+        virtual SourceMod::HandleType_t parent() const =0;
+        virtual const SourceMod::TypeAccess& access() const =0;
+        virtual const SourceMod::HandleAccess& handleAccess() const =0;
+        virtual const SourceMod::IdentityToken_t *ident() const =0;
+
+    public:
+        virtual IHandle* create(void *object,
+                               SourceMod::IdentityToken_t* owner,
+                               SourceMod::IdentityToken_t* ident) =0;
+
+    public:
+        virtual SourceMod::HandleType_t type() const =0;
+    };
+
+    class IHandle
+    {
+    public:
+        virtual const IHandleType *type() const =0;
+        virtual const void *object() const =0;
+        virtual const SourceMod::IdentityToken_t *owner() const =0;
+        virtual const SourceMod::IdentityToken_t *ident() const =0;
+
+    public:
+        virtual SourceMod::HandleType_t handle() const =0;
+    };
+
+    class IHandleTypeManager
+    {
+    public:
+        virtual std::vector<IHandleType *> Types() const =0;
+
+    public:
+        virtual IHandleType* GetType(const char* name) const =0;
     };
 };
 
