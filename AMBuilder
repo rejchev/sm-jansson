@@ -22,6 +22,7 @@ for cxx in builder.targets:
   ]
 
   binary.compiler.includes += [
+    os.path.join(builder.sourcePath, 'interface'),
     os.path.join(builder.sourcePath, 'jansson', 'include'),
   ]
 
