@@ -24,6 +24,7 @@
 
 /**< Global singleton for extension's main interface */
 CJanssonExtension g_JanssonExtension;
+nJansson::IJansson* pJansson;
 
 SMEXT_LINK(&g_JanssonExtension);
 

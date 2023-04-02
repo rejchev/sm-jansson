@@ -13,8 +13,7 @@ namespace nJansson
                              m_Parent(parent),
                              m_Access(access),
                              m_HandleAccess(handleAccess),
-                             m_pIdent(identityToken),
-                             m_MyType()
+                             m_pIdent(identityToken)
     {
         SourceMod::HandleError error;
         m_MyType = g_pHandleSys->CreateType(
@@ -71,5 +70,5 @@ namespace nJansson
 
     SourceMod::HandleType_t CHandleType::type() const {
         return m_MyType;
-    };
+    }
 }

@@ -31,9 +31,6 @@ class CJanssonExtension :
 public:
 	virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
 	virtual void SDK_OnUnload();
-
-public:
-    static nJansson::IJansson* pJansson;
 };
 
 class CJsonHandler : public SourceMod::IHandleTypeDispatch
@@ -49,5 +46,6 @@ public:
 };
 
 extern CJanssonExtension g_JanssonExtension;
+extern nJansson::IJansson* pJansson;
 
 #endif // _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_

@@ -6,13 +6,10 @@
 
 namespace nJansson
 {
-
-
     class Jansson : public IJansson
     {
-
     public:
-        Jansson(IHandleTypeManager* manager = nullptr);
+        explicit Jansson(IHandleTypeManager* manager = nullptr);
         virtual ~Jansson();
 
     public:

@@ -13,7 +13,7 @@ IJson *Jansson::Create(FILE *input, const size_t &flags)
 }
 
 const IHandleTypeManager *Jansson::GetTypeManager() const {
-    return nullptr;
+    return m_pHandleTypeManager;
 }
 
 Jansson::Jansson(IHandleTypeManager *manager) :
