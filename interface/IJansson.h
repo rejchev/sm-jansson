@@ -7,7 +7,7 @@
 #include <IHandleSys.h>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
-#define SMINTERFACE_JANSSON_VERSION	    1
+#define SMINTERFACE_JANSSON_VERSION	    04042023
 
 
 namespace nJansson
@@ -222,18 +222,6 @@ namespace nJansson
 
     public:
         virtual SourceMod::HandleType_t type() const =0;
-    };
-
-    class IHandle
-    {
-    public:
-        virtual const IHandleType *type() const =0;
-        virtual const void *object() const =0;
-        virtual const SourceMod::IdentityToken_t *owner() const =0;
-        virtual const SourceMod::IdentityToken_t *ident() const =0;
-
-    public:
-        virtual SourceMod::HandleType_t handle() const =0;
     };
 
     class IHandleTypeManager
