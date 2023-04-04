@@ -37,8 +37,9 @@ methodmap Json < Handle
     //
     // @param file       File to write to.
     // @param flags      Encoding flags.
+    // @param freeHandle Auto delete handle after call
     // @return           True on success, false on failure.
-    public native bool ToFile(const char[] path, int flags = 0);
+    public native bool ToFile(const char[] path, int flags = 0, bool freeHandle = false);
 
     // Is JSON equals
     // 
@@ -50,18 +51,55 @@ methodmap Json < Handle
     // 
     // @param obj       Another object
     // @return          size in bytes or -1 on failure
-    public native int Size(int flags = 0);
+//    public native int Size(int flags = 0);
 
     // Retrieves the JSON string representation.
     //
     // @param buffer     String buffer to write to.
     // @param maxlength  Maximum length of the string buffer.
     // @param flags      Encoding flags.
+    // @param freeHandle Auto delete current handle after call successfully end
+    //
     // @return           True on success, false on failure.
-    public native bool ToString(char[] buffer, int maxlength, int flags = 0);
+    public native bool Dump(char[] buffer, int maxlength, int flags = 0, bool freeHandle = false);
+
+    // View Json as bool (must be JsonType::Boolean).
+    //
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              Value
+    public native bool AsBool(bool freeHandle = false);
+
+    // View Json as int (must be JsonType::Integer).
+    //
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              Value
+    public native int AsInt(bool freeHandle = false);
+
+    // View Json as float (must be JsonType::Real).
+    //
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              Value
+    public native float AsFloat(bool freeHandle = false);
+
+    // View Json as string (must be JsonType::String).
+    //
+    // @param buffer        String buffer
+    // @param size          String buffer size
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              success or not
+    public native bool AsString(char[] buffer, int size, bool freeHandle = false);
 
     // Retrieves the type of current object
     property JsonType Type {
+        public native get();
+    }
+
+    // Retrieves error object
+    property JsonError Error {
         public native get();
     }
 };
