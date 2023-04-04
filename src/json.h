@@ -10,7 +10,7 @@ namespace nJansson
     public:
         explicit Json(const char *, const size_t &flags = 0);
         explicit Json(FILE *, const size_t& flags = 0);
-        explicit Json(json_t*);
+        explicit Json(json_t*, const JsonError&, bool = true);
         virtual ~Json();
 
     public:

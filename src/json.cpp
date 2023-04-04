@@ -3,6 +3,7 @@
 using namespace nJansson;
 
 Json::Json(const char *str, const size_t &flags) :
+    m_pJson(),
     m_JsonError()
 {
     json_error_t error = {};
@@ -12,6 +13,7 @@ Json::Json(const char *str, const size_t &flags) :
 }
 
 Json::Json(FILE *input, const size_t &flags) :
+    m_pJson(),
     m_JsonError()
 {
     json_error_t error = {};
@@ -20,21 +22,12 @@ Json::Json(FILE *input, const size_t &flags) :
         m_JsonError = error;
 }
 
-Json::Json(json_t *json) :
-    m_JsonError(),
-    m_pJson(nullptr)
+Json::Json(json_t *json, const JsonError& jsonError, bool increment) :
+    m_pJson(json),
+    m_JsonError(jsonError)
 {
-    if(json == nullptr)
-        m_JsonError = JsonError {
-            -1,
-            -1,
-            -1,
-            NullValue,
-            "Json::Json(json_t*)",
-            "Json pointer is nullptr"
-    };
-
-    else m_pJson = json_incref(json);
+    if(m_pJson != nullptr && IJsonError::null(jsonError) && increment)
+        m_pJson = json_incref(m_pJson);
 }
 
 Json::~Json()
@@ -121,5 +114,3 @@ const char* Json::get()
 
     return json_string_value(json());
 }
-
-
