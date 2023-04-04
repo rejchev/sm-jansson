@@ -5,6 +5,15 @@
 
 #include "jansson/enums.inc"
 
+methodmap JsonError < Handle
+{
+    public native JsonErrorCode Code();
+    public native int Line();
+    public native int Column();
+    public native void Text(char[] buffer, int size);
+    public native void Source(char[] buffer, int size);
+};
+
 // Generic type for encoding JSON.
 methodmap Json < Handle
 {
