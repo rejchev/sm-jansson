@@ -22,6 +22,7 @@
 #include "extension.h"
 #include "natives.h"
 #include "src/jansson.h"
+#include "src/json_object_iter.h"
 #include "src/types/CHandleTypeManager.h"
 
 /**< Global singleton for extension's main interface */
@@ -33,7 +34,7 @@ SMEXT_LINK(&g_JanssonExtension);
 bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
 	sharesys->AddNatives(myself, JSON_NATIVES);
-//    sharesys->AddNatives(myself, JSON_OBJECT_NATIVES);
+    sharesys->AddNatives(myself, JSON_OBJECT_NATIVES);
 //    sharesys->AddNatives(myself, JSON_ARRAY_NATIVES);
 //    sharesys->AddNatives(myself, JSON_ERROR_NATIVES);
 	sharesys->RegisterLibrary(myself, "jansson");
@@ -92,5 +93,5 @@ void CJsonHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object)
 }
 
 void CJsonObjectKeysHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object) {
-//    delete (nJansson::Json*) object;
+    delete (nJansson::JsonObjectKeyIterator*) object;
 }
