@@ -1,5 +1,7 @@
 #include "CHandleType.h"
 
+#include <smsdk_ext.h>
+
 namespace nJansson
 {
     CHandleType::CHandleType(const char *name,
@@ -64,8 +66,20 @@ namespace nJansson
         return const_cast<SourceMod::IdentityToken_t *>(m_pIdent);
     }
 
-    IHandle *CHandleType::create(void *object, SourceMod::IdentityToken_t *owner, SourceMod::IdentityToken_t *ident) {
-        return new CHandle(object, this, owner, ident);
+    SourceMod::Handle_t CHandleType::createHandle(void *object,
+                                                  SourceMod::IdentityToken_t *owner,
+                                                  SourceMod::IdentityToken_t *ident,
+                                                  SourceMod::HandleError* handleError) {
+        Handle_t handle;
+
+        if((handle = g_pHandleSys->CreateHandle(this->type(), object, owner, ident, handleError)) != BAD_HANDLE
+        && handleError != nullptr && *handleError != HandleError_None)
+        {
+            g_pHandleSys->FreeHandle(handle, nullptr);
+            handle = BAD_HANDLE;
+        }
+
+        return handle;
     }
 
     SourceMod::HandleType_t CHandleType::type() const {

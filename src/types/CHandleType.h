@@ -1,7 +1,7 @@
 #ifndef SM_JANSSON_CHANDLETYPE_H
 #define SM_JANSSON_CHANDLETYPE_H
 
-#include "CHandle.h"
+#include <IJansson.h>
 
 namespace nJansson
 {
@@ -26,9 +26,8 @@ namespace nJansson
         virtual const SourceMod::IdentityToken_t *ident() const;
 
     public:
-        virtual IHandle *create(void *object,
-                               SourceMod::IdentityToken_t* owner,
-                               SourceMod::IdentityToken_t* ident);
+        virtual SourceMod::Handle_t
+            createHandle(void *, SourceMod::IdentityToken_t*, SourceMod::IdentityToken_t*,SourceMod::HandleError*);
 
     public:
         virtual SourceMod::HandleType_t type() const;
