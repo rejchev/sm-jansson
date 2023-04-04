@@ -12,49 +12,57 @@ namespace nJansson {
             delete (CHandleType*) m_vecType;
     }
 
-    void CHandleTypeManager::RegisterType(IHandleType *type) {
-        if(type->type() == BAD_HANDLE)
+    void CHandleTypeManager::add(const CHandleType& handleType) {
+        if(handleType.type() == BAD_HANDLE)
             return;
 
-        size_t index = FindType(type->name());
-
-        if(index >= m_vecTypes.size())
+        if((get(find(handleType.type()))) != nullptr)
             return;
 
-        m_vecTypes.push_back(type);
+        m_vecTypes.push_back(new CHandleType(handleType));
     }
 
-    std::vector<IHandleType *> CHandleTypeManager::Types() const {
+    const std::vector<IHandleType *>& CHandleTypeManager::types() const {
         return m_vecTypes;
     }
 
-    size_t CHandleTypeManager::FindType(const char *name) const{
+    size_t CHandleTypeManager::find(const char *name) const{
         size_t pos = 0;
 
-        for(; pos < m_vecTypes.size(); pos++)
+        for(; pos < count(); pos++)
             if(strcmp(name, m_vecTypes[pos]->name()) == 0)
                 break;
 
         return pos;
     }
 
-    size_t CHandleTypeManager::FindType(const SourceMod::HandleType_t &type) const{
+    size_t CHandleTypeManager::find(const SourceMod::HandleType_t& type) const{
         size_t pos = 0;
 
-        for(; pos < m_vecTypes.size(); pos++)
+        for(; pos < count(); pos++)
             if(type == m_vecTypes[pos]->type())
                 break;
 
         return pos;
     }
 
-    IHandleType *CHandleTypeManager::GetType(const char *name) const {
-        if(name == nullptr)
+    IHandleType *CHandleTypeManager::get(const char *name) const {
+        return ((name == nullptr) ? nullptr : get(find(name)));
+    }
+
+    IHandleType *CHandleTypeManager::get(const SourceMod::HandleType_t& uType) const {
+        return ((uType == 0) ? nullptr : get(find(uType)));
+    }
+
+    IHandleType *CHandleTypeManager::get(const size_t &index) const {
+        if(index >= count())
             return nullptr;
 
-        size_t pos = FindType(name);
+        return types()[index];
+    }
 
-        return (pos >= m_vecTypes.size()) ? nullptr : m_vecTypes[pos];
+    size_t CHandleTypeManager::count() const {
+        return types().size();
     }
 
 

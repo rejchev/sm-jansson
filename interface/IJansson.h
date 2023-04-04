@@ -96,11 +96,11 @@ namespace nJansson
             }
 
         public:
-            virtual const IHandleTypeManager* GetTypeManager() const =0;
+            virtual const IHandleTypeManager* typeManager() const =0;
 
         public:
-            virtual IJson *Create(const char *,  const size_t &flags)    =0;
-            virtual IJson *Create(FILE *input,   const size_t &flags)    =0;
+            virtual IJson *create(const char *,  const size_t &flags)    =0;
+            virtual IJson *create(FILE *input,   const size_t &flags)    =0;
     };
 
     class IJsonError
@@ -226,11 +226,20 @@ namespace nJansson
 
     class IHandleTypeManager
     {
-    public:
-        virtual std::vector<IHandleType *> Types() const =0;
+    protected:
+        virtual const std::vector<IHandleType *>& types() const =0;
 
     public:
-        virtual IHandleType* GetType(const char* name) const =0;
+        virtual IHandleType* get(const char* name) const =0;
+        virtual IHandleType* get(const SourceMod::HandleType_t& ident) const =0;
+        virtual IHandleType* get(const size_t& index) const =0;
+
+    public:
+        virtual size_t find(const char* name) const =0;
+        virtual size_t find(const SourceMod::HandleType_t& type) const =0;
+
+    public:
+        virtual size_t count() const =0;
     };
 };
 

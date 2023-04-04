@@ -41,24 +41,26 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 
     pJansson = new nJansson::Jansson();
 
-    ((nJansson::CTypeMgr *)pJansson->GetTypeManager())->RegisterType(
-        new nJansson::CHandleType(
+    ((nJansson::CTypeMgr *)pJansson->typeManager())->add(
+        nJansson::CHandleType {
                 "Json",
                 new CJsonHandler(),
                 0,
                 {},
                 {},
-                nullptr)
+                nullptr
+        }
     );
 
-    ((nJansson::CTypeMgr *)pJansson->GetTypeManager())->RegisterType(
-        new nJansson::CHandleType(
-                "JsonKeys",
+    ((nJansson::CTypeMgr *)pJansson->typeManager())->add(
+        nJansson::CHandleType {
+                "JsonObjectKeyIterator",
                 new CJsonObjectKeysHandler(),
                 0,
                 {},
                 {},
-                nullptr)
+                nullptr
+        }
     );
 
     sharesys->AddInterface(myself, pJansson);

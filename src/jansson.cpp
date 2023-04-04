@@ -2,27 +2,24 @@
 
 using namespace nJansson;
 
-IJson *Jansson::Create(const char *str, const size_t& flags)
+IJson *Jansson::create(const char *str, const size_t& flags)
 {
     return new Json(str, flags);
 }
 
-IJson *Jansson::Create(FILE *input, const size_t &flags)
+IJson *Jansson::create(FILE *input, const size_t &flags)
 {
     return new Json(input, flags);
 }
 
-const IHandleTypeManager *Jansson::GetTypeManager() const {
+const IHandleTypeManager *Jansson::typeManager() const {
     return m_pHandleTypeManager;
 }
 
-Jansson::Jansson(IHandleTypeManager *manager) :
-    m_pHandleTypeManager(manager)
-{
-    if(m_pHandleTypeManager == nullptr)
-        m_pHandleTypeManager = new CHandleTypeManager();
-}
+Jansson::Jansson(const CHandleTypeManager& manager) :
+    m_pHandleTypeManager(new CHandleTypeManager(manager))
+{}
 
 Jansson::~Jansson() {
-    delete (CHandleTypeManager* )m_pHandleTypeManager;
+    delete (CHandleTypeManager*) m_pHandleTypeManager;
 }
