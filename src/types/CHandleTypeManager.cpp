@@ -16,7 +16,7 @@ namespace nJansson {
         if(handleType.type() == BAD_HANDLE)
             return;
 
-        if((get(find(handleType.type()))) != nullptr)
+        if((getByHandleType(find(handleType.type()))) != nullptr)
             return;
 
         m_vecTypes.push_back(new CHandleType(handleType));
@@ -47,14 +47,14 @@ namespace nJansson {
     }
 
     IHandleType *CHandleTypeManager::get(const char *name) const {
-        return ((name == nullptr) ? nullptr : get(find(name)));
+        return ((name == nullptr) ? nullptr : getByIndex(find(name)));
     }
 
-    IHandleType *CHandleTypeManager::get(const SourceMod::HandleType_t& uType) const {
-        return ((uType == 0) ? nullptr : get(find(uType)));
+    IHandleType *CHandleTypeManager::getByHandleType(const SourceMod::HandleType_t& uType) const {
+        return ((uType == 0) ? nullptr : getByIndex(find(uType)));
     }
 
-    IHandleType *CHandleTypeManager::get(const size_t &index) const {
+    IHandleType *CHandleTypeManager::getByIndex(const size_t &index) const {
         if(index >= count())
             return nullptr;
 

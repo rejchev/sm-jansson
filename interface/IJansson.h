@@ -230,8 +230,8 @@ namespace nJansson
 
     public:
         virtual IHandleType* get(const char* name) const =0;
-        virtual IHandleType* get(const SourceMod::HandleType_t& ident) const =0;
-        virtual IHandleType* get(const size_t& index) const =0;
+        virtual IHandleType* getByHandleType(const SourceMod::HandleType_t& ident) const =0;
+        virtual IHandleType* getByIndex(const size_t& index) const =0;
 
     public:
         virtual size_t find(const char* name) const =0;

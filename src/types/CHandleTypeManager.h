@@ -10,20 +10,20 @@ namespace nJansson {
         virtual ~CHandleTypeManager();
 
     public:
-        void add(const CHandleType& type);
-        IHandleType* get(const char* name) const;
-        IHandleType* get(const SourceMod::HandleType_t& ident) const;
-        IHandleType* get(const size_t& index) const;
+        virtual void add(const CHandleType& type);
+        virtual IHandleType* get(const char* name) const;
+        virtual IHandleType* getByHandleType(const SourceMod::HandleType_t& ident) const;
+        virtual IHandleType* getByIndex(const size_t& index) const;
 
     public:
-        size_t find(const char* name) const;
-        size_t find(const SourceMod::HandleType_t& type) const;
+        virtual size_t find(const char* name) const;
+        virtual size_t find(const SourceMod::HandleType_t& type) const;
 
     protected:
-        const std::vector<IHandleType *>& types() const;
+        virtual const std::vector<IHandleType *>& types() const;
 
     public:
-        size_t count() const;
+        virtual size_t count() const;
 
     private:
         std::vector<IHandleType *> m_vecTypes;
