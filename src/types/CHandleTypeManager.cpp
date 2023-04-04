@@ -1,5 +1,7 @@
 #include "CHandleTypeManager.h"
 
+#include <cstring>
+
 namespace nJansson {
     CHandleTypeManager::CHandleTypeManager() :
         m_vecTypes()
