@@ -66,13 +66,13 @@ bool nJansson::JsonArray::push(long long value) {
 }
 
 nJansson::JsonType nJansson::JsonArray::type(const size_t &index) const {
-    return Json(json_array_get((*((Json *)this)).json(), index)).type();
+    return Json(json_array_get((*((Json *)this)).json(), index), JsonError {}).type();
 }
 
 nJansson::IJson *nJansson::JsonArray::get(const size_t &index) const {
     return (length() >= index)
         ? nullptr
-        : new Json(json_array_get((*((Json *)this)).json(), index));
+        : new Json(json_array_get((*((Json *)this)).json(), index), JsonError {});
 }
 
 bool nJansson::JsonArray::extend(const nJansson::IJsonArray *another) {

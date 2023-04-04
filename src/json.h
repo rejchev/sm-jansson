@@ -8,9 +8,11 @@ namespace nJansson
     class Json : public IJson 
     {
     public:
-        explicit Json(const char *, const size_t &flags = 0);
-        explicit Json(FILE *, const size_t& flags = 0);
-        explicit Json(json_t*, const JsonError&, bool = true);
+        Json(const char * = nullptr,  const size_t& = 0);
+        Json(FILE *,        const size_t& = 0);
+        Json(json_t*,       const JsonError&, bool = true);
+        Json(const Json&) = default;
+
         virtual ~Json();
 
     public:
