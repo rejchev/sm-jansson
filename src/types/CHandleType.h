@@ -26,8 +26,10 @@ namespace nJansson
         virtual const SourceMod::IdentityToken_t *ident() const;
 
     public:
-        virtual SourceMod::Handle_t
-            createHandle(void *, SourceMod::IdentityToken_t*, SourceMod::IdentityToken_t*,SourceMod::HandleError*);
+        virtual SourceMod::Handle_t createHandle(void *,
+                                                 SourceMod::IdentityToken_t*,
+                                                 SourceMod::IdentityToken_t*,
+                                                 SourceMod::HandleError*) const;
 
     public:
         virtual SourceMod::HandleType_t type() const;

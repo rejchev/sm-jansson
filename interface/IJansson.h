@@ -74,7 +74,6 @@ namespace nJansson
     };
 
     class IHandleType;
-    class IHandle;
     class IHandleTypeManager;
 
     // TODO: JsonObject: Update, Size, Keys, KeyIterator
@@ -218,7 +217,7 @@ namespace nJansson
         virtual SourceMod::Handle_t createHandle(void *object,
                                SourceMod::IdentityToken_t* pOwner,
                                SourceMod::IdentityToken_t* pIdent,
-                               SourceMod::HandleError* pHandleError) =0;
+                               SourceMod::HandleError* pHandleError) const =0;
 
     public:
         virtual SourceMod::HandleType_t type() const =0;

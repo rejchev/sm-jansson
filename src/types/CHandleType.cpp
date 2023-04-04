@@ -69,7 +69,7 @@ namespace nJansson
     SourceMod::Handle_t CHandleType::createHandle(void *object,
                                                   SourceMod::IdentityToken_t *owner,
                                                   SourceMod::IdentityToken_t *ident,
-                                                  SourceMod::HandleError* handleError) {
+                                                  SourceMod::HandleError* handleError) const {
         Handle_t handle;
 
         if((handle = g_pHandleSys->CreateHandle(this->type(), object, owner, ident, handleError)) != BAD_HANDLE
