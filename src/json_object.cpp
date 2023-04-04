@@ -76,3 +76,11 @@ bool nJansson::JsonObject::update(const nJansson::IJsonObject *another, nJansson
     return updateFunc(((Json *)this)->json(), ((Json *)another)->json()) == 0;
 }
 
+nJansson::IJsonObjectKeyIterator *nJansson::JsonObject::keys() const {
+    return new JsonObjectKeyIterator(((Json*)this)->json());
+}
+
+size_t nJansson::JsonObject::size() const {
+    return json_object_size(((Json*)this)->json());
+}
+

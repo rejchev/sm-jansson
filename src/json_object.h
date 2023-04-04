@@ -2,6 +2,7 @@
 #define SM_JANSSON_JSON_OBJECT_H
 
 #include "json.h"
+#include "json_object_iter.h"
 
 namespace nJansson
 {
@@ -26,6 +27,10 @@ namespace nJansson
         bool exist(const char *key) const override;
         void clear() override;
         bool remove(const char *key) override;
+
+    public:
+        virtual IJsonObjectKeyIterator* keys() const;
+        virtual size_t size() const;
     };
 }
 
