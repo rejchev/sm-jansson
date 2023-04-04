@@ -20,7 +20,9 @@
  */
 
 #include "extension.h"
-//#include "natives.h"
+#include "natives.h"
+#include "src/jansson.h"
+#include "src/types/CHandleTypeManager.h"
 
 /**< Global singleton for extension's main interface */
 CJanssonExtension g_JanssonExtension;
@@ -30,7 +32,7 @@ SMEXT_LINK(&g_JanssonExtension);
 
 bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
-//	sharesys->AddNatives(myself, JSON_NATIVES);
+	sharesys->AddNatives(myself, JSON_NATIVES);
 //    sharesys->AddNatives(myself, JSON_OBJECT_NATIVES);
 //    sharesys->AddNatives(myself, JSON_ARRAY_NATIVES);
 //    sharesys->AddNatives(myself, JSON_ERROR_NATIVES);
@@ -61,6 +63,17 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
                 {},
                 nullptr
         }
+    );
+
+    ((nJansson::CTypeMgr *)pJansson->typeManager())->add(
+            nJansson::CHandleType {
+                    "JsonError",
+                    nullptr,
+                    0,
+                    {},
+                    {},
+                    nullptr
+            }
     );
 
     sharesys->AddInterface(myself, pJansson);

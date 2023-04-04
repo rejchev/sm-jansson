@@ -22,8 +22,9 @@
 #ifndef _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 #define _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 
+#include <IJansson.h>
+
 #include "smsdk_ext.h"
-#include "src/jansson.h"
 
 class CJanssonExtension :
         public SDKExtension
