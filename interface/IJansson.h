@@ -81,6 +81,7 @@ namespace nJansson
     class IJsonObject;
     class IJsonArray;
     class IJsonError;
+    class IJsonObjectKeyIterator;
 
     class IJansson : public SourceMod::SMInterface
     {
@@ -174,6 +175,19 @@ namespace nJansson
             virtual bool        exist(const char *key) const =0;
             virtual bool        remove(const char *key) =0;
             virtual void        clear() =0;
+
+        public:
+            virtual IJsonObjectKeyIterator* keys() const =0;
+            virtual size_t size() const =0;
+    };
+
+    class IJsonObjectKeyIterator
+    {
+    public:
+        virtual const char* key() const =0;
+
+    public:
+        virtual void next() =0;
     };
 
     class IJsonArray : public IJson
@@ -218,6 +232,11 @@ namespace nJansson
                                SourceMod::IdentityToken_t* pOwner,
                                SourceMod::IdentityToken_t* pIdent,
                                SourceMod::HandleError* pHandleError) const =0;
+
+        virtual SourceMod::Handle_t createHandle(void *object,
+                                                 const SourceMod::HandleSecurity* owner,
+                                                 const SourceMod::HandleAccess* access,
+                                                 SourceMod::HandleError* error) const =0;
 
     public:
         virtual SourceMod::HandleType_t type() const =0;
