@@ -28,7 +28,7 @@ namespace nJansson {
         ctx->LocalToString(addr, &str);
 
         IJson* json;
-        if((json = face->create(str, flags)) == nullptr || IJsonError::null(*json->error()))
+        if((json = face->create(str, flags)) == nullptr || IJsonError::null(json->error()))
         {
             ThrowJsonError(ctx, json);
 
@@ -106,7 +106,7 @@ namespace nJansson {
     }
 
     bool PluginContextUtils::ThrowJsonError(IPluginContext *ctx, IJson *json) {
-        if(!IJsonError::null(*json->error()))
+        if(!IJsonError::null(json->error()))
             return false;
 
         ctx->ThrowNativeError("Json is invalid (code: %d, source: %s): %s [line: %d, column: %d]",

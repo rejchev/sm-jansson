@@ -26,7 +26,7 @@ Json::Json(json_t *json, const JsonError& jsonError, bool increment) :
     m_pJson(json),
     m_JsonError(jsonError)
 {
-    if(m_pJson != nullptr && IJsonError::null(jsonError) && increment)
+    if(m_pJson != nullptr && IJsonError::null(&jsonError) && increment)
         m_pJson = json_incref(m_pJson);
 }
 
@@ -39,7 +39,7 @@ const char *Json::dump(const size_t& decodingFlags)
 {
     char *buffer = nullptr;
 
-    if(IJsonError::null(*error()) && (buffer = json_dumps(m_pJson, decodingFlags)) == nullptr)
+    if(IJsonError::null(error()) && (buffer = json_dumps(m_pJson, decodingFlags)) == nullptr)
         m_JsonError = JsonError {
             -1,
             -1,
