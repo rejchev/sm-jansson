@@ -20,6 +20,7 @@ for cxx in builder.targets:
     os.path.join(builder.sourcePath, 'src', 'types/CHandleTypeManager.cpp'),
     os.path.join(builder.sourcePath, 'natives', 'json_natives.cpp'),
     os.path.join(builder.sourcePath, 'natives', 'json_o_natives.cpp'),
+    os.path.join(builder.sourcePath, 'natives', 'json_i_natives.cpp'),
     os.path.join(builder.sourcePath, 'natives', 'json_e_natives.cpp'),
     os.path.join(builder.sourcePath, 'natives', 'json_a_natives.cpp'),
     os.path.join(builder.sourcePath, 'src', 'utils/PluginContextUtils.cpp'),
