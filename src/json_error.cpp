@@ -102,13 +102,13 @@ void JsonError::text(const char *value)
     strncpy(m_error.text, value, size);
 }
 
-bool JsonError::equal(const IJsonError &another) const
+bool JsonError::equal(const IJsonError* another) const
 {
-    return another.code() == code()
-        && another.line() == line()
-        && another.position() == position()
-        && strcmp(another.text(), text()) == 0
-        && strcmp(another.source(), source()) == 0;
+    return another->code() == code()
+        && another->line() == line()
+        && another->position() == position()
+        && strcmp(another->text(), text()) == 0
+        && strcmp(another->source(), source()) == 0;
 }
 
 void JsonError::clear()

@@ -43,7 +43,7 @@ namespace nJansson
         void code(JsonErrorCode code);
 
     public:
-        bool equal(const IJsonError &another) const override;
+        bool equal(const IJsonError* another) const override;
         void clear() override;
 
     private:

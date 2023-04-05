@@ -118,23 +118,23 @@ namespace nJansson
             virtual JsonErrorCode code() const =0;
 
         public:
-            virtual bool equal(const IJsonError &error) const =0;
+            virtual bool equal(const IJsonError* error) const =0;
             virtual void clear() =0;
 
         public:
-            static bool null(const IJsonError &obj)
+            static bool null(const IJsonError* obj)
             {
-                return obj.code()       == JsonErrorCode::Unknown
-                    && obj.line()       == -1
-                    && obj.column()     == -1
-                    && obj.position()   == -1
-                    && obj.text()       == nullptr
-                    && obj.source()     == nullptr;
+                return obj->code()       == JsonErrorCode::Unknown
+                    && obj->line()       == -1
+                    && obj->column()     == -1
+                    && obj->position()   == -1
+                    && obj->text()       == nullptr
+                    && obj->source()     == nullptr;
             };
 
-            static bool equal(const IJsonError &obj1, const IJsonError &obj2)
+            static bool equal(const IJsonError* obj1, const IJsonError* obj2)
             {
-                return obj1.equal(obj2);
+                return obj1->equal(obj2);
             }
     };
 
