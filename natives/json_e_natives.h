@@ -10,6 +10,7 @@ extern cell_t JsonErrorSource(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonErrorLine(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonErrorColumn(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonErrorNull(IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonErrorsEqual(IPluginContext *pContext, const cell_t *params);
 
 extern const sp_nativeinfo_t JSON_ERROR_NATIVES[];
 

@@ -56,6 +56,26 @@ cell_t JsonErrorNull(IPluginContext *pContext, const cell_t *params) {
     return nJansson::IJsonError::null(jsonError);
 }
 
+cell_t JsonErrorsEqual(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PluginContextUtils::GetType(pContext, pJansson, "JsonError")) == nullptr)
+        return false;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJsonError* jsonError;
+    if((jsonError = static_cast<nJansson::IJsonError *>
+            (nJansson::PluginContextUtils::ReadHandle(pContext, g_pHandleSys, pType, &sec, params[1]))) == nullptr)
+        return false;
+
+    nJansson::IJsonError* jsonError2;
+    if((jsonError2 = static_cast<nJansson::IJsonError *>
+            (nJansson::PluginContextUtils::ReadHandle(pContext, g_pHandleSys, pType, &sec, params[2]))) == nullptr)
+        return false;
+
+    return nJansson::IJsonError::equal(jsonError, jsonError2);
+}
+
 cell_t JsonErrorText(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PluginContextUtils::GetType(pContext, pJansson, "JsonError")) == nullptr)
@@ -93,5 +113,6 @@ const sp_nativeinfo_t JSON_ERROR_NATIVES[] =
         {"JsonError.Column.get", JsonErrorColumn},
         {"JsonError.Text", JsonErrorText},
         {"JsonError.Source", JsonErrorSource},
-        {"JsonError.IsEmpty", JsonErrorNull}
+        {"JsonError.IsEmpty", JsonErrorNull},
+        {"JsonError.IsEquals", JsonErrorsEqual}
 };
