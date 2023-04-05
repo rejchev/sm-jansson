@@ -7,11 +7,23 @@
 
 methodmap JsonError < Handle
 {
-    public native JsonErrorCode Code();
-    public native int Line();
-    public native int Column();
-    public native void Text(char[] buffer, int size);
-    public native void Source(char[] buffer, int size);
+    public static native bool IsEquals(JsonError obj1, JsonError obj2);
+
+    property JsonErrorCode Code {
+        public native get();
+    }
+
+    property int Line {
+        public native get();
+    }
+
+    property int Column {
+        public native get();
+    }
+
+    public native bool Text(char[] buffer, int size);
+    public native bool Source(char[] buffer, int size);
+    public native bool IsEmpty();
 };
 
 // Generic type for encoding JSON.
