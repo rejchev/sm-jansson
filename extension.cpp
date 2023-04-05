@@ -35,7 +35,7 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
 	sharesys->AddNatives(myself, JSON_NATIVES);
     sharesys->AddNatives(myself, JSON_OBJECT_NATIVES);
-//    sharesys->AddNatives(myself, JSON_ARRAY_NATIVES);
+    sharesys->AddNatives(myself, JSON_ARRAY_NATIVES);
     sharesys->AddNatives(myself, JSON_ERROR_NATIVES);
 	sharesys->RegisterLibrary(myself, "jansson");
 
