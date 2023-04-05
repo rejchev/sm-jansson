@@ -9,11 +9,27 @@ for cxx in builder.targets:
 
   binary.sources += [
     'extension.cpp',
-    'json_natives.cpp',
+#    'json_natives.cpp',
+    os.path.join(builder.sourcePath, 'src', 'json_error.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'json.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'json_object.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'json_array.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'jansson.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'json_object_iter.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'types/CHandleType.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'types/CHandleTypeManager.cpp'),
+    os.path.join(builder.sourcePath, 'natives', 'json_natives.cpp'),
+    os.path.join(builder.sourcePath, 'natives', 'json_o_natives.cpp'),
+    os.path.join(builder.sourcePath, 'natives', 'json_i_natives.cpp'),
+    os.path.join(builder.sourcePath, 'natives', 'json_e_natives.cpp'),
+    os.path.join(builder.sourcePath, 'natives', 'json_a_natives.cpp'),
+    os.path.join(builder.sourcePath, 'src', 'utils/PluginContextUtils.cpp'),
     os.path.join(Extension.sm_root, 'public', 'smsdk_ext.cpp'),
   ]
 
   binary.compiler.includes += [
+    os.path.join(builder.sourcePath, 'interface'),
+    os.path.join(builder.sourcePath, 'src', 'utils'),
     os.path.join(builder.sourcePath, 'jansson', 'include'),
   ]
 
