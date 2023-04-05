@@ -158,4 +158,20 @@ namespace nJansson {
 
         return handle;
     }
+
+    void *
+    PluginContextUtils::ReadJsonHandle(IPluginContext *ctx,
+                                       IHandleSys *hndl,
+                                       const IHandleType *pHandleType,
+                                       const HandleSecurity *sec,
+                                       const cell_t &addr,
+                                       nJansson::JsonType jsonType) {
+        void *obj;
+        if((obj = ReadHandle(ctx, hndl, pHandleType, sec, addr)) == nullptr)
+            return nullptr;
+
+        ThrowJsonError(ctx, (nJansson::IJson*)obj);
+
+        return ((((nJansson::IJson*)obj)->type() != jsonType) ? nullptr : obj);
+    }
 } // nJansson

@@ -51,6 +51,13 @@ namespace nJansson {
                                const HandleSecurity*,
                                const cell_t&);
 
+        static void* ReadJsonHandle(IPluginContext*,
+                                IHandleSys*,
+                                const IHandleType*,
+                                const HandleSecurity*,
+                                const cell_t&,
+                                nJansson::JsonType);
+
     public:
         static bool ThrowJsonError(IPluginContext*, IJson*);
     };
