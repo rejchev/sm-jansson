@@ -110,57 +110,52 @@ methodmap JsonObject < Json
     //
     // The JSON must be freed via delete or CloseHandle().
     //
-    // @param key        Key string.
-    // @return           Value read (can be JSON_NULL).
-    // @error            Invalid key.
-    public native Json Get(const char[] key);
+    // @param key           Key string.
+    // @param freeHandle    Auto delete current handle after call successfully end
+    // @return              Value read (can be JSON_NULL).
+    // @error               Invalid key.
+    public native Json Get(const char[] key, bool freeHandle = false);
 
     // Trying to get Json value 
     //
-    // The JSON must be freed via delete or CloseHandle().
+    // The JSON must be freed via delete or CloseHandle() or [freeHandle = true].
     //
     // @param key        Key string
-    // @param buffer     Json buffer where must be freed, default null
+    // @param freeHandle Auto delete handle after call (reassign the value of variable is now available [freeHandle = true])
     // @return           Json on success, null - otherwise
-    public Json TryGet(const char[] key, Json buffer = null)
+    public Json TryGet(const char[] key, bool freeHandle = false)
     {
-        delete buffer;
-
-        if(!this.HasKey(key))
-            return null;
-
-        return this.Get(key);
+        return null;
     }
 
     // Retrieves a boolean value from the object.
     //
-    // @param key        Key string.
-    // @return           Value read.
-    // @error            Invalid key.
-    public native bool GetBool(const char[] key);
+    // @param key           Key string.
+    // @param freeHandle    Auto delete current handle after call successfully end
+
+    // @return              Value read.
+    // @error               Invalid key.
+    public native bool GetBool(const char[] key, bool freeHandle = false);
 
     // Trying to get Boolean value 
     //
-    // @param key        Key string
-    // @param value      Bool buffer for storage value
-    // @return           True on success
+    // @param key           Key string
+    // @param freeHandle    Auto delete current handle after call successfully end
+    // @param value         Bool buffer for storage value
+    // @return              True on success
     public bool TryGetBool(const char[] key, bool &value)
     {
-        value = false;
-
-        if(!this.HasKey(key) || !JSON_TYPE_BOOLEAN(this.GetType(key)))
-            return false;
-
-        value = this.GetBool(key);
-        return true;
+        return false;
     }
 
     // Retrieves a float value from the object.
     //
-    // @param key        Key string.
-    // @return           Value read.
-    // @error            Invalid key.
-    public native float GetFloat(const char[] key);
+    // @param key           Key string.
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              Value read.
+    // @error               Invalid key.
+    public native float GetFloat(const char[] key, bool freeHandle = false);
 
     // Trying to get Float value 
     //
@@ -169,21 +164,17 @@ methodmap JsonObject < Json
     // @return           True on success
     public bool TryGetFloat(const char[] key, float &value)
     {
-        value = 0.0;
-
-        if(!this.HasKey(key) || !JSONO_TYPE_EQUAL(this, key, JSON_REAL))
-            return false;
-
-        value = this.GetFloat(key);
         return true;
     }
 
     // Retrieves an integer value from the object.
     //
-    // @param key        Key string.
-    // @return           Value read.
-    // @error            Invalid key.
-    public native int GetInt(const char[] key);
+    // @param key           Key string.
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              Value read.
+    // @error               Invalid key.
+    public native int GetInt(const char[] key, bool freeHandle = false)
 
     // Trying to get Integer value 
     //
@@ -194,12 +185,6 @@ methodmap JsonObject < Json
     // @return           True on success
     public bool TryGetInt(const char[] key, int &value)
     {
-        value = 0;
-
-        if(!this.HasKey(key) || !JSONO_TYPE_EQUAL(this, key, JSON_INTEGER))
-            return false;
-
-        value = this.GetInt(key);
         return true;
     }
 
@@ -209,15 +194,16 @@ methodmap JsonObject < Json
     // @param buffer     String buffer to store value.
     // @param maxlength  Maximum length of the string buffer.
     // @return           True on success, false if the key was not found.
-    public native bool GetInt64(const char[] key, char[] buffer, int maxlength);
+//    public native bool GetInt64(const char[] key, char[] buffer, int maxlength);
 
     // Retrieves a string value from the object.
     //
-    // @param key        Key string.
-    // @param buffer     String buffer to store value.
-    // @param maxlength  Maximum length of the string buffer.
-    // @return           True on success. False if the key was not found, or the value is not a string.
-    public native bool GetString(const char[] key, char[] buffer, int maxlength);
+    // @param key           Key string.
+    // @param buffer        String buffer to store value.
+    // @param maxlength     Maximum length of the string buffer.
+    // @param freeHandle    Auto delete current handle after call successfully end
+    // @return              True on success. False if the key was not found, or the value is not a string.
+    public native bool GetString(const char[] key, char[] buffer, int maxlength, bool freeHandle = false)
     
     // Trying to get a Json value 
     //
@@ -227,12 +213,7 @@ methodmap JsonObject < Json
     // @return           True on success
     public bool TryGetString(const char[] key, char[] value, int size)
     {
-        value[0] = 0;
-
-        if(!this.HasKey(key) || !JSONO_TYPE_EQUAL(this, key, JSON_STRING))
-            return false;
-
-        return this.GetString(key, value, size);
+        return false;
     }
 
     // Retrieves an item type from the array.
@@ -280,7 +261,7 @@ methodmap JsonObject < Json
     // @param key        Key string.
     // @param value      Value to store at this key.
     // @return           True on success, false on failure.
-    public native bool SetInt64(const char[] key, const char[] value);
+//    public native bool SetInt64(const char[] key, const char[] value);
 
     // Sets a string value in the object, either inserting a new entry or replacing an old one.
     //
@@ -293,37 +274,30 @@ methodmap JsonObject < Json
     //
     // @param key        Key string.
     // @return           True on success, false if the key was not found.
-    public native bool Remove(const char[] key);
+//    public native bool Remove(const char[] key);
 
     // Update an object keys.
     //
-    // @param   obj       Another object
-    // @param   updType   Update type (see JsonUpdateType enum)
+    // @param   obj                 Another object
+    // @param   updType             Update type (see JsonUpdateType enum)
+    // @param   freeAnotherObject   Auto delete another handle after call successfully end
+    //
     // @return            True on success
-    public native bool Update(JsonObject obj, JsonUpdateType updType = JSON_UPDATE);
+    public native bool Update(JsonObject obj, JsonUpdateType updType = JSON_UPDATE, bool freeAnotherObject = false);
 
     // Clears the object of all entries.
     // @return           True on success, false on failure.
     public native bool Clear();
 
     // Returns an iterator for the object's keys. See JSONObjectKeys.
-    public native JsonKeys KeysIterator();
+//    public native JsonKeys KeysIterator();
 
     // deprecated; will be removed at next update
     // use KeysIterator instead
-    public JsonKeys Keys()
-    {
-        return this.KeysIterator();
-    }
+    public native JsonObjectKeyIterator Keys();
 
-    // Retrieves the size of the object.
-    property int Elements {
-        public native get();
-    }
-
-    // deprecated; will be removed at next update
-    // use Elements instead
-    property int Size {
+    // ...
+    property int KeysCount {
         public native get();
     }
 };
@@ -333,7 +307,7 @@ methodmap JsonObject < Json
  * object to be iterated. The JSONObjectKeys must be freed with delete or
  * CloseHandle().
  */
-methodmap JsonKeys < Handle
+methodmap JsonObjectKeyIterator < Handle
 {
     // Reads an object key, then advances to the next key if any.
     //
