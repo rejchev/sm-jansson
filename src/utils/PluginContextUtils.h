@@ -31,6 +31,12 @@ namespace nJansson {
                                      SourceMod::IdentityToken_t* = nullptr,
                                      SourceMod::IdentityToken_t* = nullptr);
 
+        static Handle_t CreateHandle(IPluginContext*,
+                                     const IHandleType*,
+                                     void*,
+                                     const SourceMod::HandleSecurity* = nullptr,
+                                     const SourceMod::HandleAccess* = nullptr);
+
         static void FreeHandle(IHandleSys*,
                                const IHandleType*,
                                const Handle_t&,
@@ -39,7 +45,7 @@ namespace nJansson {
 
     public:
 
-        static IJson* ReadJson(IPluginContext*,
+        static void* ReadHandle(IPluginContext*,
                                IHandleSys*,
                                const IHandleType*,
                                const HandleSecurity*,

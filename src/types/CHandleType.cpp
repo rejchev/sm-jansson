@@ -85,4 +85,27 @@ namespace nJansson
     SourceMod::HandleType_t CHandleType::type() const {
         return m_MyType;
     }
+
+    SourceMod::Handle_t
+    CHandleType::createHandle(void *object,
+                              const SourceMod::HandleSecurity *sec,
+                              const SourceMod::HandleAccess *access,
+                              SourceMod::HandleError *error) const {
+        Handle_t handle;
+
+        if((handle = g_pHandleSys->CreateHandleEx(
+                this->type(),
+                object,
+                sec,
+                access,
+                error)) != BAD_HANDLE
+        && error != nullptr
+        && *error != HandleError_None)
+        {
+            g_pHandleSys->FreeHandle(handle, sec);
+            handle = BAD_HANDLE;
+        }
+
+        return handle;
+    }
 }
