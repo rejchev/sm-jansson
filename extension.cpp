@@ -37,6 +37,7 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
     sharesys->AddNatives(myself, JSON_OBJECT_NATIVES);
     sharesys->AddNatives(myself, JSON_ARRAY_NATIVES);
     sharesys->AddNatives(myself, JSON_ERROR_NATIVES);
+    sharesys->AddNatives(myself, JSON_OBJECT_KEY_ITERATOR_NATIVES);
 	sharesys->RegisterLibrary(myself, "jansson");
 
     if(pJansson != nullptr)
@@ -51,7 +52,7 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
                 0,
                 {},
                 {},
-                nullptr
+                myself->GetIdentity()
         }
     );
 
@@ -62,7 +63,7 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
                 0,
                 {},
                 {},
-                nullptr
+                myself->GetIdentity()
         }
     );
 
@@ -73,7 +74,7 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
                     0,
                     {},
                     {},
-                    nullptr
+                    myself->GetIdentity()
             }
     );
 
