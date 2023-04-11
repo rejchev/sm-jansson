@@ -46,6 +46,12 @@ public:
     virtual void OnHandleDestroy(SourceMod::HandleType_t type, void* object);
 };
 
+class CJsonErrorHandler : public SourceMod::IHandleTypeDispatch
+{
+public:
+    virtual void OnHandleDestroy(SourceMod::HandleType_t type, void* object);
+};
+
 extern CJanssonExtension g_JanssonExtension;
 extern nJansson::IJansson* pJansson;
 

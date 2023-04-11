@@ -31,5 +31,6 @@ cell_t JsonObjectKeyIteratorNext(IPluginContext *pContext, const cell_t *params)
 
 const sp_nativeinfo_t JSON_OBJECT_KEY_ITERATOR_NATIVES[] =
 {
-        {"JsonObjectKeyIterator.Next", JsonObjectKeyIteratorNext}
+        {"JsonObjectKeyIterator.Next", JsonObjectKeyIteratorNext},
+        {nullptr, nullptr}
 };

@@ -26,12 +26,14 @@ namespace nJansson {
 
     public:
         static Handle_t CreateHandle(IPluginContext*,
+                                     IHandleSys*,
                                      const IHandleType*,
                                      void*,
                                      SourceMod::IdentityToken_t* = nullptr,
                                      SourceMod::IdentityToken_t* = nullptr);
 
         static Handle_t CreateHandle(IPluginContext*,
+                                     IHandleSys*,
                                      const IHandleType*,
                                      void*,
                                      const SourceMod::HandleSecurity* = nullptr,
@@ -51,16 +53,18 @@ namespace nJansson {
                                const HandleSecurity*,
                                const cell_t&);
 
-        static void* ReadJsonHandle(IPluginContext*,
+        static nJansson::IJS* ReadJsonHandle(IPluginContext*,
                                 IHandleSys*,
                                 const IHandleType*,
                                 const HandleSecurity*,
                                 const cell_t&,
-                                nJansson::JsonType);
+                                bool (*)(nJansson::IJS*) = nullptr);
 
     public:
         static bool ThrowJsonError(IPluginContext*, IJson*);
     };
+
+    using PCU = PluginContextUtils;
 
 } // nJansson
 

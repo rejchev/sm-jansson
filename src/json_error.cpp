@@ -74,7 +74,7 @@ void JsonError::source(const char *value)
 {
     if(!value)
     {
-        m_error.text[0] = '\0';
+        m_error.source[0] = '\0';
         return;
     }
 
@@ -102,11 +102,18 @@ void JsonError::text(const char *value)
     strncpy(m_error.text, value, size);
 }
 
-bool JsonError::equal(const IJsonError* another) const
+bool JsonError::isEqual(const nJansson::IJsonError *another) const
 {
+    if(another == nullptr)
+        return false;
+
+    if(this == another)
+        return true;
+
     return another->code() == code()
         && another->line() == line()
         && another->position() == position()
+        && another->column() == column()
         && strcmp(another->text(), text()) == 0
         && strcmp(another->source(), source()) == 0;
 }
@@ -116,6 +123,7 @@ void JsonError::clear()
     position(-1);
     line(-1);
     column(-1);
+    code(Unknown);
     text(nullptr);
     source(nullptr);
 }

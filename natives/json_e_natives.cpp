@@ -53,7 +53,7 @@ cell_t JsonErrorNull(IPluginContext *pContext, const cell_t *params) {
             (nJansson::PluginContextUtils::ReadHandle(pContext, g_pHandleSys, pType, &sec, params[1]))) == nullptr)
         return false;
 
-    return nJansson::IJsonError::null(jsonError);
+    return nJansson::IJsonError::isEmpty(jsonError);
 }
 
 cell_t JsonErrorsEqual(IPluginContext *pContext, const cell_t *params) {
@@ -73,7 +73,7 @@ cell_t JsonErrorsEqual(IPluginContext *pContext, const cell_t *params) {
             (nJansson::PluginContextUtils::ReadHandle(pContext, g_pHandleSys, pType, &sec, params[2]))) == nullptr)
         return false;
 
-    return nJansson::IJsonError::equal(jsonError, jsonError2);
+    return nJansson::IJsonError::isEqual(jsonError, jsonError2);
 }
 
 cell_t JsonErrorText(IPluginContext *pContext, const cell_t *params) {
@@ -114,5 +114,6 @@ const sp_nativeinfo_t JSON_ERROR_NATIVES[] =
         {"JsonError.Text", JsonErrorText},
         {"JsonError.Source", JsonErrorSource},
         {"JsonError.IsEmpty", JsonErrorNull},
-        {"JsonError.IsEquals", JsonErrorsEqual}
+        {"JsonError.IsEquals", JsonErrorsEqual},
+        {nullptr, nullptr}
 };

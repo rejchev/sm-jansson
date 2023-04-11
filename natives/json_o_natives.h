@@ -19,9 +19,7 @@ extern cell_t JsonObjectSetString(IPluginContext *pContext, const cell_t *params
 extern cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonObjectHasKey(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonObjectUpdate(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonObjectClear(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonObjectKeys(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonObjectGetKeysCount(IPluginContext *pContext, const cell_t *params);
 
 
 extern const sp_nativeinfo_t JSON_OBJECT_NATIVES[];

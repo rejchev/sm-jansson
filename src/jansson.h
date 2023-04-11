@@ -17,7 +17,7 @@ namespace nJansson
         IJson *create(FILE *input,   const size_t &flags) override;
 
     public:
-        virtual const IHandleTypeManager* typeManager() const;
+        virtual IHandleTypeManager* typeManager() const;
 
     private:
         IHandleTypeManager* m_pHandleTypeManager;

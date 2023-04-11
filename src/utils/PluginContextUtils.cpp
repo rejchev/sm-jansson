@@ -7,14 +7,14 @@ namespace nJansson {
         if(face == nullptr || ctx == nullptr || typeName == nullptr)
             return nullptr;
 
-        IHandleType* type;
-        if((type = face->typeManager()->get(typeName)) == nullptr || type->type() == 0)
+        const IHandleType* type;
+        if((type = face->typeManager()->getByName(typeName)) == nullptr || type->id() == 0)
             type = nullptr;
 
         if(type == nullptr)
-            ctx->ThrowNativeError("Unknown type '%s', aborting...", typeName);
+            ctx->ReportError("Type '%s' is unknown type", typeName);
 
-        return const_cast<IHandleType*>(type);
+        return type;
     }
 
     IJson *PluginContextUtils::CreateJson(IPluginContext *ctx,
@@ -28,12 +28,13 @@ namespace nJansson {
         ctx->LocalToString(addr, &str);
 
         IJson* json;
-        if((json = face->create(str, flags)) == nullptr || IJsonError::null(json->error()))
+        if((json = face->create(str, flags)) == nullptr)
+            ctx->ReportError("Something went wrong on Create Json wrapper...");
+
+        if(!json->isOK())
         {
             ThrowJsonError(ctx, json);
-
-            delete (Json *) json;
-
+            delete (nJansson::Json*)json;
             json = nullptr;
         }
 
@@ -42,6 +43,7 @@ namespace nJansson {
 
     Handle_t
     PluginContextUtils::CreateHandle(IPluginContext *ctx,
+                                     IHandleSys* hndlSys,
                                      const IHandleType *type,
                                      void *object,
                                      SourceMod::IdentityToken_t *owner,
@@ -49,18 +51,13 @@ namespace nJansson {
         if(ctx == nullptr || type == nullptr || object == nullptr)
             return BAD_HANDLE;
 
-        Handle_t handle;
-        HandleError error = {};
-        if((handle = type->createHandle(object, owner, ident, &error)) == BAD_HANDLE
-        || error != HandleError_None)
-        {
-            ctx->ThrowNativeError("Create handle failed (code: %d, type: %s)", error, type->name());
+        Handle_t handle = BAD_HANDLE;
+        HandleError error = SourceMod::HandleError_None;
+        if((handle = type->createHandle(object, owner, ident, &error)) == BAD_HANDLE)
+            FreeHandle(hndlSys, type, handle, nullptr, object);
 
-            if(g_pHandleSys->FreeHandle(handle, nullptr) != HandleError_None)
-                type->dispatch()->OnHandleDestroy(type->type(), object);
-
-            handle = BAD_HANDLE;
-        }
+        if(error != HandleError_None)
+            ctx->ReportError("Create handle failed (code: %d, type: %s)", error, type->name());
 
         return handle;
     }
@@ -80,7 +77,7 @@ namespace nJansson {
         utils->BuildPath(Path_Game, fullPath, sizeof(fullPath), "%s", buffer);
 
         json_t* object;
-        json_error_t error;
+        json_error_t error = {};
         object = json_load_file(fullPath, flags, &error);
 
         return new Json(object, error, false);
@@ -96,20 +93,20 @@ namespace nJansson {
 
         void* obj;
         HandleError error;
-        if((error = hndl->ReadHandle(addr, type->type(), sec, (void**)&obj)) != SourceMod::HandleError_None)
-        {
-            ctx->ThrowNativeError("Read '%s' handle error (code: %d)", type->name(), error);
+        if((error = hndl->ReadHandle(addr, type->id(), sec, (void**)&obj)) != SourceMod::HandleError_None)
+            ctx->ReportError("Read '%s' handle error (code: %d)", type->name(), error);
+
+        if(error != HandleError_None)
             obj = nullptr;
-        }
 
         return obj;
     }
 
     bool PluginContextUtils::ThrowJsonError(IPluginContext *ctx, IJson *json) {
-        if(!IJsonError::null(json->error()))
+        if(nJansson::IJsonError::isEmpty(json->error()))
             return false;
 
-        ctx->ThrowNativeError("Json is invalid (code: %d, source: %s): %s [line: %d, column: %d]",
+        ctx->ReportError("Json is invalid (code: %d, source: %s): %s [line: %d, column: %d]",
                               json->error()->code(),
                               json->error()->source(),
                               json->error()->text(),
@@ -127,7 +124,7 @@ namespace nJansson {
         if(sys->FreeHandle(handle, sec) == SourceMod::HandleError_None)
             return;
 
-        type->dispatch()->OnHandleDestroy(type->type(), object);
+        type->dispatch()->OnHandleDestroy(type->id(), object);
     }
 
     int PluginContextUtils::DumpJsonToFile(IJson *json, const char *path, const size_t &flags) {
@@ -136,6 +133,7 @@ namespace nJansson {
 
     Handle_t
     PluginContextUtils::CreateHandle(IPluginContext *ctx,
+                                     IHandleSys* handleSys,
                                      const IHandleType *type,
                                      void *object,
                                      const SourceMod::HandleSecurity *sec,
@@ -144,34 +142,28 @@ namespace nJansson {
             return BAD_HANDLE;
 
         Handle_t handle;
-        HandleError error = {};
-        if((handle = type->createHandle(object, sec, access, &error)) == BAD_HANDLE
-        || error != HandleError_None)
-        {
+        HandleError error = SourceMod::HandleError_None;
+        if((handle = type->createHandle(object, sec, access, &error)) == BAD_HANDLE)
             ctx->ThrowNativeError("Create security handle failed (code: %d, type: %s)", error, type->name());
 
-            if(g_pHandleSys->FreeHandle(handle, sec) != HandleError_None)
-                type->dispatch()->OnHandleDestroy(type->type(), object);
-
-            handle = BAD_HANDLE;
-        }
+        if(error != HandleError_None)
+            FreeHandle(handleSys, type, handle, sec, object);
 
         return handle;
     }
 
-    void *
-    PluginContextUtils::ReadJsonHandle(IPluginContext *ctx,
+    nJansson::IJS* PluginContextUtils::ReadJsonHandle(IPluginContext *ctx,
                                        IHandleSys *hndl,
                                        const IHandleType *pHandleType,
                                        const HandleSecurity *sec,
                                        const cell_t &addr,
-                                       nJansson::JsonType jsonType) {
-        void *obj;
-        if((obj = ReadHandle(ctx, hndl, pHandleType, sec, addr)) == nullptr)
+                                       bool (*pFunc)(nJansson::IJson*)) {
+        nJansson::IJson *obj;
+        if((obj = static_cast<IJson *>(ReadHandle(ctx, hndl, pHandleType, sec, addr))) == nullptr)
             return nullptr;
 
-        ThrowJsonError(ctx, (nJansson::IJson*)obj);
+        ThrowJsonError(ctx, obj);
 
-        return ((((nJansson::IJson*)obj)->type() != jsonType) ? nullptr : obj);
+        return ((pFunc != nullptr && !pFunc(obj)) ? nullptr : obj);
     }
 } // nJansson

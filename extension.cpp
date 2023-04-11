@@ -45,42 +45,37 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 
     pJansson = new nJansson::Jansson();
 
-    ((nJansson::CTypeMgr *)pJansson->typeManager())->add(
-        nJansson::CHandleType {
-                "Json",
+    pJansson->typeManager()
+        ->registerType("Json",
                 new CJsonHandler(),
                 0,
-                {},
-                {},
-                myself->GetIdentity()
-        }
-    );
+                nullptr,
+                nullptr,
+                myself->GetIdentity());
 
-    ((nJansson::CTypeMgr *)pJansson->typeManager())->add(
-        nJansson::CHandleType {
-                "JsonObjectKeyIterator",
+    pJansson->typeManager()
+        ->registerType("JsonObjectKeyIterator",
                 new CJsonObjectKeysHandler(),
                 0,
-                {},
-                {},
-                myself->GetIdentity()
-        }
-    );
+                nullptr,
+                nullptr,
+                myself->GetIdentity());
 
-    ((nJansson::CTypeMgr *)pJansson->typeManager())->add(
-            nJansson::CHandleType {
-                    "JsonError",
-                    nullptr,
+    pJansson->typeManager()
+        ->registerType("JsonError",
+                    new CJsonErrorHandler(),
                     0,
-                    {},
-                    {},
-                    myself->GetIdentity()
-            }
-    );
+                    nullptr,
+                    nullptr,
+                    myself->GetIdentity());
 
-    sharesys->AddInterface(myself, pJansson);
+    if(pJansson->typeManager()->count() != 3)
+    {
+        sprintf(error, "Something went wrong on type registration");
+        return false;
+    }
 
-	return true;
+	return sharesys->AddInterface(myself, pJansson);
 }
 
 void CJanssonExtension::SDK_OnUnload()
@@ -95,4 +90,8 @@ void CJsonHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object)
 
 void CJsonObjectKeysHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object) {
     delete (nJansson::JsonObjectKeyIterator*) object;
+}
+
+void CJsonErrorHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object) {
+    // ....
 }

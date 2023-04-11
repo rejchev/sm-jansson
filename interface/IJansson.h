@@ -3,12 +3,12 @@
 #define _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 
 #include <vector>
+#include <cstring>
 #include <IShareSys.h>
 #include <IHandleSys.h>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
 #define SMINTERFACE_JANSSON_VERSION	    04042023
-
 
 namespace nJansson
 {
@@ -74,14 +74,25 @@ namespace nJansson
     };
 
     class IHandleType;
-    class IHandleTypeManager;
+    using IHT = IHandleType;
 
-    // TODO: JsonObject: Update, Size, Keys, KeyIterator
+    class IHandleTypeManager;
+    using UHTM = IHandleTypeManager;
+
     class IJson;
+    using IJS = IJson;
+
     class IJsonObject;
+    using IJSO = IJsonObject;
+
     class IJsonArray;
+    using IJSA = IJsonArray;
+
     class IJsonError;
+    using IJSE = IJsonError;
+
     class IJsonObjectKeyIterator;
+    using IJSOI = IJsonObjectKeyIterator;
 
     class IJansson : public SourceMod::SMInterface
     {
@@ -96,7 +107,7 @@ namespace nJansson
             }
 
         public:
-            virtual const IHandleTypeManager* typeManager() const =0;
+            virtual IHandleTypeManager* typeManager() const =0;
 
         public:
             virtual IJson *create(const char *,  const size_t &flags)    =0;
@@ -118,46 +129,30 @@ namespace nJansson
             virtual JsonErrorCode code() const =0;
 
         public:
-            virtual bool equal(const IJsonError* error) const =0;
+            virtual bool isEqual(const IJsonError* error) const =0;
             virtual void clear() =0;
 
         public:
-            static bool null(const IJsonError* obj)
+            static bool isEmpty(const IJsonError* obj)
             {
-                return obj->code()       == JsonErrorCode::Unknown
-                    && obj->line()       == -1
-                    && obj->column()     == -1
-                    && obj->position()   == -1
-                    && obj->text()       == nullptr
-                    && obj->source()     == nullptr;
+                if(obj == nullptr)
+                    return true;
+
+                return obj->line() == -1
+                    && obj->column() == -1
+                    && obj->position() == -1
+                    && strlen(obj->text()) == 0
+                    && strlen(obj->source()) == 0;
             };
 
-            static bool equal(const IJsonError* obj1, const IJsonError* obj2)
+            static bool isEqual(const IJsonError* obj1, const IJsonError* obj2)
             {
-                return obj1->equal(obj2);
+                return obj1->isEqual(obj2);
             }
+
     };
 
-    class IJson
-    {
-        public:
-            virtual const char *dump(const size_t &decodingFlags) =0;
-
-        public:
-            virtual bool equal(const IJson &json) const =0;
-
-        public:
-            virtual bool get(long long *value) =0;
-            virtual bool get(double *value) =0;
-            virtual bool get(bool *value) =0;
-            virtual const char* get() =0;
-
-        public:
-            virtual IJsonError  *error() const =0;
-            virtual JsonType    type() const =0;
-    };
-
-    class IJsonObject : public IJson
+    class IJsonObject
     {
         public:
             virtual IJson*      get(const char *key) const =0;
@@ -174,11 +169,12 @@ namespace nJansson
             virtual JsonType    type(const char *key) const =0;
             virtual bool        exist(const char *key) const =0;
             virtual bool        remove(const char *key) =0;
-            virtual void        clear() =0;
 
         public:
             virtual IJsonObjectKeyIterator* keys() const =0;
-            virtual size_t size() const =0;
+
+        public:
+            virtual bool isOK() const =0;
     };
 
     class IJsonObjectKeyIterator
@@ -190,7 +186,7 @@ namespace nJansson
         virtual void next() =0;
     };
 
-    class IJsonArray : public IJson
+    class IJsonArray
     {
     public:
         virtual IJson   *get(const size_t& index) const =0;
@@ -213,9 +209,31 @@ namespace nJansson
         virtual JsonType type(const size_t& index) const =0;
         virtual bool extend(const IJsonArray *another) =0;
         virtual bool remove(const size_t& index) =0;
-        virtual size_t length() const =0;
-        virtual void clear() =0;
     };
+
+    class IJson : public IJsonArray, public IJsonObject
+    {
+    public:
+        virtual const char *dump(const size_t &decodingFlags) =0;
+
+    public:
+        virtual bool equal(const IJson &json) const =0;
+
+    public:
+        virtual bool get(long long *value) =0;
+        virtual bool get(double *value) =0;
+        virtual bool get(bool *value) =0;
+        virtual const char* get() =0;
+
+    public:
+        virtual size_t size() const =0;
+        virtual void clear() =0;
+
+    public:
+        virtual IJsonError* error() const =0;
+        virtual JsonType    type() const =0;
+    };
+
 
     class IHandleType
     {
@@ -223,8 +241,8 @@ namespace nJansson
         virtual const char *name() const =0;
         virtual SourceMod::IHandleTypeDispatch* dispatch() const =0;
         virtual SourceMod::HandleType_t parent() const =0;
-        virtual const SourceMod::TypeAccess& access() const =0;
-        virtual const SourceMod::HandleAccess& handleAccess() const =0;
+        virtual const SourceMod::TypeAccess* access() const =0;
+        virtual const SourceMod::HandleAccess* handleAccess() const =0;
         virtual const SourceMod::IdentityToken_t *ident() const =0;
 
     public:
@@ -239,7 +257,7 @@ namespace nJansson
                                                  SourceMod::HandleError* error) const =0;
 
     public:
-        virtual SourceMod::HandleType_t type() const =0;
+        virtual SourceMod::HandleType_t id() const =0;
     };
 
     class IHandleTypeManager
@@ -248,13 +266,20 @@ namespace nJansson
         virtual const std::vector<IHandleType *>& types() const =0;
 
     public:
-        virtual IHandleType* get(const char* name) const =0;
-        virtual IHandleType* getByHandleType(const SourceMod::HandleType_t& ident) const =0;
-        virtual IHandleType* getByIndex(const size_t& index) const =0;
+        virtual SourceMod::HandleType_t registerType(const char* name,
+                                              SourceMod::IHandleTypeDispatch *dispatch,
+                                              const SourceMod::HandleType_t& parent,
+                                              SourceMod::TypeAccess* access,
+                                              SourceMod::HandleAccess* handleAccess,
+                                              SourceMod::IdentityToken_t *identityToken) =0;
+
+        // because HandleType_t an unique
+        virtual void removeType(const SourceMod::HandleType_t&) =0;
 
     public:
-        virtual size_t find(const char* name) const =0;
-        virtual size_t find(const SourceMod::HandleType_t& type) const =0;
+        virtual const IHandleType* getByName(const char* name) const =0;
+        virtual const IHandleType* getById(const SourceMod::HandleType_t& ident) const =0;
+        virtual const IHandleType* getByIndex(const size_t& index) const =0;
 
     public:
         virtual size_t count() const =0;

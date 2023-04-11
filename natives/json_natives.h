@@ -16,6 +16,9 @@ extern cell_t JsonGetString(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetInt(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetBool(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetFloat(IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonClear(IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonSize(IPluginContext *pContext, const cell_t *params);
+
 
 extern const sp_nativeinfo_t JSON_NATIVES[];
 

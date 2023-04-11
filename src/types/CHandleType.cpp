@@ -4,43 +4,33 @@
 
 namespace nJansson
 {
-    CHandleType::CHandleType(const char *name,
+    CHandleType::CHandleType(const SourceMod::HandleType_t& htId,
+                             const char *name,
                              SourceMod::IHandleTypeDispatch *dispatch,
                              const SourceMod::HandleType_t &parent,
-                             const SourceMod::TypeAccess &access,
-                             const SourceMod::HandleAccess &handleAccess,
-                             const SourceMod::IdentityToken_t *identityToken) :
+                             SourceMod::TypeAccess *access,
+                             SourceMod::HandleAccess *handleAccess,
+                             SourceMod::IdentityToken_t *identityToken) :
                              m_pName(name),
                              m_pDispatch(dispatch),
                              m_Parent(parent),
-                             m_Access(access),
-                             m_HandleAccess(handleAccess),
+                             m_MyType(htId),
+                             m_pAccess(access),
+                             m_pHandleAccess(handleAccess),
                              m_pIdent(identityToken)
-    {
-        SourceMod::HandleError error;
-        m_MyType = g_pHandleSys->CreateType(
-                m_pName,
-                m_pDispatch,
-                m_Parent,
-                &m_Access,
-                &m_HandleAccess,
-                const_cast<IdentityToken_t *>(m_pIdent),
-                &error
-        );
+    {}
 
-        if(error != HandleError_None && m_MyType != 0)
-        {
-            g_pHandleSys->RemoveType(m_MyType, const_cast<IdentityToken_t *>(m_pIdent));
-            m_MyType = 0;
-        }
-    }
+    CHandleType::CHandleType(const CHandleType& copy) :
+            m_pName(copy.m_pName),
+            m_pDispatch(copy.m_pDispatch),
+            m_Parent(copy.m_Parent),
+            m_MyType(copy.m_MyType),
+            m_pAccess(copy.m_pAccess),
+            m_pHandleAccess(copy.m_pHandleAccess),
+            m_pIdent(copy.m_pIdent)
+    {}
 
-    CHandleType::~CHandleType() {
-        if(!m_MyType)
-            return;
-
-        g_pHandleSys->RemoveType(m_MyType, const_cast<IdentityToken_t *>(m_pIdent));
-    }
+    CHandleType::~CHandleType() = default;
 
     const char *CHandleType::name() const {
         return m_pName;
@@ -54,12 +44,12 @@ namespace nJansson
         return m_Parent;
     }
 
-    const SourceMod::TypeAccess &CHandleType::access() const {
-        return m_Access;
+    const SourceMod::TypeAccess* CHandleType::access() const {
+        return const_cast<SourceMod::TypeAccess *>(m_pAccess);
     }
 
-    const SourceMod::HandleAccess &CHandleType::handleAccess() const {
-        return m_HandleAccess;
+    const SourceMod::HandleAccess* CHandleType::handleAccess() const {
+        return m_pHandleAccess;
     }
 
     const SourceMod::IdentityToken_t *CHandleType::ident() const {
@@ -70,19 +60,10 @@ namespace nJansson
                                                   SourceMod::IdentityToken_t *owner,
                                                   SourceMod::IdentityToken_t *ident,
                                                   SourceMod::HandleError* handleError) const {
-        Handle_t handle;
-
-        if((handle = g_pHandleSys->CreateHandle(this->type(), object, owner, ident, handleError)) != BAD_HANDLE
-        && handleError != nullptr && *handleError != HandleError_None)
-        {
-            g_pHandleSys->FreeHandle(handle, nullptr);
-            handle = BAD_HANDLE;
-        }
-
-        return handle;
+        return g_pHandleSys->CreateHandle(this->id(), object, owner, ident, handleError);
     }
 
-    SourceMod::HandleType_t CHandleType::type() const {
+    SourceMod::HandleType_t CHandleType::id() const {
         return m_MyType;
     }
 
@@ -91,21 +72,6 @@ namespace nJansson
                               const SourceMod::HandleSecurity *sec,
                               const SourceMod::HandleAccess *access,
                               SourceMod::HandleError *error) const {
-        Handle_t handle;
-
-        if((handle = g_pHandleSys->CreateHandleEx(
-                this->type(),
-                object,
-                sec,
-                access,
-                error)) != BAD_HANDLE
-        && error != nullptr
-        && *error != HandleError_None)
-        {
-            g_pHandleSys->FreeHandle(handle, sec);
-            handle = BAD_HANDLE;
-        }
-
-        return handle;
+        return g_pHandleSys->CreateHandleEx(this->id(), object,sec,access,error);
     }
 }

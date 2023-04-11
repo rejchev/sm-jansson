@@ -12,7 +12,7 @@ IJson *Jansson::create(FILE *input, const size_t &flags)
     return new Json(input, flags);
 }
 
-const IHandleTypeManager *Jansson::typeManager() const {
+IHandleTypeManager *Jansson::typeManager() const {
     return m_pHandleTypeManager;
 }
 

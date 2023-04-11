@@ -24,9 +24,7 @@ extern cell_t JsonArrayPushString(IPluginContext *pContext, const cell_t *params
 
 extern cell_t JsonArrayGetType(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonArrayExtend(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonArrayClear(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonArrayRemove(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonArrayLength(IPluginContext *pContext, const cell_t *params);
 
 extern const sp_nativeinfo_t JSON_ARRAY_NATIVES[];
 
