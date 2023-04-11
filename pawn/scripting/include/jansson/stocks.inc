@@ -39,7 +39,7 @@ stock JsonArray asJSONA(Handle value)
 // try view as JsonKeys
 stock JsonObjectKeyIterator asJSONK(Handle value)
 {
-    return view_as<JsonKeys>(value);
+    return view_as<JsonObjectKeyIterator>(value);
 }
 
 // try view as JsonBuilder

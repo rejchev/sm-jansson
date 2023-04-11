@@ -59,11 +59,12 @@ methodmap Json < Handle
     // @return          True on success
     public native bool Equal(Json obj);
 
-    // Json size in bytes (try it before using ToString if u need)
+    // ....
     // 
-    // @param obj       Another object
     // @return          size in bytes or -1 on failure
-//    public native int Size(int flags = 0);
+    property int Size {
+        public native get();
+    }
 
     // Retrieves the JSON string representation.
     //
@@ -105,6 +106,8 @@ methodmap Json < Handle
     // @return              success or not
     public native bool AsString(char[] buffer, int size, bool freeHandle = false);
 
+    public native void Clear();
+
     // Retrieves the type of current object
     property JsonType Type {
         public native get();
@@ -118,27 +121,15 @@ methodmap Json < Handle
 
 methodmap JsonObject < Json
 {
-    // Retrieves a JSON value from the object 
+    // Retrieves a JSON value from the object
     //
     // The JSON must be freed via delete or CloseHandle().
     //
     // @param key           Key string.
     // @param freeHandle    Auto delete current handle after call successfully end
-    // @return              Value read (can be JSON_NULL).
-    // @error               Invalid key.
+    // @return              Json on success or null then (handle err, this is not an object or key is not exist)
+    // @error               On Error() is not empty
     public native Json Get(const char[] key, bool freeHandle = false);
-
-    // Trying to get Json value 
-    //
-    // The JSON must be freed via delete or CloseHandle() or [freeHandle = true].
-    //
-    // @param key        Key string
-    // @param freeHandle Auto delete handle after call (reassign the value of variable is now available [freeHandle = true])
-    // @return           Json on success, null - otherwise
-    public Json TryGet(const char[] key, bool freeHandle = false)
-    {
-        return null;
-    }
 
     // Retrieves a boolean value from the object.
     //
@@ -155,9 +146,20 @@ methodmap JsonObject < Json
     // @param freeHandle    Auto delete current handle after call successfully end
     // @param value         Bool buffer for storage value
     // @return              True on success
-    public bool TryGetBool(const char[] key, bool &value)
+    public bool TryGetBool(const char[] key, bool &value, bool freeHandle = false)
     {
-        return false;
+        value = false;
+
+        Json buffer;
+        if(!(buffer = this.Get(key, freeHandle)))
+            return false;
+
+        JsonType type;
+        if((type = buffer.Type) == JBooleanType)
+            value = buffer.AsBool(true);
+
+        delete buffer;
+        return type == JBooleanType;
     }
 
     // Retrieves a float value from the object.
@@ -174,9 +176,20 @@ methodmap JsonObject < Json
     // @param key        Key string
     // @param value      Float buffer for storage value
     // @return           True on success
-    public bool TryGetFloat(const char[] key, float &value)
+    public bool TryGetFloat(const char[] key, float &value, bool freeHandle = false)
     {
-        return true;
+        value = 0.0;
+
+        Json buffer;
+        if(!(buffer = this.Get(key, freeHandle)))
+            return false;
+
+        JsonType type;
+        if((type = buffer.Type) == JRealType)
+            value = buffer.AsFloat(true);
+
+        delete buffer;
+        return type == JRealType;
     }
 
     // Retrieves an integer value from the object.
@@ -195,9 +208,20 @@ methodmap JsonObject < Json
     // @param key        Key string
     // @param value      Integer buffer for storage value
     // @return           True on success
-    public bool TryGetInt(const char[] key, int &value)
+    public bool TryGetInt(const char[] key, int &value, bool freeHandle = false)
     {
-        return true;
+        value = 0;
+
+        Json buffer;
+        if(!(buffer = this.Get(key, freeHandle)))
+            return false;
+
+        JsonType type;
+        if((type = buffer.Type) == JIntegerType)
+            value = buffer.AsBool(true);
+
+        delete buffer;
+        return type == JIntegerType;
     }
 
     // Retrieves a 64-bit integer value from the object.
@@ -223,9 +247,20 @@ methodmap JsonObject < Json
     // @param value      String buffer for storage value
     // @param size       Buffer size
     // @return           True on success
-    public bool TryGetString(const char[] key, char[] value, int size)
+    public bool TryGetString(const char[] key, char[] value, int size, bool freeHandle = false)
     {
-        return false;
+        value[0] = '\0';
+
+        Json buffer;
+        if(!(buffer = this.Get(key, freeHandle)))
+            return false;
+
+        JsonType type;
+        if((type = buffer.Type) == JStringType)
+            buffer.AsString(value, size, true);
+
+        delete buffer;
+        return type == JStringType;
     }
 
     // Retrieves an item type from the array.
@@ -295,23 +330,10 @@ methodmap JsonObject < Json
     // @param   freeAnotherObject   Auto delete another handle after call successfully end
     //
     // @return            True on success
-    public native bool Update(JsonObject obj, JsonUpdateType updType = JSON_UPDATE, bool freeAnotherObject = false);
-
-    // Clears the object of all entries.
-    // @return           True on success, false on failure.
-    public native bool Clear();
-
-    // Returns an iterator for the object's keys. See JSONObjectKeys.
-//    public native JsonKeys KeysIterator();
-
-    // deprecated; will be removed at next update
-    // use KeysIterator instead
-    public native JsonObjectKeyIterator Keys();
+    public native bool Update(JsonObject obj, JsonObjectUpdateType updType = UpdDefault, bool freeAnotherObject = false);
 
     // ...
-    property int KeysCount {
-        public native get();
-    }
+    public native JsonObjectKeyIterator Keys();
 };
 
 /**
@@ -338,28 +360,28 @@ methodmap JsonArray < Json
     // @param index      Index in the array.
     // @return           Value read (can be JSON_NULL).
     // @error            Invalid index.
-    public native Json Get(int index);
+    public native Json Get(int index, bool feeHandle = false);
 
     // Retrieves a boolean value from the array.
     //
     // @param index      Index in the array.
     // @return           Value read.
     // @error            Invalid index.
-    public native bool GetBool(int index);
+    public native bool GetBool(int index, bool freeHandle = false);
 
     // Retrieves a float value from the array.
     //
     // @param index      Index in the array.
     // @return           Value read.
     // @error            Invalid index.
-    public native float GetFloat(int index);
+    public native float GetFloat(int index, bool freeHandle = false);
 
     // Retrieves an integer value from the array.
     //
     // @param index      Index in the array.
     // @return           Value read.
     // @error            Invalid index.
-    public native int GetInt(int index);
+    public native int GetInt(int index, bool freeHandle = false);
 
     // Retrieves an 64-bit integer value from the array.
     //
@@ -367,7 +389,7 @@ methodmap JsonArray < Json
     // @param buffer     Buffer to copy to.
     // @param maxlength  Maximum size of the buffer.
     // @error            Invalid index.
-    public native bool GetInt64(int index, char[] buffer, int maxlength);
+//    public native bool GetInt64(int index, char[] buffer, int maxlength);
 
     // Retrieves a string value from the array.
     //
@@ -376,7 +398,7 @@ methodmap JsonArray < Json
     // @param maxlength  Maximum size of the buffer.
     // @return           True on success, false if the value is not a string.
     // @error            Invalid index.
-    public native bool GetString(int index, char[] buffer, int maxlength);
+    public native bool GetString(int index, char[] buffer, int maxlength, bool freeHandle = false);
 
     // Retrieves an item type from the array.
     //
@@ -417,7 +439,7 @@ methodmap JsonArray < Json
     // @param index      Index in the array.
     // @param value      64-bit integer value to set.
     // @return           True on success, false on failure.
-    public native bool SetInt64(int index, const char[] value);
+//    public native bool SetInt64(int index, const char[] value);
 
     // Sets a string value in the array.
     //
@@ -454,7 +476,7 @@ methodmap JsonArray < Json
     //
     // @param value      64-bit integer value to push.
     // @return           True on success, false on failure.
-    public native bool PushInt64(const char[] value);
+//    public native bool PushInt64(const char[] value);
 
     // Pushes a string value onto the end of the array, adding a new index.
     //
@@ -466,22 +488,13 @@ methodmap JsonArray < Json
     //
     // @param other      An another json array
     // @return           True on success, false on failure.
-    public native bool Extend(JsonArray another);
+    public native bool Extend(JsonArray another, bool freeAnotherHandle = false);
 
     // Removes an entry from the array.
     //
     // @param index      Index in the array to remove.
     // @return           True on success, false on invalid index.
     public native bool Remove(int index);
-
-    // Clears the array of all entries.
-    // @return           True on success, false on failure.
-    public native bool Clear();
-
-    // Retrieves the size of the array.
-    property int Length {
-        public native get();
-    }
 };
 
 #include "jansson/stocks.inc"

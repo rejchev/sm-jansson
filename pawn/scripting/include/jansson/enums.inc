@@ -25,43 +25,43 @@ enum JsonEncodingFlag
 // Json types
 enum JsonType
 {
-    Invalid = -1,
-    Object,
-    Array,
-    String,
-    Integer,
-    Real,
-    Boolean,
-    Null
+    JInvalidType = -1,
+    JObjectType,
+    JArrayType,
+    JStringType,
+    JIntegerType,
+    JRealType,
+    JBooleanType,
+    JNullType
 };
 
 // Json update types
 enum JsonObjectUpdateType
 {
-    Default = 0,
-    Existing,
-    Missing,
-    Recursive
+    UpdDefault = 0,
+    UpdExisting,
+    UpdMissing,
+    UpdRecursive
 };
 
 enum JsonErrorCode
 {
-    Unknown,
-    OutOfMemory,
-    StackOverflow,
-    CannotOpenFile,
-    InvalidArgument,
-    InvalidUTF8,
-    PrematureEndOfInput,
-    EndOfInputExpected,
-    InvalidSyntax,
-    InvalidFormat,
-    WrongType,
-    NullCharacter,
-    NullValue,
-    NullByteInKey,
-    DuplicateKey,
-    NumericOverflow,
-    ItemNotFound,
-    IndexOutOfRange
+    jecUnknown,
+    jecOutOfMemory,
+    jecStackOverflow,
+    jecCannotOpenFile,
+    jecInvalidArgument,
+    jecInvalidUTF8,
+    jecPrematureEndOfInput,
+    jecEndOfInputExpected,
+    jecInvalidSyntax,
+    jecInvalidFormat,
+    jecWrongType,
+    jecNullCharacter,
+    jecNullValue,
+    jecNullByteInKey,
+    jecDuplicateKey,
+    jecNumericOverflow,
+    jecItemNotFound,
+    jecIndexOutOfRange
 };

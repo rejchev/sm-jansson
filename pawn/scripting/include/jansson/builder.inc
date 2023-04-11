@@ -15,7 +15,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder SetString(const char[] k, const char[] v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
+        if(this.Type == JObjectType)
             asJSONO(this).SetString(k, v);
 
         return this;
@@ -23,7 +23,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder Set(const char[] k, Json v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
+        if(this.Type == JObjectType)
             asJSONO(this).Set(k, v);
 
         return this;
@@ -31,7 +31,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder SetInt(const char[] k, int v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
+        if(this.Type == JObjectType)
             asJSONO(this).SetInt(k, v);
 
         return this;
@@ -39,23 +39,23 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder SetBool(const char[] k, bool v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
+        if(this.Type == JObjectType)
             asJSONO(this).SetBool(k, v);
 
         return this;
     }
 
-    public JsonBuilder SetInt64(const char[] k, const char[] v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).SetInt64(k, v);
+    // public JsonBuilder SetInt64(const char[] k, const char[] v)
+    // {
+    //     if(this.Type == JObjectType)
+    //         asJSONO(this).SetInt64(k, v);
 
-        return this;
-    }
+    //     return this;
+    // }
 
     public JsonBuilder SetFloat(const char[] k, float v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
+        if(this.Type == JObjectType)
             asJSONO(this).SetFloat(k, v);
 
         return this;
@@ -63,7 +63,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder PushString(const char[] v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
+        if(this.Type == JArrayType)
             asJSONA(this).PushString(v);
 
         return this;
@@ -71,23 +71,23 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder PushInt(int v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
+        if(this.Type == JArrayType)
             asJSONA(this).PushInt(v);
 
         return this;
     }
 
-    public JsonBuilder PushInt64(const char[] v)
-    {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).PushInt64(v);
+    // public JsonBuilder PushInt64(const char[] v)
+    // {
+    //     if(this.Type == JArrayType)
+    //         asJSONA(this).PushInt64(v);
 
-        return this;
-    }
+    //     return this;
+    // }
 
     public JsonBuilder PushBool(bool v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
+        if(this.Type == JArrayType)
             asJSONA(this).PushBool(v);
 
         return this;
@@ -95,7 +95,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder Push(Json v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
+        if(this.Type == JArrayType)
             asJSONA(this).Push(v);
 
         return this;
@@ -103,7 +103,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder PushFloat(float v)
     {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
+        if(this.Type == JArrayType)
             asJSONA(this).PushFloat(v);
 
         return this;
@@ -111,11 +111,7 @@ methodmap JsonBuilder < Json
 
     public JsonBuilder Clear()
     {
-        if(JSON_TYPE_EQUAL(this, JSON_ARRAY))
-            asJSONA(this).Clear();
-        
-        else if(JSON_TYPE_EQUAL(this, JSON_OBJECT))
-            asJSONO(this).Clear();
+        asJSON(this).Clear();
 
         return this;
     }
