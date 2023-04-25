@@ -12,13 +12,13 @@ jobs:
         os: [ubuntu-latest, windows-2019, macos-latest]
         sourcemod-version: [1.11-dev]
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             target-archs: x86,x86_64
 
           - os: windows-2019
             target-archs: x86,x86_64
 
-          - os: macos-10.15
+          - os: macos-latest
             target-archs: x86_64
 
     steps:
