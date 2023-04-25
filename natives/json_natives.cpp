@@ -44,7 +44,7 @@ cell_t JsonDump(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     const char* buffer;
-    if((buffer = json->dump(params[3])) == nullptr)
+    if((buffer = json->dump(params[4])) == nullptr)
         return 0;
 
     pContext->StringToLocalUTF8(params[2], params[3], buffer, nullptr);
