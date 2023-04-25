@@ -172,9 +172,6 @@ namespace nJansson
 
         public:
             virtual IJsonObjectKeyIterator* keys() const =0;
-
-        public:
-            virtual bool isOK() const =0;
     };
 
     class IJsonObjectKeyIterator
@@ -232,6 +229,9 @@ namespace nJansson
     public:
         virtual IJsonError* error() const =0;
         virtual JsonType    type() const =0;
+
+    public:
+        virtual bool isOK() const =0;
     };
 
 
