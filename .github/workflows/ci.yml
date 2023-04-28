@@ -62,7 +62,7 @@ jobs:
         working-directory: extension
         shell: bash
         run: |
-          echo ${{ github.run_attempt }}
+          echo ${{ github.run_number }}
           mkdir build && cd build
           python ../configure.py --enable-optimize --targets=${{ matrix.target-archs }}
           ambuild
@@ -88,7 +88,6 @@ jobs:
         run: |
           version=`echo $GITHUB_REF | sed "s/refs\/tags\///"`
           7z a jansson-${version}.${{ github.run_attempt }}-linux.zip ./Linux/*
-          7z a jansson-${version}.${{ github.run_attempt }}-mac.zip ./macOS/*
           7z a jansson-${version}.${{ github.run_attempt }}-windows.zip ./Windows/*
 
       - name: Release
