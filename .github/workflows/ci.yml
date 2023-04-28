@@ -62,6 +62,7 @@ jobs:
         working-directory: extension
         shell: bash
         run: |
+          echo ${{ github.run_attempt }}
           mkdir build && cd build
           python ../configure.py --enable-optimize --targets=${{ matrix.target-archs }}
           ambuild
@@ -86,9 +87,9 @@ jobs:
       - name: Package
         run: |
           version=`echo $GITHUB_REF | sed "s/refs\/tags\///"`
-          7z a jansson-${version}-linux.zip ./Linux/*
-          7z a jansson-${version}-mac.zip ./macOS/*
-          7z a jansson-${version}-windows.zip ./Windows/*
+          7z a jansson-${version}.${{ github.run_attempt }}-linux.zip ./Linux/*
+          7z a jansson-${version}.${{ github.run_attempt }}-mac.zip ./macOS/*
+          7z a jansson-${version}.${{ github.run_attempt }}-windows.zip ./Windows/*
 
       - name: Release
         uses: svenstaro/upload-release-action@v2
