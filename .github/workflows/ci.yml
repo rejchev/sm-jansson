@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-2019]
-        sourcemod-version: [1.11-dev, 1.12-dev]
+        sourcemod-version: [1.11-dev, master]
         include:
           - os: ubuntu-latest
             target-archs: x86,x86_64
