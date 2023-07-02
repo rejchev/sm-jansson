@@ -2,10 +2,12 @@
 #ifndef _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 #define _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 
-#include <vector>
-#include <cstring>
+
 #include <IShareSys.h>
 #include <IHandleSys.h>
+#include <ISourceMod.h>
+#include <vector>
+#include <cstring>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
 #define SMINTERFACE_JANSSON_VERSION	    04042023
@@ -110,8 +112,15 @@ namespace nJansson
             virtual IHandleTypeManager* typeManager() const =0;
 
         public:
+            // create from string
             virtual IJson *create(const char *,  const size_t &flags)    =0;
+
+            // create from file stream
             virtual IJson *create(FILE *input,   const size_t &flags)    =0;
+
+        public:
+            // create from sm file path
+            virtual IJson *createp(const char*,  const size_t& flags, SourceMod::ISourceMod* utils) =0;
     };
 
     class IJsonError

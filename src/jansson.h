@@ -16,6 +16,8 @@ namespace nJansson
         IJson *create(const char *,  const size_t &flags) override;
         IJson *create(FILE *input,   const size_t &flags) override;
 
+        IJson *createp(const char*,  const size_t& flags, SourceMod::ISourceMod* utils) override;
+
     public:
         virtual IHandleTypeManager* typeManager() const;
 
