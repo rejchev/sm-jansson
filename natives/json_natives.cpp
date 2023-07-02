@@ -19,13 +19,11 @@ cell_t JsonCreateFromFile(IPluginContext *pContext, const cell_t *params) {
     if((pType = nJansson::PluginContextUtils::GetType(pContext, pJansson, "Json")) == nullptr)
         return BAD_HANDLE;
 
+    char *buffer;
+    pContext->LocalToString(params[1], &buffer);
+
     nJansson::IJson* json;
-    if((json = nJansson::PluginContextUtils::CreateJsonFromPath(
-            pContext,
-            pJansson,
-            smutils,
-            params[1],
-            params[2])) == nullptr)
+    if((json = pJansson->createp(buffer, params[2], smutils)) == nullptr)
         return BAD_HANDLE;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
@@ -236,7 +234,7 @@ cell_t JsonDumpToFile(IPluginContext *pContext, const cell_t *params) {
     smutils->BuildPath(Path_Game, fullPath, sizeof(fullPath), "%s", buffer);
 
     bool success;
-    if((success = nJansson::PluginContextUtils::DumpJsonToFile(json, fullPath, params[3]) == 0) && params[4] == 1)
+    if((success = json->dump(fullPath, params[3]) == 0) && params[4] == 1)
         nJansson::PluginContextUtils::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
     return success;
