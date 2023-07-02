@@ -62,27 +62,6 @@ namespace nJansson {
         return handle;
     }
 
-    IJson *PluginContextUtils::CreateJsonFromPath(IPluginContext *ctx,
-                                                  IJansson *face,
-                                                  ISourceMod* utils,
-                                                  const cell_t &addr,
-                                                  const cell_t &flags) {
-        if(ctx == nullptr || face == nullptr)
-            return nullptr;
-
-        char *buffer;
-        ctx->LocalToString(addr, &buffer);
-
-        char fullPath[PLATFORM_MAX_PATH];
-        utils->BuildPath(Path_Game, fullPath, sizeof(fullPath), "%s", buffer);
-
-        json_t* object;
-        json_error_t error = {};
-        object = json_load_file(fullPath, flags, &error);
-
-        return new Json(object, error, false);
-    }
-
     void* PluginContextUtils::ReadHandle(IPluginContext *ctx,
                                         IHandleSys* hndl,
                                         const IHandleType *type,
@@ -125,10 +104,6 @@ namespace nJansson {
             return;
 
         type->dispatch()->OnHandleDestroy(type->id(), object);
-    }
-
-    int PluginContextUtils::DumpJsonToFile(IJson *json, const char *path, const size_t &flags) {
-        return json_dump_file(((Json*) json)->json(), path, flags);
     }
 
     Handle_t

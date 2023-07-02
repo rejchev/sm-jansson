@@ -16,14 +16,6 @@ namespace nJansson {
                                  const cell_t& addr,
                                  const cell_t& flags = 0);
 
-        static IJson* CreateJsonFromPath(IPluginContext*,
-                                         IJansson*,
-                                         ISourceMod*,
-                                         const cell_t&,
-                                         const cell_t& = 0);
-
-        static int DumpJsonToFile(IJson*, const char*, const size_t& = 0);
-
     public:
         static Handle_t CreateHandle(IPluginContext*,
                                      IHandleSys*,
