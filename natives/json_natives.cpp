@@ -51,7 +51,7 @@ cell_t JsonDump(IPluginContext *pContext, const cell_t *params) {
 
     free((void *) buffer);
 
-    if(params[4] == 1)
+    if(params[5] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
     return 1;
