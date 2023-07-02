@@ -10,7 +10,7 @@
 #include <cstring>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
-#define SMINTERFACE_JANSSON_VERSION	    04042023
+#define SMINTERFACE_JANSSON_VERSION	    02072023
 
 namespace nJansson
 {
