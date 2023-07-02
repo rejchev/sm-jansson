@@ -17,6 +17,7 @@ namespace nJansson
 
     public:
         const char *dump(const size_t &decodingFlags) override;
+        int dump(const char* path, const size_t& flags) override;
 
     public:
         bool equal(const IJson &json) const override;

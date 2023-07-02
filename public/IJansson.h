@@ -221,6 +221,7 @@ namespace nJansson
     {
     public:
         virtual const char *dump(const size_t &decodingFlags) =0;
+        virtual int dump(const char* path, const size_t& flags) = 0;
 
     public:
         virtual bool equal(const IJson &json) const =0;

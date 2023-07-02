@@ -46,6 +46,13 @@ const char *Json::dump(const size_t& decodingFlags)
     return json_dumps(json(), decodingFlags);
 }
 
+int Json::dump(const char *path, const size_t &flags) {
+    if(path == nullptr)
+        return -1;
+
+    return json_dump_file(json(), path, flags);
+}
+
 bool Json::equal(const IJson &json) const
 {
     Json &link = (Json &) json;
