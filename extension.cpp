@@ -29,7 +29,10 @@
 CJanssonExtension g_JanssonExtension;
 nJansson::IJansson* pJansson;
 
-SMEXT_LINK(&g_JanssonExtension);
+SMEXT_LINK(&g_JanssonExtension)
+
+#define REGISTER_TYPE(manager, type, dispatch, ident) manager \
+    ->typeManager()->registerType(type, dispatch, 0, nullptr, nullptr, ident)
 
 bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
@@ -45,31 +48,9 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
 
     pJansson = new nJansson::Jansson();
 
-    pJansson->typeManager()
-        ->registerType("Json",
-                new CJsonHandler(),
-                0,
-                nullptr,
-                nullptr,
-                myself->GetIdentity());
-
-    pJansson->typeManager()
-        ->registerType("JsonObjectKeyIterator",
-                new CJsonObjectKeysHandler(),
-                0,
-                nullptr,
-                nullptr,
-                myself->GetIdentity());
-
-    pJansson->typeManager()
-        ->registerType("JsonError",
-                    new CJsonErrorHandler(),
-                    0,
-                    nullptr,
-                    nullptr,
-                    myself->GetIdentity());
-
-    if(pJansson->typeManager()->count() != 3)
+    if(!REGISTER_TYPE(pJansson, "Json", new CJsonHandler(), myself->GetIdentity())
+    || !REGISTER_TYPE(pJansson, "JsonObjectKeyIterator", new CJsonObjectKeysHandler(), myself->GetIdentity())
+    || !REGISTER_TYPE(pJansson, "JsonError", new CJsonErrorHandler(), myself->GetIdentity()))
     {
         sprintf(error, "Something went wrong on type registration");
         return false;
