@@ -17,6 +17,13 @@ namespace nJansson {
                                                      SourceMod::HandleAccess* handleAccess,
                                                      SourceMod::IdentityToken_t *identityToken);
 
+        virtual SourceMod::HandleType_t registerExistingType(const char* name,
+                                                             SourceMod::IHandleTypeDispatch *dispatch,
+                                                             const SourceMod::HandleType_t &parent,
+                                                             SourceMod::TypeAccess *access,
+                                                             SourceMod::HandleAccess *handleAccess,
+                                                             SourceMod::IdentityToken_t *identityToken);
+
         virtual void removeType(const SourceMod::HandleType_t&);
 
         virtual const IHandleType* getByName(const char* name) const;

@@ -81,7 +81,7 @@ namespace nJansson
         bool remove(const size_t& index) override;
 
     public:
-        virtual IJsonObjectKeyIterator* keys() const;
+        virtual SourceMod::ICellArray* keys() const;
         virtual size_t size() const;
 
     public:

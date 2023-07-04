@@ -384,8 +384,8 @@ cell_t JsonObjectKeys(IPluginContext *pContext, const cell_t *params) {
     if((pType = eContext::GetType(pContext, pJansson, "Json")) == nullptr)
         return 0;
 
-    const nJansson::IHandleType* pIteratorType;
-    if((pIteratorType = eContext::GetType(pContext, pJansson, "JsonObjectKeyIterator")) == nullptr)
+    const nJansson::IHandleType* pArrayListType;
+    if((pArrayListType = eContext::GetType(pContext, pJansson, "CellArray")) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
@@ -399,12 +399,14 @@ cell_t JsonObjectKeys(IPluginContext *pContext, const cell_t *params) {
             params[1], IsObjectAnJsonObject)) == nullptr)
         return 0;
 
+    // https://github.com/alliedmodders/sourcemod/blob/5addaffa5665f353c874f45505914ab692535c24/core/logic/smn_adt_array.cpp#L85
     return (cell_t) eContext::CreateHandle(
             pContext,
             g_pHandleSys,
-            pIteratorType,
+            pArrayListType,
             json->keys(),
-            &sec);
+            pContext->GetIdentity(),
+            const_cast<SourceMod::IdentityToken_t*>(pArrayListType->ident()));
 }
 
 const sp_nativeinfo_t JSON_OBJECT_NATIVES[] =
@@ -422,7 +424,7 @@ const sp_nativeinfo_t JSON_OBJECT_NATIVES[] =
         {"JsonObject.GetType",      JsonObjectGetType    },
         {"JsonObject.HasKey",       JsonObjectHasKey     },
         {"JsonObject.Update",       JsonObjectUpdate     },
-        {"JsonObject.Keys",         JsonObjectKeys       },
+        {"JsonObject.Keys.get",         JsonObjectKeys   },
         {nullptr, nullptr}
 };
 

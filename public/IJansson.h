@@ -6,11 +6,12 @@
 #include <IShareSys.h>
 #include <IHandleSys.h>
 #include <ISourceMod.h>
+#include <ICellArray.h>
 #include <vector>
 #include <cstring>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
-#define SMINTERFACE_JANSSON_VERSION	    02072023
+#define SMINTERFACE_JANSSON_VERSION	    05072023
 
 namespace nJansson
 {
@@ -180,16 +181,7 @@ namespace nJansson
             virtual bool        remove(const char *key) =0;
 
         public:
-            virtual IJsonObjectKeyIterator* keys() const =0;
-    };
-
-    class IJsonObjectKeyIterator
-    {
-    public:
-        virtual const char* key() const =0;
-
-    public:
-        virtual void next() =0;
+            virtual SourceMod::ICellArray* keys() const =0;
     };
 
     class IJsonArray
@@ -282,6 +274,13 @@ namespace nJansson
                                               SourceMod::TypeAccess* access,
                                               SourceMod::HandleAccess* handleAccess,
                                               SourceMod::IdentityToken_t *identityToken) =0;
+
+        virtual SourceMod::HandleType_t registerExistingType(const char* name,
+                                                             SourceMod::IHandleTypeDispatch *dispatch,
+                                                             const SourceMod::HandleType_t &parent,
+                                                             SourceMod::TypeAccess *access,
+                                                             SourceMod::HandleAccess *handleAccess,
+                                                             SourceMod::IdentityToken_t *identityToken) =0;
 
         // because HandleType_t an unique
         virtual void removeType(const SourceMod::HandleType_t&) =0;

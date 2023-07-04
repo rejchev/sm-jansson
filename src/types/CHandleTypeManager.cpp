@@ -84,6 +84,28 @@ namespace nJansson {
         return type;
     }
 
+    SourceMod::HandleType_t CHandleTypeManager::registerExistingType(const char* name,
+                                                                     SourceMod::IHandleTypeDispatch *dispatch,
+                                                                     const SourceMod::HandleType_t &parent,
+                                                                     SourceMod::TypeAccess *access,
+                                                                     SourceMod::HandleAccess *handleAccess,
+                                                                     SourceMod::IdentityToken_t *identityToken) {
+
+        SourceMod::HandleType_t type = NO_HANDLE_TYPE;
+        if(!(g_pHandleSys->FindHandleType(name, &type)))
+            return NO_HANDLE_TYPE;
+
+        const auto& alreadyIn = (std::find_if(m_vecTypes.begin(), m_vecTypes.end(),
+                                       [&](const auto &item) {
+            return item->id() == type;
+        }) != m_vecTypes.end());
+
+        if(!alreadyIn)
+            m_vecTypes.push_back(new CHandleType(type, name, dispatch, parent, access, handleAccess, identityToken));
+
+        return type;
+    }
+
     void CHandleTypeManager::removeType(const SourceMod::HandleType_t &id) {
         std::remove_if(m_vecTypes.begin(),
                        m_vecTypes.end(),

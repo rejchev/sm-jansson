@@ -333,7 +333,9 @@ methodmap JsonObject < Json
     public native bool Update(JsonObject obj, JsonObjectUpdateType updType = UpdDefault, bool freeAnotherObject = false);
 
     // ...
-    public native JsonObjectKeyIterator Keys();
+    property ArrayList Keys {
+        public native get();
+    }
 };
 
 /**

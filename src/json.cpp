@@ -99,6 +99,8 @@ JsonType Json::type() const
         case JSON_NULL:
             return Null;
     }
+
+    return Invalid;
 }
 
 bool Json::get(long long int *value)
@@ -304,11 +306,33 @@ size_t Json::size() const {
     return pSize(json());
 }
 
-IJsonObjectKeyIterator *Json::keys() const {
-    if(type() != Object)
+SourceMod::ICellArray *Json::keys() const {
+    if(type() != Object || !size())
         return nullptr;
-    
-    return new JsonObjectKeyIterator(json());
+
+    // 10 * 512 = 5120
+    // 20 * 512 = (ノ-_-)ノ~┻━┻
+    auto* array = new CellArray(512);
+
+    void* iter = json_object_iter(m_pJson);
+
+    cell_t* block;
+    const char* buffer;
+    while((buffer = json_object_iter_key(iter)) != nullptr)
+    {
+        if((block = array->push()) == nullptr)
+        {
+            delete array;
+            return nullptr;
+        }
+
+        // https://github.com/alliedmodders/sourcemod/blob/5addaffa5665f353c874f45505914ab692535c24/core/logic/smn_adt_array.cpp#L190
+        strncopy((char *)block, buffer, strlen(buffer) + 1);
+
+        iter = json_object_iter_next(m_pJson, iter);
+    }
+
+    return array;
 }
 
 bool Json::isOK() const {
