@@ -1,8 +1,8 @@
 #ifndef _INCLUDE_SOURCEMOD_CELLARRAY_1H_
 #define _INCLUDE_SOURCEMOD_CELLARRAY_1H_
 
-#include <cstdlib>
-#include <cstring>
+#include <stdlib.h>
+#include <string.h>
 #include <sp_vm_types.h>
 #include <ICellArray.h>
 #include <amtl/am-bits.h>
@@ -10,7 +10,7 @@
 class CellArray : public SourceMod::ICellArray
 {
 public:
-    CellArray(size_t blocksize) : m_Data(NULL), m_BlockSize(blocksize), m_AllocSize(0), m_Size(0)
+    CellArray(size_t blocksize) : m_Data(nullptr), m_BlockSize(blocksize), m_AllocSize(0), m_Size(0)
 	{
 	}
 
