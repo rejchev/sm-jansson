@@ -1,6 +1,6 @@
 #include <src/jansson.h>
 #include <IExtensionSys.h>
-#include <shared/Handlesys.h>
+#include <shared/HandleSys.h>
 
 #include "extension.h"
 #include "natives.h"
