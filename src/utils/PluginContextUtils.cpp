@@ -104,7 +104,8 @@ namespace nJansson {
         if(sys->FreeHandle(handle, sec) == SourceMod::HandleError_None)
             return;
 
-        type->dispatch()->OnHandleDestroy(type->id(), object);
+        if(type->dispatch())
+            type->dispatch()->OnHandleDestroy(type->id(), object);
     }
 
     Handle_t
