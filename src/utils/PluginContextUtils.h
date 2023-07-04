@@ -1,7 +1,7 @@
 #ifndef SM_JANSSON_PLUGINCONTEXTUTILS_H
 #define SM_JANSSON_PLUGINCONTEXTUTILS_H
 
-#include <IJansson.h>
+#include <public/IJansson.h>
 #include <smsdk_ext.h>
 
 namespace nJansson {

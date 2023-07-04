@@ -1,9 +1,8 @@
 #ifndef SM_JANSSON_JSON_NATIVES_H
 #define SM_JANSSON_JSON_NATIVES_H
 
-#include <PluginContextUtils.h>
-
-#include "../extension.h"
+#include <src/utils/PluginContextUtils.h>
+#include <extension.h>
 
 extern cell_t JsonCreate(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonCreateFromFile(IPluginContext *pContext, const cell_t *params);

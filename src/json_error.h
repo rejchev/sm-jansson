@@ -1,9 +1,10 @@
 #ifndef _INCLUDE_SOURCEMOD_JANSSON_JSON_ERROR_H_
 #define _INCLUDE_SOURCEMOD_JANSSON_JSON_ERROR_H_
 
-#include <IJansson.h>
-#include <jansson.h>
+#include <public/IJansson.h>
 #include <cstring>
+
+#include <jansson.h>
 
 namespace nJansson
 {

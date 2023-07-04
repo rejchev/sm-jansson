@@ -1,5 +1,6 @@
+#include <src/json.h>
+
 #include "PluginContextUtils.h"
-#include "../json.h"
 
 namespace nJansson {
 

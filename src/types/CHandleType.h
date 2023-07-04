@@ -1,7 +1,7 @@
 #ifndef SM_JANSSON_CHANDLETYPE_H
 #define SM_JANSSON_CHANDLETYPE_H
 
-#include <IJansson.h>
+#include <public/IJansson.h>
 
 namespace nJansson
 {

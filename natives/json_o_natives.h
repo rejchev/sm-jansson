@@ -1,8 +1,8 @@
 #ifndef SM_JANSSON_JSON_O_NATIVES_H
 #define SM_JANSSON_JSON_O_NATIVES_H
 
-#include "../extension.h"
-#include <PluginContextUtils.h>
+#include <src/utils/PluginContextUtils.h>
+#include <extension.h>
 
 extern cell_t JsonObjectGetJson(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params);

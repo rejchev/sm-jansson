@@ -1,7 +1,7 @@
 #ifndef SM_JANSSON_JSON_A_NATIVES_H
 #define SM_JANSSON_JSON_A_NATIVES_H
 
-#include <PluginContextUtils.h>
+#include <src/utils/PluginContextUtils.h>
 #include <extension.h>
 
 extern cell_t JsonArrayGetJson(IPluginContext *pContext, const cell_t *params);

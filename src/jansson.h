@@ -1,8 +1,9 @@
 #ifndef _INCLUDE_SOURCEMOD_JANSSON_H_
 #define _INCLUDE_SOURCEMOD_JANSSON_H_
 
+#include <src/types/CHandleTypeManager.h>
+
 #include "json.h"
-#include "./types/CHandleTypeManager.h"
 
 namespace nJansson
 {

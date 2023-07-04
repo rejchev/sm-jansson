@@ -1,5 +1,6 @@
+#include <src/json.h>
+
 #include "json_o_natives.h"
-#include "../src/json.h"
 
 using eIJson =              nJansson::IJson;
 using eIJsonObject =        nJansson::IJsonObject;
