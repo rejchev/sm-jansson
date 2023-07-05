@@ -20,7 +20,7 @@ namespace nJansson
         IJson *createp(const char*,  const size_t& flags, SourceMod::ISourceMod* utils) override;
 
     public:
-        virtual IHandleTypeManager* typeManager() const;
+        IHandleTypeManager* typeManager() const override;
 
     private:
         IHandleTypeManager* m_pHandleTypeManager;

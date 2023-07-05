@@ -1,7 +1,8 @@
+#include <cstring>
+#include <smsdk_ext.h>
+
 #include "CHandleTypeManager.h"
 
-#include <smsdk_ext.h>
-#include <cstring>
 
 namespace nJansson {
     CHandleTypeManager::CHandleTypeManager() :
@@ -56,54 +57,63 @@ namespace nJansson {
 
     SourceMod::HandleType_t CHandleTypeManager::registerType(const char *name,
                                                              SourceMod::IHandleTypeDispatch *dispatch,
-                                                             const SourceMod::HandleType_t &parent = 0,
-                                                             SourceMod::TypeAccess *access = nullptr,
-                                                             SourceMod::HandleAccess *handleAccess = nullptr,
-                                                             SourceMod::IdentityToken_t *identityToken = nullptr) {
-        SourceMod::HandleType_t type = 0;
-        if(g_pHandleSys->FindHandleType(name, &type))
-            return NO_HANDLE_TYPE;
+                                                             const SourceMod::HandleType_t &parent,
+                                                             SourceMod::TypeAccess *access,
+                                                             SourceMod::HandleAccess *handleAccess,
+                                                             SourceMod::IdentityToken_t *identityToken) {
+        const auto& hType = std::find_if(
+                m_vecTypes.begin(),
+                m_vecTypes.end(),
+                [&](const auto &item) {
+                    return strcmp(name, item->name()) == 0;
+                });
 
+        if(hType != m_vecTypes.end())
+            return (*hType)->id();
+
+        SourceMod::HandleType_t type = 0;
         SourceMod::HandleError error = SourceMod::HandleError_None;
-        if((type = g_pHandleSys->CreateType(name,
-                                            dispatch,
-                                            parent,
-                                            access,
-                                            handleAccess,
-                                            identityToken,
-                                            &error)) == BAD_HANDLE)
+
+        if(g_pHandleSys->FindHandleType(name, &type))
+        {
+            const QHandleType* pTypeInfo;
+
+            if((pTypeInfo = getHandleStruct(name)) == nullptr)
+                return NO_HANDLE_TYPE;
+
+            dispatch = pTypeInfo->dispatch;
+            access = (SourceMod::TypeAccess *)&pTypeInfo->typeSec;
+            handleAccess = (SourceMod::HandleAccess *)&pTypeInfo->hndlSec;
+            identityToken = pTypeInfo->typeSec.ident;
+        }
+        else if((type = g_pHandleSys->CreateType(
+                name,
+                dispatch,
+                parent,
+                access,
+                handleAccess,
+                identityToken,
+                &error)) == BAD_HANDLE)
             return NO_HANDLE_TYPE;
 
         if(error != SourceMod::HandleError_None)
+        {
             g_pHandleSys->RemoveType(type, identityToken);
+            type = NO_HANDLE_TYPE;
+        }
 
-        type = NO_HANDLE_TYPE;
-        if(g_pHandleSys->FindHandleType(name, &type))
+        if(type != NO_HANDLE_TYPE)
             m_vecTypes.push_back(new CHandleType(type, name, dispatch, parent, access, handleAccess, identityToken));
 
         return type;
     }
 
-    SourceMod::HandleType_t CHandleTypeManager::registerExistingType(const char* name,
-                                                                     SourceMod::IHandleTypeDispatch *dispatch,
-                                                                     const SourceMod::HandleType_t &parent,
-                                                                     SourceMod::TypeAccess *access,
-                                                                     SourceMod::HandleAccess *handleAccess,
-                                                                     SourceMod::IdentityToken_t *identityToken) {
+    const QHandleType * CHandleTypeManager::getHandleStruct(const char *handleTypeName) {
+        QHandleType* pHandleT = nullptr;
 
-        SourceMod::HandleType_t type = NO_HANDLE_TYPE;
-        if(!(g_pHandleSys->FindHandleType(name, &type)))
-            return NO_HANDLE_TYPE;
+        ((HandleSystem*) g_pHandleSys)->m_TypeLookup.retrieve(handleTypeName, &pHandleT);
 
-        const auto& alreadyIn = (std::find_if(m_vecTypes.begin(), m_vecTypes.end(),
-                                       [&](const auto &item) {
-            return item->id() == type;
-        }) != m_vecTypes.end());
-
-        if(!alreadyIn)
-            m_vecTypes.push_back(new CHandleType(type, name, dispatch, parent, access, handleAccess, identityToken));
-
-        return type;
+        return const_cast<QHandleType*>(pHandleT);
     }
 
     void CHandleTypeManager::removeType(const SourceMod::HandleType_t &id) {
@@ -113,6 +123,5 @@ namespace nJansson {
             return item->id() == id;
         });
     }
-
 
 } // nJansson
