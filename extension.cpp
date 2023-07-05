@@ -1,12 +1,10 @@
 #include <src/jansson.h>
-#include <IExtensionSys.h>
-#include <shared/HandleSys.h>
+#include <src/natives.h>
 
 #include "extension.h"
-#include "natives.h"
 
-/**< Global singleton for extension's main interface */
 CJanssonExtension g_JanssonExtension;
+
 nJansson::IJansson* pJansson;
 
 SMEXT_LINK(&g_JanssonExtension)
@@ -43,30 +41,7 @@ void CJanssonExtension::SDK_OnUnload()
 }
 
 void CJanssonExtension::SDK_OnAllLoaded() {
-
-    // hack :/
-    QHandleType* pCellArrayHandleType = nullptr;
-    ((HandleSystem*) g_pHandleSys)->m_TypeLookup.retrieve("CellArray", &pCellArrayHandleType);
-
-    if(pCellArrayHandleType == nullptr || pJansson->typeManager()->registerExistingType(
-            pCellArrayHandleType->name->c_str(),
-            pCellArrayHandleType->dispatch,
-            0,
-            &pCellArrayHandleType->typeSec,
-            &pCellArrayHandleType->hndlSec,
-            pCellArrayHandleType->typeSec.ident)
-            == NO_HANDLE_TYPE)
-    {
-        SourceMod::IExtensionManager* mgr = nullptr;
-        SM_FIND_IFACE(EXTENSIONMANAGER, mgr);
-
-        SDK_OnUnload();
-
-        if(mgr != nullptr)
-            mgr->UnloadExtension(myself);
-    }
-
-    SDKExtension::SDK_OnAllLoaded();
+    // pass
 }
 
 void CJsonHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object) {

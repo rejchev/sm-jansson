@@ -1,4 +1,3 @@
-#include <shared/CellArray.h>
 #include <src/utils/utils.h>
 
 #include "json.h"
@@ -274,6 +273,8 @@ void Json::clear() {
             
         case Object: json_object_clear(json());
             break;
+
+        default: break;
     }
 }
 
@@ -308,33 +309,20 @@ size_t Json::size() const {
     return pSize(json());
 }
 
-SourceMod::ICellArray *Json::keys() const {
-    if(type() != Object || !size())
+IJsonArray* Json::keys(const JsonType& type, const size_t& flags) const {
+    if(this->type() != Object || !size())
         return nullptr;
 
-    // 10 * 512 = 5120
-    // 20 * 512 = (ノ-_-)ノ~┻━┻
-    auto* array = new CellArray(512);
-
-    void* iter = json_object_iter(m_pJson);
-
-    cell_t* block;
     const char* buffer;
-    while((buffer = json_object_iter_key(iter)) != nullptr)
-    {
-        if((block = array->push()) == nullptr)
-        {
-            delete array;
-            return nullptr;
-        }
+    Json *keys = new Json {"[]", flags };
 
-        // https://github.com/alliedmodders/sourcemod/blob/5addaffa5665f353c874f45505914ab692535c24/core/logic/smn_adt_array.cpp#L190
-        strncopy((char *)block, buffer, strlen(buffer) + 1);
+    for(void* iter = json_object_iter(m_pJson);
+        (buffer = json_object_iter_key(iter));
+        iter = json_object_iter_next(m_pJson, iter))
+        if(type == Invalid || this->type(buffer) == type)
+            keys->push(buffer);
 
-        iter = json_object_iter_next(m_pJson, iter);
-    }
-
-    return array;
+    return keys;
 }
 
 bool Json::isOK() const {

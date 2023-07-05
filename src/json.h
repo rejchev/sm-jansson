@@ -37,8 +37,8 @@ namespace nJansson
         virtual json_t* get_t(const size_t&) const;
 
     public:
-        virtual IJson* get(const char *key) const;
-        virtual IJson* get(const size_t& index) const;
+        IJson* get(const char *key) const override;
+        IJson* get(const size_t& index) const override;
 
     protected:
         virtual bool set(const char*, json_t* value, int (*pSet) (json_t*, const char*, json_t*));
@@ -46,46 +46,46 @@ namespace nJansson
         virtual bool push(json_t*, int (*pSet) (json_t*, json_t*));
 
     public:
-        virtual bool    set(const char *key, const IJson* value);
-        virtual bool    set(const char *key, const char* value);
-        virtual bool    set(const char *key, double value);
-        virtual bool    set(const char *key, bool value);
-        virtual bool    set(const char *key, long long value);
+        bool    set(const char *key, const IJson* value) override;
+        bool    set(const char *key, const char* value) override;
+        bool    set(const char *key, double value) override;
+        bool    set(const char *key, bool value) override;
+        bool    set(const char *key, long long value) override;
 
     public:
-        virtual bool    set(const size_t& index, const IJson *value);
-        virtual bool    set(const size_t& index, const char* value);
-        virtual bool    set(const size_t& index, double value);
-        virtual bool    set(const size_t& index, bool value);
-        virtual bool    set(const size_t& index, long long value);
+        bool    set(const size_t& index, const IJson *value) override;
+        bool    set(const size_t& index, const char* value) override;
+        bool    set(const size_t& index, double value) override;
+        bool    set(const size_t& index, bool value) override;
+        bool    set(const size_t& index, long long value) override;
 
     public:
-        virtual bool    push(const IJson *value);
-        virtual bool    push(const char* value);
-        virtual bool    push(double value);
-        virtual bool    push(bool value);
-        virtual bool    push(long long value);
+        bool    push(const IJson *value) override;
+        bool    push(const char* value) override;
+        bool    push(double value) override;
+        bool    push(bool value) override;
+        bool    push(long long value) override;
 
     public:
-        virtual bool update(const IJsonObject* another, JsonObjectUpdateType type);
-        virtual bool extend(const IJsonArray *another);
+        bool update(const IJsonObject* another, JsonObjectUpdateType type) override;
+        bool extend(const IJsonArray *another) override;
 
-        virtual JsonType type(const char *key) const;
-        virtual JsonType type(const size_t& index) const;
+        JsonType type(const char *key) const override;
+        JsonType type(const size_t& index) const override;
 
-        virtual bool exist(const char *key) const;
+        bool exist(const char *key) const override;
 
-        virtual void clear();
+        void clear() override;
 
         bool remove(const char *key) override;
         bool remove(const size_t& index) override;
 
     public:
-        virtual SourceMod::ICellArray* keys() const;
-        virtual size_t size() const;
+        IJsonArray* keys(const JsonType& type, const size_t& flags) const override;
+        size_t size() const override;
 
     public:
-        virtual bool isOK() const;
+        bool isOK() const override;
 
     public:
         virtual json_t *json() const;
