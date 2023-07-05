@@ -19,21 +19,25 @@ public void OnPluginStart()
 
     LogMessage("Simple int: %d", asJSONA(asJSONO(o).Get("array")).GetInt(1, true));
 
-    ArrayList keys = asJSONO(o).Keys;
+    JsonArray keys = asJSONO(o).Keys();
 
     LogMessage("Keys: %x", keys);
 
     char buffer[1024];
     if(keys)
     {
-        for(int i = 0; i < keys.Length; i++)
+        for(int i = 0; i < keys.Size; i++)
         {
-            keys.GetString(i, buffer, sizeof(buffer));
+            if(!keys.GetString(i, buffer, sizeof(buffer)))
+                LogMessage("Fail on get string");
+
             LogMessage("Key(%d): %s", i + 1, buffer);
         }
+
+        
+        delete keys;
     }
         
-    delete keys;
 
     // char buffer[1024];
     if(b.Dump(buffer, sizeof(buffer), JSON_INDENT(44), true))

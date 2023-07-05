@@ -332,10 +332,13 @@ methodmap JsonObject < Json
     // @return            True on success
     public native bool Update(JsonObject obj, JsonObjectUpdateType updType = UpdDefault, bool freeAnotherObject = false);
 
-    // ...
-    property ArrayList Keys {
-        public native get();
-    }
+    // Get an object keys
+    //
+    // @param   type                Filter based on json type of key (grabbing all keys by default)
+    // @param   flags               Encoding flags
+    //
+    // @return                      null on zero size
+    public native JsonArray Keys(JsonType type = JInvalidType, int flags = 0);
 };
 
 /**
