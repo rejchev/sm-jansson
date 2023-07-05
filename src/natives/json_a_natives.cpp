@@ -150,11 +150,11 @@ cell_t JsonArrayGetString(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     const char* value;
-    if(buffer->type() == nJansson::String && (value = buffer->get()) != nullptr && params[4] == 1)
+    if(buffer->type() == nJansson::String && (value = buffer->get()) != nullptr && params[5] == 1)
         eContext::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
     if(value != nullptr)
-        pContext->StringToLocalUTF8(params[2], params[3], buffer->get(), nullptr);
+        pContext->StringToLocalUTF8(params[3], params[4], buffer->get(), nullptr);
 
     delete (nJansson::Json*) buffer;
     return value != nullptr;
