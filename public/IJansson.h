@@ -2,7 +2,7 @@
 #ifndef _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 #define _INCLUDE_SOURCEMOD_JANSSON_IFACE_H_
 
-
+#include <sm_platform.h>
 #include <IShareSys.h>
 #include <IHandleSys.h>
 #include <ISourceMod.h>
@@ -10,20 +10,20 @@
 #include <cstring>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
-#define SMINTERFACE_JANSSON_VERSION	    05072023
+#define SMINTERFACE_JANSSON_VERSION	    07072023
 
 namespace nJansson
 {
     enum JsonType
     {
-        Invalid = -1,
-        Object,
-        Array,
-        String,
-        Integer,
-        Real,
-        Boolean,
-        Null
+        jtInvalid = -1,
+        jtObject,
+        jtArray,
+        jtString,
+        jtInteger,
+        jtReal,
+        jtBoolean,
+        jtNull
     };
 
     enum JsonDecodingFlag
@@ -45,34 +45,12 @@ namespace nJansson
         Embed                   = 0x10000
     };
 
-    enum JsonErrorCode
-    {
-        Unknown,
-        OutOfMemory,
-        StackOverflow,
-        CannotOpenFile,
-        InvalidArgument,
-        InvalidUTF8,
-        PrematureEndOfInput,
-        EndOfInputExpected,
-        InvalidSyntax,
-        InvalidFormat,
-        WrongType,
-        NullCharacter,
-        NullValue,
-        NullByteInKey,
-        DuplicateKey,
-        NumericOverflow,
-        ItemNotFound,
-        IndexOutOfRange
-    };
-
     enum JsonObjectUpdateType
     {
-        Default,
-        Existing,
-        Missing,
-        Recursive
+        utDefault,
+        utExisting,
+        utMissing,
+        utRecursive
     };
 
     class IHandleType;
@@ -90,97 +68,73 @@ namespace nJansson
     class IJsonArray;
     using IJSA = IJsonArray;
 
-    class IJsonError;
-    using IJSE = IJsonError;
-
     class IJsonObjectKeyIterator;
     using IJSOI = IJsonObjectKeyIterator;
+
+    struct JsonError_t {
+        int line;
+        int column;
+        int position;
+        char source[PLATFORM_MAX_PATH];
+        char text[PLATFORM_MAX_PATH];
+
+        bool equal(const JsonError_t& another) const {
+            return line == another.line
+                   && column == another.column
+                   && position == another.position
+                   && std::strcmp(source, another.source) == 0
+                   && std::strcmp(text, another.text) == 0;
+        }
+    };
+
+    const JsonError_t JSON_ERROR_NULL = {};
 
     class IJansson : public SourceMod::SMInterface
     {
         public:
-            const char *GetInterfaceName()
+            const char *GetInterfaceName() override
             {
                 return SMINTERFACE_JANSSON_NAME;
             }
-            unsigned int GetInterfaceVersion()
+            unsigned int GetInterfaceVersion() override
             {
                 return SMINTERFACE_JANSSON_VERSION;
             }
 
         public:
-            virtual IHandleTypeManager* typeManager() const =0;
+            virtual IHandleTypeManager* types() const =0;
 
         public:
             // create from string
-            virtual IJson *create(const char *,  const size_t &flags)    =0;
+            virtual IJson *create(const char *str,  const size_t &flags) =0;
 
             // create from file stream
-            virtual IJson *create(FILE *input,   const size_t &flags)    =0;
+            virtual IJson *create(FILE *input,   const size_t &flags) =0;
 
-        public:
             // create from sm file path
-            virtual IJson *createp(const char*,  const size_t& flags, SourceMod::ISourceMod* utils) =0;
-    };
-
-    class IJsonError
-    {
-        public:
-            virtual int line() const = 0;
-            virtual int column() const =0;
-            virtual int position() const =0;
-
-        public:
-            virtual const char *source() const =0;
-            virtual const char *text() const =0;
-
-        public:
-            virtual JsonErrorCode code() const =0;
-
-        public:
-            virtual bool isEqual(const IJsonError* error) const =0;
-            virtual void clear() =0;
-
-        public:
-            static bool isEmpty(const IJsonError* obj)
-            {
-                if(obj == nullptr)
-                    return true;
-
-                return obj->line() == -1
-                    && obj->column() == -1
-                    && obj->position() == -1
-                    && strlen(obj->text()) == 0
-                    && strlen(obj->source()) == 0;
-            };
-
-            static bool isEqual(const IJsonError* obj1, const IJsonError* obj2)
-            {
-                return obj1->isEqual(obj2);
-            }
-
+            virtual IJson *create(const char* smpath,  const size_t& flags, SourceMod::ISourceMod* pUtils) =0;
     };
 
     class IJsonObject
     {
-        public:
-            virtual IJson*      get(const char *key) const =0;
+    public:
+        virtual IJson*      get(const char *key) const =0;
 
-        public:
-            virtual bool        set(const char *key, const IJson *value) =0;
-            virtual bool        set(const char *key, const char* value) =0;
-            virtual bool        set(const char *key, double value) =0;
-            virtual bool        set(const char *key, bool value) =0;
-            virtual bool        set(const char *key, long long value) =0;
+    public:
+        virtual bool        set(const char *key, const IJson *value) =0;
+        virtual bool        set(const char *key, const char* value) =0;
+        virtual bool        set(const char *key, double value) =0;
+        virtual bool        set(const char *key, bool value) =0;
+        virtual bool        set(const char *key, long long value) =0;
             
-        public:
-            virtual bool        update(const IJsonObject* another, JsonObjectUpdateType type) =0;
-            virtual JsonType    type(const char *key) const =0;
-            virtual bool        exist(const char *key) const =0;
-            virtual bool        remove(const char *key) =0;
+    public:
+        virtual bool        update(const IJsonObject* another, JsonObjectUpdateType type) =0;
+        virtual JsonType    type(const char *key) const =0;
+        virtual bool        exist(const char *key) const =0;
+        virtual bool        remove(const char *key) =0;
 
-        public:
-            virtual IJsonArray* keys(const JsonType& type, const size_t& flags) const =0;
+    public:
+        virtual IJsonArray* keys(const JsonType& type, const size_t& flags) const =0;
     };
 
     class IJsonArray
@@ -211,11 +165,11 @@ namespace nJansson
     class IJson : public IJsonArray, public IJsonObject
     {
     public:
-        virtual const char *dump(const size_t &decodingFlags) =0;
-        virtual int dump(const char* path, const size_t& flags) = 0;
+        virtual const char *dump(const size_t &decodingFlags) const =0;
+        virtual int dump(const char* path, const size_t& flags) const =0;
 
     public:
-        virtual bool equal(const IJson &json) const =0;
+        virtual bool equal(const IJson* json) const =0;
 
     public:
         virtual bool get(long long *value) =0;
@@ -228,7 +182,7 @@ namespace nJansson
         virtual void clear() =0;
 
     public:
-        virtual IJsonError* error() const =0;
+        virtual const JsonError_t& error() const =0;
         virtual JsonType    type() const =0;
 
     public:
@@ -242,9 +196,9 @@ namespace nJansson
         virtual const char *name() const =0;
         virtual SourceMod::IHandleTypeDispatch* dispatch() const =0;
         virtual SourceMod::HandleType_t parent() const =0;
-        virtual const SourceMod::TypeAccess* access() const =0;
+        virtual const SourceMod::TypeAccess* typeAccess() const =0;
         virtual const SourceMod::HandleAccess* handleAccess() const =0;
-        virtual const SourceMod::IdentityToken_t *ident() const =0;
+        virtual const SourceMod::IdentityToken_t *identity() const =0;
 
     public:
         virtual SourceMod::Handle_t createHandle(void *object,
@@ -263,27 +217,20 @@ namespace nJansson
 
     class IHandleTypeManager
     {
-    protected:
-        virtual const std::vector<IHandleType *>& types() const =0;
+    public:
+        virtual SourceMod::HandleType_t add(const IHandleType* pHType) =0;
+        virtual void remove(const SourceMod::HandleType_t&) =0;
 
     public:
-        virtual SourceMod::HandleType_t registerType(const char* name,
-                                              SourceMod::IHandleTypeDispatch *dispatch  = nullptr,
-                                              const SourceMod::HandleType_t& parent     = 0,
-                                              SourceMod::TypeAccess* access             = nullptr,
-                                              SourceMod::HandleAccess* handleAccess     = nullptr,
-                                              SourceMod::IdentityToken_t *identityToken = nullptr) =0;
-
-        // because HandleType_t an unique
-        virtual void removeType(const SourceMod::HandleType_t&) =0;
-
-    public:
-        virtual const IHandleType* getByName(const char* name) const =0;
-        virtual const IHandleType* getById(const SourceMod::HandleType_t& ident) const =0;
-        virtual const IHandleType* getByIndex(const size_t& index) const =0;
+        virtual const IHandleType* find(const char* name) const =0;
+        virtual const IHandleType* find(const size_t& index) const =0;
+        virtual const IHandleType* find_t(const SourceMod::HandleType_t&) const =0;
 
     public:
         virtual size_t count() const =0;
+
+    protected:
+        virtual const std::vector<const IHandleType *>& container() const =0;
     };
 };
 
