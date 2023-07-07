@@ -5,27 +5,6 @@
 
 #include "jansson/enums.inc"
 
-methodmap JsonError < Handle
-{
-    public static native bool IsEquals(JsonError obj1, JsonError obj2);
-
-    property JsonErrorCode Code {
-        public native get();
-    }
-
-    property int Line {
-        public native get();
-    }
-
-    property int Column {
-        public native get();
-    }
-
-    public native bool Text(char[] buffer, int size);
-    public native bool Source(char[] buffer, int size);
-    public native bool IsEmpty();
-};
-
 // Generic type for encoding JSON.
 methodmap Json < Handle
 {
@@ -58,13 +37,6 @@ methodmap Json < Handle
     // @param obj       Another object
     // @return          True on success
     public native bool Equal(Json obj);
-
-    // ....
-    // 
-    // @return          size in bytes or -1 on failure
-    property int Size {
-        public native get();
-    }
 
     // Retrieves the JSON string representation.
     //
@@ -108,13 +80,24 @@ methodmap Json < Handle
 
     public native void Clear();
 
+    // Size by json type
+    // 
+    // @return          On object - keys count
+    //                  On array  - items count
+    //                  On string  - string length
+    //                  On Invalid - 0
+    //                  On Another - 1
+    property int Size {
+        public native get();
+    }
+
     // Retrieves the type of current object
     property JsonType Type {
         public native get();
     }
 
-    // Retrieves error object
-    property JsonError Error {
+    // Is this json valid
+    property bool Valid {
         public native get();
     }
 };
@@ -321,7 +304,7 @@ methodmap JsonObject < Json
     //
     // @param key        Key string.
     // @return           True on success, false if the key was not found.
-//    public native bool Remove(const char[] key);
+    public native bool Remove(const char[] key);
 
     // Update an object keys.
     //
@@ -339,21 +322,11 @@ methodmap JsonObject < Json
     //
     // @return                      null on zero size
     public native JsonArray Keys(JsonType type = JInvalidType, int flags = 0);
-};
 
-/**
- * A JSONObjectKeys is created via JSONObject.Keys(). It allows the keys of an
- * object to be iterated. The JSONObjectKeys must be freed with delete or
- * CloseHandle().
- */
-methodmap JsonObjectKeyIterator < Handle
-{
-    // Reads an object key, then advances to the next key if any.
-    //
-    // @param buffer     String buffer to store key.
-    // @param maxlength  Maximum length of the string buffer.
-    // @return           True on success, false if there are no more keys.
-    public native bool Next(char[] buffer, int maxlength);
+    // keys count
+    property int Size {
+        public native get();
+    }
 };
 
 methodmap JsonArray < Json
@@ -500,6 +473,11 @@ methodmap JsonArray < Json
     // @param index      Index in the array to remove.
     // @return           True on success, false on invalid index.
     public native bool Remove(int index);
+
+    // keys count
+    property int Size {
+        public native get();
+    }
 };
 
 #include "jansson/stocks.inc"
