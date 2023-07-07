@@ -1,8 +1,6 @@
 #ifndef SM_JANSSON_CHANDLETYPEMANAGER_H
 #define SM_JANSSON_CHANDLETYPEMANAGER_H
 
-#include <shared/HandleSys.h>
-
 #include "CHandleType.h"
 
 namespace nJansson {
@@ -12,31 +10,22 @@ namespace nJansson {
         virtual ~CHandleTypeManager();
 
     public:
-        SourceMod::HandleType_t registerType(const char* name,
-                                             SourceMod::IHandleTypeDispatch *dispatch,
-                                             const SourceMod::HandleType_t& parent,
-                                             SourceMod::TypeAccess* access,
-                                             SourceMod::HandleAccess* handleAccess,
-                                             SourceMod::IdentityToken_t *identityToken) override;
+        SourceMod::HandleType_t add(const IHandleType* pHType) override;
+        void remove(const SourceMod::HandleType_t&) override;
 
-
-        void removeType(const SourceMod::HandleType_t&) override;
-
-        const IHandleType* getByName(const char* name) const override;
-        const IHandleType* getById(const SourceMod::HandleType_t& ident) const override;
-        const IHandleType* getByIndex(const size_t& index) const override;
+    public:
+        const IHandleType* find(const char* name) const override;
+        const IHandleType* find(const size_t& index) const override;
+        const IHandleType* find_t(const SourceMod::HandleType_t& ident) const override;
 
     protected:
-        const std::vector<IHandleType *>& types() const override;
-
-    private:
-        static const QHandleType * getHandleStruct(const char*);
+        const std::vector<const IHandleType *>& container() const override;
 
     public:
         size_t count() const override;
 
     private:
-        std::vector<IHandleType *> m_vecTypes;
+        std::vector<const IHandleType *> m_vecTypes;
     };
 
     using CTypeMgr = CHandleTypeManager;

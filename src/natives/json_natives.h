@@ -10,7 +10,7 @@ extern cell_t JsonDump(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonDumpToFile(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonEqual(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetType(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetError(IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonValidState(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetString(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetInt(IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetBool(IPluginContext *pContext, const cell_t *params);

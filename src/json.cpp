@@ -1,5 +1,3 @@
-#include <src/utils/utils.h>
-
 #include "json.h"
 #include "json_utils.h"
 
@@ -11,7 +9,7 @@ Json::Json(const char *str, const size_t &flags) :
 {
     json_error_t error = {};
     if((m_pJson = json_loads(str, flags, &error)) == nullptr)
-        m_JsonError = error;
+        m_JsonError = convertNativeErrorStruct(&error);
 }
 
 Json::Json(FILE *input, const size_t &flags) :
@@ -20,14 +18,14 @@ Json::Json(FILE *input, const size_t &flags) :
 {
     json_error_t error = {};
     if((m_pJson = json_loadf(input, flags, &error)) == nullptr)
-        m_JsonError = error;
+        m_JsonError = convertNativeErrorStruct(&error);
 }
 
-Json::Json(json_t *json, const JsonError& jsonError, bool increment) :
+Json::Json(json_t *json, const JsonError_t& jsonError, bool increment) :
     m_pJson(json),
     m_JsonError(jsonError)
 {
-    if(m_pJson == nullptr || !IJsonError::isEmpty(&jsonError))
+    if(m_pJson == nullptr || !jsonError.equal(JSON_ERROR_NULL))
         return;
 
     if(increment)
@@ -39,74 +37,75 @@ Json::~Json()
     json_decref(m_pJson);
 }
 
-const char *Json::dump(const size_t& decodingFlags)
-{
+const char *Json::dump(const size_t& decodingFlags) const {
     if(!isOK())
         return nullptr;
 
     return json_dumps(json(), decodingFlags);
 }
 
-int Json::dump(const char *path, const size_t &flags) {
+int Json::dump(const char *path, const size_t &flags) const {
     if(path == nullptr)
         return -1;
 
     return json_dump_file(json(), path, flags);
 }
 
-bool Json::equal(const IJson &json) const
+bool Json::equal(const IJson* json) const
 {
-    Json &link = (Json &) json;
+    if(json == nullptr)
+        return false;
 
-    return m_pJson != nullptr && link.json() == m_pJson;
+    const char* self = dump(0);
+    const char* another = json->dump(0);
+
+    return strcmp(self, another) == 0;
 }
 
-IJsonError *Json::error() const
-{
-    return const_cast<IJsonError *>(((nJansson::IJsonError *) &m_JsonError));
+const JsonError_t& Json::error() const {
+    return m_JsonError;
 }
 
-json_t *Json::json() const
-{
+json_t *Json::json() const {
     return m_pJson;
 }
 
 JsonType Json::type() const
 {
-    if(json() == nullptr || !isOK())
-        return Invalid;
+    if(!isOK())
+        return jtInvalid;
 
     switch (m_pJson->type) {
 
         case JSON_OBJECT:
-            return Object;
+            return jtObject;
 
         case JSON_ARRAY:
-            return Array;
+            return jtArray;
 
         case JSON_STRING:
-            return String;
+            return jtString;
 
         case JSON_INTEGER:
-            return Integer;
+            return jtInteger;
 
         case JSON_REAL:
-            return Real;
+            return jtReal;
 
         case JSON_TRUE:
         case JSON_FALSE:
-            return Boolean;
+            return jtBoolean;
 
         case JSON_NULL:
-            return Null;
+            return jtNull;
     }
 
-    return Invalid;
+    return jtInvalid;
 }
 
 bool Json::get(long long int *value)
 {
-    if(value == nullptr || type() != JsonType::Integer)
+    if(value == nullptr || !isOK() || type() != JsonType::jtInteger)
         return false;
 
     return &(*value = json_integer_value(json())) != nullptr;
@@ -114,7 +113,7 @@ bool Json::get(long long int *value)
 
 bool Json::get(bool *value)
 {
-    if(value == nullptr || type() != JsonType::Boolean)
+    if(value == nullptr || !isOK() || type() != JsonType::jtBoolean)
         return false;
 
     return &(*value = json_boolean_value(json())) != nullptr;
@@ -122,7 +121,7 @@ bool Json::get(bool *value)
 
 bool Json::get(double *value)
 {
-    if(value == nullptr || type() != JsonType::Real)
+    if(value == nullptr || !isOK() || type() != JsonType::jtReal)
         return false;
 
     return &(*value = json_real_value(json())) != nullptr;
@@ -130,18 +129,18 @@ bool Json::get(double *value)
 
 const char* Json::get()
 {
-    if(type() != JsonType::String)
+    if(!isOK() || type() != JsonType::jtString)
         return nullptr;
 
     return json_string_value(json());
 }
 
 IJson *Json::get(const char *key) const {
-    return new Json(get_t(key), JsonError {}, true);
+    return new Json(get_t(key), JSON_ERROR_NULL, true);
 }
 
 IJson *Json::get(const size_t &index) const {
-    return new Json(get_t(index), JsonError {}, true);
+    return new Json(get_t(index), JSON_ERROR_NULL, true);
 }
 
 bool Json::set(const char *key, const IJson *value) {
@@ -221,16 +220,16 @@ bool Json::update(const IJsonObject *another, JsonObjectUpdateType type) {
 
     switch(type)
     {
-        case Default:
+        case utDefault:
             updateFunc = json_object_update;
             break;
-        case Existing:
+        case utExisting:
             updateFunc = json_object_update_existing;
             break;
-        case Missing:
+        case utMissing:
             updateFunc = json_object_update_missing;
             break;
-        case Recursive:
+        case utRecursive:
             updateFunc = json_object_update_recursive;
             break;
     }
@@ -247,7 +246,7 @@ bool Json::extend(const IJsonArray *another) {
 }
 
 JsonType Json::type(const char *key) const {
-    return Json(get_t(key), JsonError{}).type();
+    return Json(get_t(key), JSON_ERROR_NULL).type();
 }
 
 json_t *Json::get_t(const char *key) const {
@@ -259,7 +258,7 @@ json_t *Json::get_t(const size_t &index) const {
 }
 
 JsonType Json::type(const size_t &index) const {
-    return Json(get_t(index), JsonError{}).type();
+    return Json(get_t(index), JSON_ERROR_NULL).type();
 }
 
 bool Json::exist(const char *key) const {
@@ -268,10 +267,10 @@ bool Json::exist(const char *key) const {
 
 void Json::clear() {
     switch (type()) {
-        case Array: json_array_clear(json());
+        case jtArray: json_array_clear(json());
             break;
             
-        case Object: json_object_clear(json());
+        case jtObject: json_object_clear(json());
             break;
 
         default: break;
@@ -290,17 +289,17 @@ size_t Json::size() const {
     size_t (*pSize) (const json_t*);
     
     switch (type()) {
-        case Array: pSize = json_array_size;
+        case jtArray: pSize = json_array_size;
             break;
             
-        case Object: pSize = json_object_size;
+        case jtObject: pSize = json_object_size;
             break;
 
-        case String:
+        case jtString:
             pSize = json_string_size;
             break;
 
-        case Invalid:
+        case jtInvalid:
             return 0;
 
         default: return 1;
@@ -310,7 +309,7 @@ size_t Json::size() const {
 }
 
 IJsonArray* Json::keys(const JsonType& type, const size_t& flags) const {
-    if(this->type() != Object || !size())
+    if(this->type() != jtObject || !size())
         return nullptr;
 
     const char* buffer;
@@ -319,13 +318,26 @@ IJsonArray* Json::keys(const JsonType& type, const size_t& flags) const {
     for(void* iter = json_object_iter(m_pJson);
         (buffer = json_object_iter_key(iter));
         iter = json_object_iter_next(m_pJson, iter))
-        if(type == Invalid || this->type(buffer) == type)
+        if(type == jtInvalid || this->type(buffer) == type)
             keys->push(buffer);
 
     return keys;
 }
 
 bool Json::isOK() const {
-    return json() != nullptr && IJsonError::isEmpty(error());
+    return m_pJson != nullptr && m_JsonError.equal(JSON_ERROR_NULL);
+}
+
+JsonError_t Json::convertNativeErrorStruct(const json_error_t *error) {
+    JsonError_t buffer {
+        error->line,
+        error->column,
+        error->position
+    };
+
+    strcpy_s(buffer.source, strlen(error->source) + 1, error->source);
+    strcpy_s(buffer.source, strlen(error->text), error->text);
+
+    return buffer;
 }
 

@@ -14,7 +14,7 @@ IJson *Jansson::create(FILE *input, const size_t &flags)
     return new Json(input, flags);
 }
 
-IJson *Jansson::createp(const char *path, const size_t &flags, SourceMod::ISourceMod *utils) {
+IJson *Jansson::create(const char *path, const size_t &flags, SourceMod::ISourceMod *utils) {
     if(utils == nullptr || path == nullptr)
         return nullptr;
 
@@ -25,10 +25,10 @@ IJson *Jansson::createp(const char *path, const size_t &flags, SourceMod::ISourc
     json_error_t error = {};
     object = json_load_file(fullPath, flags, &error);
 
-    return new Json(object, error, false);
+    return new Json(object, Json::convertNativeErrorStruct(&error), false);
 }
 
-IHandleTypeManager *Jansson::typeManager() const {
+IHandleTypeManager *Jansson::types() const {
     return m_pHandleTypeManager;
 }
 

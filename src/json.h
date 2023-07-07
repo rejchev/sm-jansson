@@ -1,7 +1,8 @@
 #ifndef _INCLUDE_SOURCEMOD_JANSSON_JSON_H_
 #define _INCLUDE_SOURCEMOD_JANSSON_JSON_H_
 
-#include "json_error.h"
+#include <public/IJansson.h>
+#include <jansson.h>
 
 namespace nJansson
 {
@@ -10,17 +11,17 @@ namespace nJansson
     public:
         Json(const char * = nullptr,  const size_t& = 0);
         Json(FILE *,        const size_t& = 0);
-        Json(json_t*,       const JsonError&, bool = true);
+        Json(json_t*,       const JsonError_t&, bool = true);
         Json(const Json&) = default;
 
         virtual ~Json();
 
     public:
-        const char *dump(const size_t &decodingFlags) override;
-        int dump(const char* path, const size_t& flags) override;
+        const char *dump(const size_t &decodingFlags) const override;
+        int dump(const char* path, const size_t& flags) const override;
 
     public:
-        bool equal(const IJson &json) const override;
+        bool equal(const IJson* json) const override;
 
     public:
         bool get(long long *value) override;
@@ -29,7 +30,7 @@ namespace nJansson
         const char* get() override;
 
     public:
-        IJsonError  *error() const override;
+        const JsonError_t& error() const override;
         JsonType    type() const override;
 
     protected:
@@ -90,9 +91,12 @@ namespace nJansson
     public:
         virtual json_t *json() const;
 
+    public:
+        static JsonError_t convertNativeErrorStruct(const json_error_t*);
+
     private:
         json_t *m_pJson;
-        JsonError m_JsonError;
+        JsonError_t m_JsonError;
     };
 }
 

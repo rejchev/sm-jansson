@@ -9,7 +9,7 @@ namespace nJansson {
             return nullptr;
 
         const IHandleType* type;
-        if((type = face->typeManager()->getByName(typeName)) == nullptr || type->id() == 0)
+        if((type = face->types()->find(typeName)) == nullptr || type->id() == NO_HANDLE_TYPE)
             type = nullptr;
 
         if(type == nullptr)
@@ -83,15 +83,14 @@ namespace nJansson {
     }
 
     bool PluginContextUtils::ThrowJsonError(IPluginContext *ctx, IJson *json) {
-        if(nJansson::IJsonError::isEmpty(json->error()))
+        if(json->isOK())
             return false;
 
-        ctx->ReportError("Json is invalid (code: %d, source: %s): %s [line: %d, column: %d]",
-                              json->error()->code(),
-                              json->error()->source(),
-                              json->error()->text(),
-                              json->error()->line(),
-                              json->error()->column());
+        ctx->ReportError("Json is invalid (source: %s): %s [line: %d, column: %d]",
+                              json->error().source,
+                              json->error().text,
+                              json->error().line,
+                              json->error().column);
 
         return true;
     }
