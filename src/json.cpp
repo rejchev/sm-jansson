@@ -1,4 +1,4 @@
-#include <cstring>
+#include <amtl/am-string.h>
 
 #include "json.h"
 #include "json_utils.h"
@@ -337,8 +337,8 @@ JsonError_t Json::convertNativeErrorStruct(const json_error_t *error) {
         error->position
     };
 
-    strcpy_s(buffer.source, strlen(error->source) + 1, error->source);
-    strcpy_s(buffer.source, strlen(error->text), error->text);
+    ke::SafeStrcpyN(buffer.source, PLATFORM_MAX_PATH, error->source, strlen(error->source) + 1);
+    ke::SafeStrcpyN(buffer.text, PLATFORM_MAX_PATH, error->text, strlen(error->text));
 
     return buffer;
 }
