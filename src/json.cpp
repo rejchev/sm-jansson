@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "json.h"
 #include "json_utils.h"
 
