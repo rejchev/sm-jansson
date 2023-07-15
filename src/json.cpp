@@ -53,15 +53,8 @@ int Json::dump(const char *path, const size_t &flags) const {
     return json_dump_file(json(), path, flags);
 }
 
-bool Json::equal(const IJson* json) const
-{
-    if(json == nullptr)
-        return false;
-
-    const char* self = dump(0);
-    const char* another = json->dump(0);
-
-    return strcmp(self, another) == 0;
+bool Json::equal(const IJson* json) const {
+    return json_equal(this->json(), ((Json*)json)->json());
 }
 
 const JsonError_t& Json::error() const {
