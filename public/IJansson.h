@@ -111,8 +111,11 @@ namespace nJansson
             // create from file stream
             virtual IJson *create(FILE *input,   const size_t &flags) =0;
 
-            // create from sm file path
-            virtual IJson *create(const char* smpath,  const size_t& flags, SourceMod::ISourceMod* pUtils) =0;
+        // create from sm file path
+        virtual IJson *create(const char* fullPath,  const size_t& flags, SourceMod::ISourceMod* pUtils) =0;
+
+    public:
+        virtual void close(IJson* json) =0;
     };
 
     class IJsonObject

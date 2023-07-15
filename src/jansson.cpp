@@ -39,3 +39,7 @@ Jansson::Jansson(const CHandleTypeManager& manager) :
 Jansson::~Jansson() {
     delete (CHandleTypeManager*) m_pHandleTypeManager;
 }
+
+void Jansson::close(IJson *json) {
+    delete (Json*) json;
+}

@@ -19,6 +19,9 @@ namespace nJansson
         IJson *create(const char*,  const size_t& flags, SourceMod::ISourceMod* utils) override;
 
     public:
+        void close(IJson* json) override;
+
+    public:
         IHandleTypeManager* types() const override;
 
     private:
