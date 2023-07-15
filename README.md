@@ -58,7 +58,7 @@ public void OnMapStart() {
     //          
     //      ] 
     // }
-    jsonObject.Set("array", jsonArray);
+    asJSONO(jsonObject).Set("array", jsonArray);
     
     delete jsonArray;
     
