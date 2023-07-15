@@ -10,7 +10,14 @@
 #include <cstring>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
-#define SMINTERFACE_JANSSON_VERSION	    07072023
+
+// xxxxxxxxyyyyyyyyyyzzzzzzzzzzz
+// x = 8    bits - major
+// y = 12   bits - minor
+// z = 12   bits - bugs
+//
+// on y & z changes guaranteed backward compatibility
+#define SMINTERFACE_JANSSON_VERSION	    ((0 << 24) & (0 << 12) & 0)
 
 namespace nJansson
 {
@@ -91,18 +98,20 @@ namespace nJansson
 
     class IJansson : public SourceMod::SMInterface
     {
-        public:
-            const char *GetInterfaceName() override
-            {
-                return SMINTERFACE_JANSSON_NAME;
-            }
-            unsigned int GetInterfaceVersion() override
-            {
-                return SMINTERFACE_JANSSON_VERSION;
-            }
+    public:
+        const char *GetInterfaceName() override {
+            return SMINTERFACE_JANSSON_NAME;
+        }
+        unsigned int GetInterfaceVersion() override {
+            return SMINTERFACE_JANSSON_VERSION;
+        }
 
-        public:
-            virtual IHandleTypeManager* types() const =0;
+        bool IsVersionCompatible(unsigned int version) override {
+            return (((GetInterfaceVersion() >> 24) & (version >> 24)) == 1);
+        }
+
+    public:
+        virtual IHandleTypeManager* types() const =0;
 
     public:
         // create from string
