@@ -1,8 +1,6 @@
-#include <src/json.h>
-
 #include "json_a_natives.h"
 
-bool IsObjectAnArrayObject(nJansson::IJS* obj) {
+bool IsObjectArrayObject(nJansson::IJS* obj) {
     return obj != nullptr && obj->type() == nJansson::jtArray;
 }
 
@@ -19,7 +17,7 @@ cell_t JsonArrayGetJson(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     Handle_t handle;
@@ -51,7 +49,7 @@ cell_t JsonArrayGetInt(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJS* buffer;
@@ -62,7 +60,8 @@ cell_t JsonArrayGetInt(IPluginContext *pContext, const cell_t *params) {
     if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[3] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json*) buffer;
+    pJansson->close(buffer);
+
     return (cell_t)value;
 }
 
@@ -82,7 +81,7 @@ cell_t JsonArrayGetBool(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJS* buffer;
@@ -93,7 +92,8 @@ cell_t JsonArrayGetBool(IPluginContext *pContext, const cell_t *params) {
     if(buffer->type() == nJansson::jtBoolean && buffer->get(&value) && params[3] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json*) buffer;
+    pJansson->close(buffer);
+
     return (cell_t)value;
 }
 
@@ -110,7 +110,7 @@ cell_t JsonArrayGetFloat(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJS* buffer;
@@ -121,7 +121,8 @@ cell_t JsonArrayGetFloat(IPluginContext *pContext, const cell_t *params) {
     if(buffer->type() == nJansson::jtReal && buffer->get(&value) && params[3] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json*) buffer;
+    pJansson->close(buffer);
+
     return sp_ftoc((float)value);
 }
 
@@ -138,7 +139,7 @@ cell_t JsonArrayGetString(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJS* buffer;
@@ -152,7 +153,8 @@ cell_t JsonArrayGetString(IPluginContext *pContext, const cell_t *params) {
     if(value != nullptr)
         pContext->StringToLocalUTF8(params[3], params[4], buffer->get(), nullptr);
 
-    delete (nJansson::Json*) buffer;
+    pJansson->close(buffer);
+
     return value != nullptr;
 }
 
@@ -169,7 +171,7 @@ cell_t JsonArraySetJson(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJS* buffer;
@@ -196,7 +198,7 @@ cell_t JsonArraySetInt(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->set(params[2], (long long)params[3]);
@@ -215,7 +217,7 @@ cell_t JsonArraySetBool(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->set(params[2], (bool)params[3]);
@@ -234,7 +236,7 @@ cell_t JsonArraySetFloat(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->set(params[2], sp_ctof(params[3]));
@@ -253,7 +255,7 @@ cell_t JsonArraySetString(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     char* value;
@@ -275,7 +277,7 @@ cell_t JsonArrayPushJson(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJS* buffer;
@@ -302,7 +304,7 @@ cell_t JsonArrayPushInt(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->push((long long)params[2]);
@@ -321,7 +323,7 @@ cell_t JsonArrayPushBool(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->push((bool)params[2]);
@@ -340,7 +342,7 @@ cell_t JsonArrayPushFloat(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->push(sp_ctof(params[2]));
@@ -359,7 +361,7 @@ cell_t JsonArrayPushString(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     char* value;
@@ -381,7 +383,7 @@ cell_t JsonArrayGetType(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return -1;
 
     nJansson::IJS* buffer;
@@ -390,7 +392,8 @@ cell_t JsonArrayGetType(IPluginContext *pContext, const cell_t *params) {
 
     nJansson::JsonType type = buffer->type();
 
-    delete (nJansson::Json *) buffer;
+    pJansson->close(buffer);
+
     return type;
 }
 
@@ -410,7 +413,7 @@ cell_t JsonArrayExtend(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     nJansson::IJsonArray* buffer;
@@ -419,7 +422,7 @@ cell_t JsonArrayExtend(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[2], IsObjectAnArrayObject)) == nullptr)
+            params[2], IsObjectArrayObject)) == nullptr)
         return 0;
 
     if(!json->extend(buffer))
@@ -444,7 +447,7 @@ cell_t JsonArrayRemove(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return json->remove(params[2]);
@@ -463,7 +466,7 @@ cell_t JsonArrayGetSize(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnArrayObject)) == nullptr)
+            params[1], IsObjectArrayObject)) == nullptr)
         return 0;
 
     return (cell_t)json->size();

@@ -1,7 +1,6 @@
 #include "json_natives.h"
 
-cell_t JsonCreate(IPluginContext *pContext, const cell_t *params)
-{
+cell_t JsonCreate(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
         return BAD_HANDLE;

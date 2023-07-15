@@ -1,8 +1,6 @@
-#include <src/json.h>
-
 #include "json_o_natives.h"
 
-bool IsObjectAnJsonObject(nJansson::IJson* obj) {
+bool IsObjectJsonObject(nJansson::IJson* obj) {
     return obj != nullptr && obj->type() == nJansson::jtObject;
 }
 
@@ -19,7 +17,7 @@ cell_t JsonObjectGetJson(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -51,7 +49,7 @@ cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -65,7 +63,8 @@ cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
     if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[3] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json *) buffer;
+    pJansson->close(buffer);
+
     return (cell_t)value;
 }
 
@@ -82,7 +81,7 @@ cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -96,7 +95,8 @@ cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
     if(buffer->type() == nJansson::jtBoolean && buffer->get(&value) && params[3] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json *) buffer;
+    pJansson->close(buffer);
+
     return (cell_t)value;
 }
 
@@ -113,7 +113,7 @@ cell_t JsonObjectGetFloat(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -127,7 +127,8 @@ cell_t JsonObjectGetFloat(IPluginContext *pContext, const cell_t *params) {
     if(buffer->type() == nJansson::jtReal && buffer->get(&value) && params[3] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json *) buffer;
+    pJansson->close(buffer);
+
     return sp_ftoc((float)value);
 }
 
@@ -144,7 +145,7 @@ cell_t JsonObjectGetString(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -164,7 +165,8 @@ cell_t JsonObjectGetString(IPluginContext *pContext, const cell_t *params) {
     if(wbt && params[4] == 1)
         nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
 
-    delete (nJansson::Json *) buffer;
+    pJansson->close(buffer);
+
     return 1;
 }
 
@@ -181,7 +183,7 @@ cell_t JsonObjectSetJson(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -210,7 +212,7 @@ cell_t JsonObjectSetInt(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -232,7 +234,7 @@ cell_t JsonObjectSetBool(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -254,7 +256,7 @@ cell_t JsonObjectSetFloat(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -276,7 +278,7 @@ cell_t JsonObjectSetString(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -301,7 +303,7 @@ cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return -1;
 
     char* key;
@@ -313,7 +315,8 @@ cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params) {
 
     nJansson::JsonType type = buffer->type();
 
-    delete (nJansson::Json*) buffer;
+    pJansson->close(buffer);
+
     return type;
 }
 
@@ -330,7 +333,7 @@ cell_t JsonObjectHasKey(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -352,7 +355,7 @@ cell_t JsonObjectRemoveKey(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     char* key;
@@ -374,7 +377,7 @@ cell_t JsonObjectUpdate(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     nJansson::IJsonObject* buffer;
@@ -383,7 +386,7 @@ cell_t JsonObjectUpdate(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[2], IsObjectAnJsonObject)) == nullptr)
+            params[2], IsObjectJsonObject)) == nullptr)
         return 0;
 
     bool success;
@@ -407,7 +410,7 @@ cell_t JsonObjectKeys(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
 
     return (cell_t) nJansson::PCU::CreateHandle(
@@ -428,7 +431,7 @@ cell_t JsonObjectSize(IPluginContext *pContext, const cell_t *params) {
             g_pHandleSys,
             pType,
             &sec,
-            params[1], IsObjectAnJsonObject)) == nullptr)
+            params[1], IsObjectJsonObject)) == nullptr)
         return 0;
     
     return (cell_t)json->size();
