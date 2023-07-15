@@ -104,12 +104,12 @@ namespace nJansson
         public:
             virtual IHandleTypeManager* types() const =0;
 
-        public:
-            // create from string
-            virtual IJson *create(const char *str,  const size_t &flags) =0;
+    public:
+        // create from string
+        virtual IJson *create(const char *str,  const size_t &flags) =0;
 
-            // create from file stream
-            virtual IJson *create(FILE *input,   const size_t &flags) =0;
+        // create from file stream
+        virtual IJson *create(FILE *input,   const size_t &flags) =0;
 
         // create from sm file path
         virtual IJson *create(const char* fullPath,  const size_t& flags, SourceMod::ISourceMod* pUtils) =0;

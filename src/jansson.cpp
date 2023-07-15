@@ -1,7 +1,5 @@
 #include "jansson.h"
 
-#include <sm_platform.h>
-
 using namespace nJansson;
 
 IJson *Jansson::create(const char *str, const size_t& flags)
@@ -14,12 +12,9 @@ IJson *Jansson::create(FILE *input, const size_t &flags)
     return new Json(input, flags);
 }
 
-IJson *Jansson::create(const char *path, const size_t &flags, SourceMod::ISourceMod *utils) {
-    if(utils == nullptr || path == nullptr)
+IJson *Jansson::create(const char *fullPath, const size_t &flags, SourceMod::ISourceMod *utils) {
+    if(utils == nullptr || fullPath == nullptr)
         return nullptr;
-
-    char fullPath[PLATFORM_MAX_PATH];
-    utils->BuildPath(SourceMod::Path_Game, fullPath, sizeof(fullPath), "%s", path);
 
     json_t* object;
     json_error_t error = {};
