@@ -3,7 +3,59 @@
 #endif
 #define _jansson_included_
 
-#include "jansson/enums.inc"
+// Maximum indentation
+#define JsonMaxIndent 0x1F
+
+// Pretty-print the result, identing with n spaces
+stock int JsonPretty(int n, const int max = JsonMaxIndent) {
+    return n & max;
+}
+
+// Output floats with at most n digits of precision
+stock int JsonFloatPrecision(int n, const int mask = JsonMaxIndent) {
+    return (n & mask) << 11;
+}
+
+enum JsonDecodingFlag
+{
+    RejectDuplicates        = 0x1,		/**< Error if any JSON object contains duplicate keys */
+    DisableEOFCheck         = 0x2,		/**< Allow extra data after a valid JSON array or object */
+    DecodeAny               = 0x4,		/**< Decode any value */
+    DecodeIntegerAsReal     = 0x8,		/**< Interpret all numbers as floats */
+    AllowNull               = 0x10		/**< Allow \u0000 escape inside string values */
+};
+
+enum JsonEncodingFlag
+{
+    Compact                 = 0x20,		    /**< Compact representation */
+    EnsureASCII             = 0x40,		    /**< Escape all Unicode characters outside the ASCII range */
+    SortKeys                = 0x80,		    /**< Sort object keys */
+    EncodeAny               = 0x200,		/**< Encode any value */
+    EscapeSlash             = 0x400,		/**< Escape / with \/ */
+    Embed                   = 0x10000
+};
+
+// Json types
+enum JsonType
+{
+    JInvalidType = -1,
+    JObjectType,
+    JArrayType,
+    JStringType,
+    JIntegerType,
+    JRealType,
+    JBooleanType,
+    JNullType
+};
+
+// Json object update types
+enum JsonObjectUpdateType
+{
+    UpdDefault = 0,
+    UpdExisting,
+    UpdMissing,
+    UpdRecursive
+};
 
 // Generic type for encoding JSON.
 methodmap Json < Handle
@@ -61,6 +113,13 @@ methodmap Json < Handle
     //
     // @return              Value
     public native int AsInt(bool freeHandle = false);
+
+    // View Json as int64 (must be JsonType::Integer).
+    //
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              Value
+    public native bool AsInt64(char[] buffer, int size, bool freeHandle = false);
 
     // View Json as float (must be JsonType::Real).
     //
@@ -137,12 +196,13 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        JsonType type;
-        if((type = buffer.Type) == JBooleanType)
-            value = buffer.AsBool(true);
+        value = buffer.AsBool(true);
 
-        delete buffer;
-        return type == JBooleanType;
+        bool success;
+        if(!(success = buffer == null))
+            delete buffer;
+
+        return success;
     }
 
     // Retrieves a float value from the object.
@@ -167,12 +227,13 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        JsonType type;
-        if((type = buffer.Type) == JRealType)
-            value = buffer.AsFloat(true);
+        value = buffer.AsFloat(true);
 
-        delete buffer;
-        return type == JRealType;
+        bool success;
+        if(!(success = buffer == null))
+            delete buffer;
+
+        return success;
     }
 
     // Retrieves an integer value from the object.
@@ -199,12 +260,13 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        JsonType type;
-        if((type = buffer.Type) == JIntegerType)
-            value = buffer.AsBool(true);
+        value = buffer.AsInt(true);
 
-        delete buffer;
-        return type == JIntegerType;
+        bool success;
+        if(!(success = buffer == null))
+            delete buffer;
+
+        return success;
     }
 
     // Retrieves a 64-bit integer value from the object.
@@ -213,7 +275,27 @@ methodmap JsonObject < Json
     // @param buffer     String buffer to store value.
     // @param maxlength  Maximum length of the string buffer.
     // @return           True on success, false if the key was not found.
-//    public native bool GetInt64(const char[] key, char[] buffer, int maxlength);
+    public native bool GetInt64(const char[] key, char[] buffer, int maxlength, bool freeHandle = false);
+
+    // Trying to get int64 value 
+    //
+    // @param key        Key string
+    // @param value      String buffer for storage value
+    // @param size       Buffer size
+    // @return           True on success
+    public bool TryGetInt64(const char[] key, char[] value, int size, bool freeHandle = false)
+    {
+        value[0] = '\0';
+
+        Json buffer;
+        if(!(buffer = this.Get(key, freeHandle)))
+            return false;
+
+        if(!buffer.AsInt64(value, size, true))
+            delete buffer;
+        
+        return value[0] != '\0';
+    }
 
     // Retrieves a string value from the object.
     //
@@ -224,7 +306,7 @@ methodmap JsonObject < Json
     // @return              True on success. False if the key was not found, or the value is not a string.
     public native bool GetString(const char[] key, char[] buffer, int maxlength, bool freeHandle = false)
     
-    // Trying to get a Json value 
+    // Trying to get string value 
     //
     // @param key        Key string
     // @param value      String buffer for storage value
@@ -238,12 +320,10 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        JsonType type;
-        if((type = buffer.Type) == JStringType)
-            buffer.AsString(value, size, true);
-
-        delete buffer;
-        return type == JStringType;
+        if(!buffer.AsString(value, size, true))
+            delete buffer;
+        
+        return value[0] != '\0';
     }
 
     // Retrieves an item type from the array.
@@ -291,7 +371,7 @@ methodmap JsonObject < Json
     // @param key        Key string.
     // @param value      Value to store at this key.
     // @return           True on success, false on failure.
-//    public native bool SetInt64(const char[] key, const char[] value);
+    public native bool SetInt64(const char[] key, const char[] value);
 
     // Sets a string value in the object, either inserting a new entry or replacing an old one.
     //
@@ -367,7 +447,7 @@ methodmap JsonArray < Json
     // @param buffer     Buffer to copy to.
     // @param maxlength  Maximum size of the buffer.
     // @error            Invalid index.
-//    public native bool GetInt64(int index, char[] buffer, int maxlength);
+    public native bool GetInt64(int index, char[] buffer, int maxlength, bool freeHandle = false);
 
     // Retrieves a string value from the array.
     //
@@ -417,7 +497,7 @@ methodmap JsonArray < Json
     // @param index      Index in the array.
     // @param value      64-bit integer value to set.
     // @return           True on success, false on failure.
-//    public native bool SetInt64(int index, const char[] value);
+    public native bool SetInt64(int index, const char[] value);
 
     // Sets a string value in the array.
     //
@@ -454,7 +534,7 @@ methodmap JsonArray < Json
     //
     // @param value      64-bit integer value to push.
     // @return           True on success, false on failure.
-//    public native bool PushInt64(const char[] value);
+    public native bool PushInt64(const char[] value);
 
     // Pushes a string value onto the end of the array, adding a new index.
     //
@@ -480,8 +560,130 @@ methodmap JsonArray < Json
     }
 };
 
-#include "jansson/stocks.inc"
-#include "jansson/builder.inc"
+#define asJSON(%0) view_as<Json>(%0)
+#define asJSONO(%0) view_as<JsonObject>(%0)
+#define asJSONA(%0) view_as<JsonArray>(%0)
+
+#if defined JSON_INCLUDE_BUILDER
+
+#define asJSONB(%0) view_as<JsonBuilder>(%0)
+
+methodmap JsonBuilder < Json
+{
+    public JsonBuilder(const char[] str)
+    {
+        return view_as<JsonBuilder>(new Json(str));
+    }
+
+    public JsonBuilder SetString(const char[] k, const char[] v)
+    {
+        if(this.Type == JObjectType)
+            asJSONO(this).SetString(k, v);
+
+        return this;
+    }
+
+    public JsonBuilder Set(const char[] k, Json v)
+    {
+        if(this.Type == JObjectType)
+            asJSONO(this).Set(k, v);
+
+        return this;
+    }
+
+    public JsonBuilder SetInt(const char[] k, int v)
+    {
+        if(this.Type == JObjectType)
+            asJSONO(this).SetInt(k, v);
+
+        return this;
+    }
+
+    public JsonBuilder SetBool(const char[] k, bool v)
+    {
+        if(this.Type == JObjectType)
+            asJSONO(this).SetBool(k, v);
+
+        return this;
+    }
+
+    public JsonBuilder SetInt64(const char[] k, const char[] v)
+    {
+        if(this.Type == JObjectType)
+            asJSONO(this).SetInt64(k, v);
+
+        return this;
+    }
+
+    public JsonBuilder SetFloat(const char[] k, float v)
+    {
+        if(this.Type == JObjectType)
+            asJSONO(this).SetFloat(k, v);
+
+        return this;
+    }
+
+    public JsonBuilder PushString(const char[] v)
+    {
+        if(this.Type == JArrayType)
+            asJSONA(this).PushString(v);
+
+        return this;
+    }
+
+    public JsonBuilder PushInt(int v)
+    {
+        if(this.Type == JArrayType)
+            asJSONA(this).PushInt(v);
+
+        return this;
+    }
+
+    public JsonBuilder PushInt64(const char[] v)
+    {
+        if(this.Type == JArrayType)
+            asJSONA(this).PushInt64(v);
+
+        return this;
+    }
+
+    public JsonBuilder PushBool(bool v)
+    {
+        if(this.Type == JArrayType)
+            asJSONA(this).PushBool(v);
+
+        return this;
+    }
+
+    public JsonBuilder Push(Json v)
+    {
+        if(this.Type == JArrayType)
+            asJSONA(this).Push(v);
+
+        return this;
+    }
+
+    public JsonBuilder PushFloat(float v)
+    {
+        if(this.Type == JArrayType)
+            asJSONA(this).PushFloat(v);
+
+        return this;
+    }
+
+    public JsonBuilder Clear()
+    {
+        asJSON(this).Clear();
+
+        return this;
+    }
+
+    public Json Build()
+    {
+        return asJSON(this);
+    }
+}
+#endif
 
 /**
  * Do not edit below this line!

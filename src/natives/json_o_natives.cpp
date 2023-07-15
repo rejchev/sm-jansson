@@ -68,6 +68,45 @@ cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
     return (cell_t)value;
 }
 
+cell_t JsonObjectGetInt64(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJsonObject* json;
+    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[1], IsObjectJsonObject)) == nullptr)
+        return 0;
+
+    char* key;
+    pContext->LocalToString(params[2], &key);
+
+    nJansson::IJson* buffer;
+    if((buffer = json->get(key)) == nullptr)
+        return 0;
+
+    long long value = 0;
+    if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[5] == 1)
+        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+
+    pJansson->close(buffer);
+
+    pContext->StringToLocalUTF8(
+            params[3],
+            params[4],
+            std::to_string(value).c_str(),
+            nullptr);
+
+    return 1;
+}
+
+
 cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
@@ -290,6 +329,34 @@ cell_t JsonObjectSetString(IPluginContext *pContext, const cell_t *params) {
     return json->set(key, val);
 }
 
+cell_t JsonObjectSetInt64(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJSO* json;
+    if((json = (nJansson::IJSO *) nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[1], IsObjectJsonObject)) == nullptr)
+        return 0;
+
+    char* key;
+    pContext->LocalToString(params[2], &key);
+
+    char* value;
+    pContext->LocalToString(params[3], &value);
+
+    char* end;
+    long long num = std::strtoll(value, &end, 10);
+
+    return ((*end) ? 0 : json->set(key, num));
+}
+
 cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
@@ -444,11 +511,15 @@ const sp_nativeinfo_t JSON_OBJECT_NATIVES[] =
         {"JsonObject.GetBool",      JsonObjectGetBool    },
         {"JsonObject.GetInt",       JsonObjectGetInt     },
         {"JsonObject.GetFloat",     JsonObjectGetFloat   },
+        { "JsonObject.GetInt64", JsonObjectGetInt64 },
+
         {"JsonObject.Set",          JsonObjectSetJson    },
         {"JsonObject.SetString",    JsonObjectSetString  },
         {"JsonObject.SetBool",      JsonObjectSetBool    },
         {"JsonObject.SetInt",       JsonObjectSetInt     },
         {"JsonObject.SetFloat",     JsonObjectSetFloat   },
+        { "JsonObject.SetInt64", JsonObjectSetInt64 },
+
         {"JsonObject.GetType",      JsonObjectGetType    },
         {"JsonObject.HasKey",       JsonObjectHasKey     },
         { "JsonObject.Remove", JsonObjectRemoveKey },

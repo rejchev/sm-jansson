@@ -158,6 +158,44 @@ cell_t JsonArrayGetString(IPluginContext *pContext, const cell_t *params) {
     return value != nullptr;
 }
 
+cell_t JsonArrayGetInt64(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJSA* json;
+    if((json = (nJansson::IJSA *) nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[1], IsObjectArrayObject)) == nullptr)
+        return 0;
+
+    nJansson::IJS* buffer;
+    if((buffer = json->get(params[2])) == nullptr)
+        return 0;
+
+    long long value = 0;
+    if(buffer->type() != nJansson::jtInteger || !buffer->get(&value)) {
+        pJansson->close(buffer);
+        return 0;
+    }
+
+    pJansson->close(buffer);
+
+    pContext->StringToLocalUTF8(
+        params[3], params[4], std::to_string(value).c_str(), nullptr
+    );
+
+    if(params[5] == 1)
+        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+
+    return 1;
+}
+
 cell_t JsonArraySetJson(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
@@ -175,11 +213,12 @@ cell_t JsonArraySetJson(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     nJansson::IJS* buffer;
-    if((buffer = static_cast<nJansson::IJS *>
-            (nJansson::PCU::ReadHandle(pContext, g_pHandleSys, pType, &sec, params[3]))) == nullptr)
-        return 0;
-
-    if(nJansson::PCU::ThrowJsonError(pContext, buffer))
+    if((buffer = nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[3])) == nullptr)
         return 0;
 
     return json->set(params[2], buffer);
@@ -242,6 +281,31 @@ cell_t JsonArraySetFloat(IPluginContext *pContext, const cell_t *params) {
     return json->set(params[2], sp_ctof(params[3]));
 }
 
+cell_t JsonArraySetInt64(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJSA* json;
+    if((json = (nJansson::IJSA *) nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[1], IsObjectArrayObject)) == nullptr)
+        return 0;
+
+    char* value;
+    pContext->LocalToString(params[3], &value);
+
+    char* end;
+    long long num = std::strtoll(value, &end, 10);
+
+    return ((*end) ? 0 : json->set(params[2], num));
+}
+
 cell_t JsonArraySetString(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
@@ -281,11 +345,12 @@ cell_t JsonArrayPushJson(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     nJansson::IJS* buffer;
-    if((buffer = static_cast<nJansson::IJS*>
-            (nJansson::PCU::ReadHandle(pContext, g_pHandleSys, pType, &sec, params[2]))) == nullptr)
-        return 0;
-
-    if(nJansson::PCU::ThrowJsonError(pContext, buffer))
+    if((buffer = nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[2])) == nullptr)
         return 0;
 
     return json->push(buffer);
@@ -368,6 +433,31 @@ cell_t JsonArrayPushString(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &value);
 
     return json->push(value);
+}
+
+cell_t JsonArrayPushInt64(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJSA* json;
+    if((json = (nJansson::IJSA *) nJansson::PCU::ReadJsonHandle(
+            pContext,
+            g_pHandleSys,
+            pType,
+            &sec,
+            params[1], IsObjectArrayObject)) == nullptr)
+        return 0;
+
+    char* value;
+    pContext->LocalToString(params[2], &value);
+
+    char* end;
+    long long num = std::strtoll(value, &end, 10);
+
+    return ((*end) ? 0 : json->push(num));
 }
 
 cell_t JsonArrayGetType(IPluginContext *pContext, const cell_t *params) {
@@ -479,18 +569,21 @@ const sp_nativeinfo_t JSON_ARRAY_NATIVES[] =
         {"JsonArray.GetBool",      JsonArrayGetBool    },
         {"JsonArray.GetInt",       JsonArrayGetInt     },
         {"JsonArray.GetFloat",     JsonArrayGetFloat   },
+        { "JsonArray.GetInt64", JsonArrayGetInt64 },
 
         {"JsonArray.Set",          JsonArraySetJson    },
         {"JsonArray.SetString",    JsonArraySetString  },
         {"JsonArray.SetBool",      JsonArraySetBool    },
         {"JsonArray.SetInt",       JsonArraySetInt     },
         {"JsonArray.SetFloat",     JsonArraySetFloat   },
+        { "JsonArray.SetInt64", JsonArraySetInt64 },
 
         {"JsonArray.Push",          JsonArrayPushJson    },
         {"JsonArray.PushString",    JsonArrayPushString  },
         {"JsonArray.PushBool",      JsonArrayPushBool    },
         {"JsonArray.PushInt",       JsonArrayPushInt     },
         {"JsonArray.PushFloat",     JsonArrayPushFloat   },
+        { "JsonArray.PushInt64", JsonArrayPushInt64 },
 
         {"JsonArray.GetType",      JsonArrayGetType    },
         {"JsonArray.Extend",       JsonArrayExtend     },

@@ -244,6 +244,6 @@ namespace nJansson
     protected:
         virtual const std::vector<const IHandleType *>& container() const =0;
     };
-};
+}
 
 #endif

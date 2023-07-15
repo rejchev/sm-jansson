@@ -121,6 +121,30 @@ cell_t JsonGetString(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
+cell_t JsonGetInt64(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJson* json;
+    if((json = nJansson::PCU::ReadJsonHandle(pContext, g_pHandleSys, pType, &sec, params[1])) == nullptr)
+        return 0;
+
+    long long value = 0;
+
+    // auto delete on success
+    if(json->get(&value) && params[4] == 1)
+        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+
+    pContext->StringToLocalUTF8(
+        params[2], params[3], std::to_string(value).c_str(), nullptr
+    );
+
+    return 1;
+}
+
 cell_t JsonGetInt(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
@@ -257,6 +281,7 @@ const sp_nativeinfo_t JSON_NATIVES[] =
         {"Json.ToFile",         JsonDumpToFile},
         {"Json.Equal",          JsonEqual},
         {"Json.AsInt",         JsonGetInt},
+        { "Json.AsInt64", JsonGetInt64 },
         {"Json.AsString",      JsonGetString},
         {"Json.AsBool",        JsonGetBool},
         {"Json.AsFloat",       JsonGetFloat},
