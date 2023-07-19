@@ -131,11 +131,21 @@ const char* Json::get()
 }
 
 IJson *Json::get(const char *key) const {
-    return new Json(get_t(key), JSON_ERROR_NULL, true);
+    json_t* pointer;
+
+    if((pointer = get_t(key)) == nullptr)
+        return nullptr;
+
+    return new Json(pointer, JSON_ERROR_NULL, true);
 }
 
 IJson *Json::get(const size_t &index) const {
-    return new Json(get_t(index), JSON_ERROR_NULL, true);
+    json_t* pointer;
+
+    if((pointer = get_t(index)) == nullptr)
+        return nullptr;
+
+    return new Json(pointer, JSON_ERROR_NULL, true);
 }
 
 bool Json::set(const char *key, const IJson *value) {
@@ -241,7 +251,12 @@ bool Json::extend(const IJsonArray *another) {
 }
 
 JsonType Json::type(const char *key) const {
-    return Json(get_t(key), JSON_ERROR_NULL).type();
+    json_t* pointer;
+
+    if((pointer = get_t(key)) == nullptr)
+        return jtInvalid;
+
+    return Json(pointer, JSON_ERROR_NULL).type();
 }
 
 json_t *Json::get_t(const char *key) const {
@@ -253,7 +268,12 @@ json_t *Json::get_t(const size_t &index) const {
 }
 
 JsonType Json::type(const size_t &index) const {
-    return Json(get_t(index), JSON_ERROR_NULL).type();
+    json_t* pointer;
+
+    if((pointer = get_t(index)) == nullptr)
+        return jtInvalid;
+
+    return Json(pointer, JSON_ERROR_NULL).type();
 }
 
 bool Json::exist(const char *key) const {

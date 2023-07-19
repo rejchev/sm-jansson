@@ -4,11 +4,18 @@ using namespace nJansson;
 
 IJson *Jansson::create(const char *str, const size_t& flags)
 {
+    // because [] & {} len = 2
+    if(str == nullptr || strlen(str) < 2)
+        return nullptr;
+
     return new Json(str, flags);
 }
 
 IJson *Jansson::create(FILE *input, const size_t &flags)
 {
+    if(input == nullptr)
+        return nullptr;
+
     return new Json(input, flags);
 }
 

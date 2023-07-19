@@ -42,8 +42,6 @@ bool CJanssonExtension::SDK_OnLoad(char *error, size_t maxlength, bool late)
         return false;
     }
 
-    smutils->LogMessage(myself, "Add type: done");
-
 	return sharesys->AddInterface(myself, pJansson);
 }
 
@@ -59,5 +57,5 @@ void CJanssonExtension::SDK_OnAllLoaded() {
 }
 
 void CJsonHandler::OnHandleDestroy(SourceMod::HandleType_t type, void *object) {
-    delete (nJansson::Json*) object;
+    pJansson->close(static_cast<nJansson::IJson *>(object));
 }

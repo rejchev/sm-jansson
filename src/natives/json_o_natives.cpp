@@ -1,55 +1,39 @@
 #include "json_o_natives.h"
 
-bool IsObjectJsonObject(nJansson::IJson* obj) {
+bool IsObject(nJansson::IJson* obj) {
     return obj != nullptr && obj->type() == nJansson::jtObject;
 }
 
 cell_t JsonObjectGetJson(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return BAD_HANDLE;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
     pContext->LocalToString(params[2], &key);
 
     Handle_t handle;
-    if((handle = nJansson::PCU::CreateHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            json->get(key),
-            &sec)) != BAD_HANDLE
-    && params[3] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+    if((handle = nJansson::PCU::CreateHandle(json->get(key), pType, &sec)) != BAD_HANDLE && params[3] == 1)
+        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
 
     return (cell_t) handle;
 }
 
 cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -61,7 +45,7 @@ cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
 
     long long value = 0;
     if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[3] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
 
     pJansson->close(buffer);
 
@@ -70,18 +54,13 @@ cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectGetInt64(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -93,7 +72,7 @@ cell_t JsonObjectGetInt64(IPluginContext *pContext, const cell_t *params) {
 
     long long value = 0;
     if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[5] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
 
     pJansson->close(buffer);
 
@@ -109,18 +88,13 @@ cell_t JsonObjectGetInt64(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -132,7 +106,7 @@ cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
 
     bool value = false;
     if(buffer->type() == nJansson::jtBoolean && buffer->get(&value) && params[3] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
 
     pJansson->close(buffer);
 
@@ -141,18 +115,13 @@ cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectGetFloat(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -164,7 +133,7 @@ cell_t JsonObjectGetFloat(IPluginContext *pContext, const cell_t *params) {
 
     double value = 0;
     if(buffer->type() == nJansson::jtReal && buffer->get(&value) && params[3] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
 
     pJansson->close(buffer);
 
@@ -173,18 +142,13 @@ cell_t JsonObjectGetFloat(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectGetString(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -202,7 +166,7 @@ cell_t JsonObjectGetString(IPluginContext *pContext, const cell_t *params) {
 
     // auto delete on success
     if(wbt && params[4] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[1], &sec, json);
+        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
 
     pJansson->close(buffer);
 
@@ -211,25 +175,20 @@ cell_t JsonObjectGetString(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectSetJson(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
     pContext->LocalToString(params[2], &key);
 
     nJansson::IJson* buffer;
-    if((buffer = nJansson::PCU::ReadJsonHandle(pContext, g_pHandleSys, pType, &sec, params[3])) == nullptr)
+    if((buffer = nJansson::PCU::ReadJsonHandle(params[3], pType, &sec)) == nullptr)
         return 0;
 
     if(buffer->type() == nJansson::jtInvalid) // :/
@@ -240,18 +199,13 @@ cell_t JsonObjectSetJson(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectSetInt(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -262,18 +216,13 @@ cell_t JsonObjectSetInt(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectSetBool(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -284,18 +233,13 @@ cell_t JsonObjectSetBool(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectSetFloat(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -306,18 +250,13 @@ cell_t JsonObjectSetFloat(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectSetString(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -331,18 +270,13 @@ cell_t JsonObjectSetString(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectSetInt64(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJSO* json;
-    if((json = (nJansson::IJSO *) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -359,18 +293,13 @@ cell_t JsonObjectSetInt64(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return -1;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return -1;
 
     char* key;
@@ -389,18 +318,13 @@ cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectHasKey(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -411,18 +335,13 @@ cell_t JsonObjectHasKey(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectRemoveKey(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     char* key;
@@ -433,72 +352,53 @@ cell_t JsonObjectRemoveKey(IPluginContext *pContext, const cell_t *params) {
 
 cell_t JsonObjectUpdate(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     nJansson::IJsonObject* buffer;
-    if((buffer = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[2], IsObjectJsonObject)) == nullptr)
+    if((buffer = nJansson::PCU::ReadJsonHandle(params[2], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     bool success;
     if((success = json->update(buffer,(nJansson::JsonObjectUpdateType)params[3]))
     && params[4] == 1)
-        nJansson::PCU::FreeHandle(g_pHandleSys, pType, params[2], &sec, buffer);
+        nJansson::PCU::FreeHandle(params[2], buffer, pType, &sec);
 
     return success;
 }
 
 cell_t JsonObjectKeys(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJsonObject* json;
-    if((json = (nJansson::IJsonObject*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsObject)) == nullptr)
         return 0;
 
     return (cell_t) nJansson::PCU::CreateHandle(
-            pContext, g_pHandleSys, pType, json->keys((nJansson::JsonType)params[2], params[3]), &sec
-    );
+            json->keys((nJansson::JsonType)params[2], params[3]),
+            pType,
+            &sec);
 }
 
 cell_t JsonObjectSize(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
-    if((pType = nJansson::PCU::GetType(pContext, pJansson, "Json")) == nullptr)
+    if((pType = nJansson::PCU::GetType("Json", pJansson)) == nullptr)
         return 0;
 
     HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
 
     nJansson::IJson* json;
-    if((json = (nJansson::IJson*) nJansson::PCU::ReadJsonHandle(
-            pContext,
-            g_pHandleSys,
-            pType,
-            &sec,
-            params[1], IsObjectJsonObject)) == nullptr)
+    if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
         return 0;
     
     return (cell_t)json->size();
