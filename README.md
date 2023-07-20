@@ -1,10 +1,10 @@
 <h1 align=center>Jansson</h1> 
 <div align=center>
 
-[![CI](https://github.com/rej-clown/sm-jansson/actions/workflows/ci.yml/badge.svg)](https://github.com/rej-clown/sm-jansson/)
+[![CI](https://github.com/rejchev/sm-jansson/actions/workflows/ci.yml/badge.svg)](https://github.com/rejchev/sm-jansson/)
 [![Discord](https://img.shields.io/discord/494942123548868609?logo=discord&logoColor=%23959da5&color=%235865F2
 )](https://discord.gg/cFZ97Mzrjy)
-[![Downloads](https://img.shields.io/github/downloads/rej-clown/sm-jansson/total?color=%2332c955)]()
+[![Downloads](https://img.shields.io/github/downloads/rejchev/sm-jansson/total?color=%2332c955)]()
 [![LICENSE](https://img.shields.io/github/license/rejchev/sm-jansson)](LICENSE)
 
 </div>
