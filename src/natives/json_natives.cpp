@@ -49,7 +49,7 @@ cell_t JsonDump(IPluginContext *pContext, const cell_t *params) {
     if(!json->dump(buffer, params[3],params[4]))
         return 0;
 
-    if(params[5] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) == nullptr)
+    if(params[5] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
         pJansson->close((nJansson::IJson*) json);
 
     return 1;
