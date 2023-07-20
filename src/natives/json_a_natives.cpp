@@ -179,7 +179,11 @@ cell_t JsonArraySetJson(IPluginContext *pContext, const cell_t *params) {
     if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsArray)) == nullptr)
         return 0;
 
-    return json->set(params[2], nJansson::PCU::ReadJsonHandle(params[3], pType, &sec));
+    nJansson::IJson* buffer = nullptr;
+    if(params[3] && (buffer = nJansson::PCU::ReadJsonHandle(params[3], pType, &sec)) == nullptr)
+        return 0;
+
+    return json->set(params[2], buffer);
 }
 
 cell_t JsonArraySetInt(IPluginContext *pContext, const cell_t *params) {
@@ -272,7 +276,11 @@ cell_t JsonArrayPushJson(IPluginContext *pContext, const cell_t *params) {
     if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec, IsArray)) == nullptr)
         return 0;
 
-    return json->push(nJansson::PCU::ReadJsonHandle(params[2], pType, &sec));
+    nJansson::IJson* buffer = nullptr;
+    if(params[2] && (buffer = nJansson::PCU::ReadJsonHandle(params[2], pType, &sec)) == nullptr)
+        return 0;
+
+    return json->push(buffer);
 }
 
 cell_t JsonArrayPushInt(IPluginContext *pContext, const cell_t *params) {

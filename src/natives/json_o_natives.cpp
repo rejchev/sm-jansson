@@ -197,7 +197,11 @@ cell_t JsonObjectSetJson(IPluginContext *pContext, const cell_t *params) {
     char* key;
     pContext->LocalToString(params[2], &key);
 
-    return json->set(key, nJansson::PCU::ReadJsonHandle(params[3], pType, &sec));
+    nJansson::IJson* buffer = nullptr;
+    if(params[3] && (buffer = nJansson::PCU::ReadJsonHandle(params[3], pType, &sec)) == nullptr)
+        return 0;
+
+    return json->set(key, buffer);
 }
 
 cell_t JsonObjectSetInt(IPluginContext *pContext, const cell_t *params) {
