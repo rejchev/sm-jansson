@@ -159,7 +159,7 @@ IJson *Json::get(const size_t &index) const {
 }
 
 bool Json::set(const char *key, const IJson *value) {
-    return set(key, ((Json *) value)->json(), json_object_set) == 0;
+    return set(key, ((value != nullptr) ? ((Json*)value)->json() : json_null()), json_object_set) == 0;
 }
 
 bool Json::set(const char *key, const char *value) {
@@ -187,7 +187,7 @@ bool Json::set(const char *key, long long int value) {
 }
 
 bool Json::set(const size_t &index, const IJson *value) {
-    return set(index, ((Json*)value)->json(), json_array_set);
+    return set(index, ((value != nullptr) ? ((Json*)value)->json() : json_null()), json_array_set);
 }
 
 bool Json::set(const size_t &index, const char *value) {
@@ -207,7 +207,7 @@ bool Json::set(const size_t &index, long long int value) {
 }
 
 bool Json::push(const IJson *value) {
-    return push(((Json*)value)->json(), json_array_append);
+    return push(((value != nullptr) ? ((Json*)value)->json() : json_null()), json_array_append);
 }
 
 bool Json::push(json_t *value, int (*pSet)(json_t *, json_t *)) {
