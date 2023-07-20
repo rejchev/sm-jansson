@@ -43,16 +43,14 @@ cell_t JsonDump(IPluginContext *pContext, const cell_t *params) {
     if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
         return 0;
 
-    const char* buffer;
-    if((buffer = json->dump(params[4])) == nullptr)
+    char* buffer;
+    pContext->LocalToString(params[2], &buffer);
+
+    if(!json->dump(buffer, params[3],params[4]))
         return 0;
 
-    pContext->StringToLocalUTF8(params[2], params[3], buffer, nullptr);
-
-    free((void *) buffer);
-
-    if(params[5] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+    if(params[5] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) == nullptr)
+        pJansson->close((nJansson::IJson*) json);
 
     return 1;
 }

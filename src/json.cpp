@@ -2,6 +2,7 @@
 
 #include "json.h"
 #include "json_utils.h"
+#include "jansson_private.h"
 
 using namespace nJansson;
 
@@ -39,11 +40,20 @@ Json::~Json()
     json_decref(m_pJson);
 }
 
-const char *Json::dump(const size_t& decodingFlags) const {
+bool Json::dump(char* buff, const size_t& maxl, const size_t &decodingFlags) const {
     if(!isOK())
-        return nullptr;
+        return false;
 
-    return json_dumps(json(), decodingFlags);
+    const char* value;
+
+    if((value = json_dumps(json(), decodingFlags)) == nullptr)
+        return false;
+
+    ke::SafeStrcpyN(buff, maxl, value, strlen(value) + 1);
+
+    jsonp_free((void *) value);
+
+    return true;
 }
 
 int Json::dump(const char *path, const size_t &flags) const {

@@ -17,8 +17,8 @@ namespace nJansson
         virtual ~Json();
 
     public:
-        const char *dump(const size_t &decodingFlags) const override;
-        int dump(const char* path, const size_t& flags) const override;
+        bool dump(char* buff, const size_t& maxl, const size_t &decodingFlags) const override;
+        int  dump(const char* path, const size_t& flags) const override;
 
     public:
         bool equal(const IJson* json) const override;

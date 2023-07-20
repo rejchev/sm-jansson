@@ -11,13 +11,16 @@
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
 
-// xxxxxxxxyyyyyyyyyyzzzzzzzzzzz
-// x = 8    bits - major
-// y = 12   bits - minor
-// z = 12   bits - bugs
-//
-// on y & z changes guaranteed backward compatibility
-#define SMINTERFACE_JANSSON_VERSION	    ((0 << 24) & (0 << 12) & 0)
+/**
+ * @brief IFace version (32 bits)
+ *
+ * @details
+ *      8  high bits - major \n
+ *      12 bits      - minor \n
+ *      12 low bits  - bugs \n
+ *
+ */
+#define SMINTERFACE_JANSSON_VERSION	    ((0 << 24) & (1 << 12) & 0)
 
 namespace nJansson
 {
@@ -177,8 +180,8 @@ namespace nJansson
     class IJson : public IJsonArray, public IJsonObject
     {
     public:
-        virtual const char *dump(const size_t &decodingFlags) const =0;
-        virtual int dump(const char* path, const size_t& flags) const =0;
+        virtual bool dump(char* buff, const size_t& maxl, const size_t &decodingFlags) const =0;
+        virtual int  dump(const char* path, const size_t& flags) const =0;
 
     public:
         virtual bool equal(const IJson* json) const =0;
