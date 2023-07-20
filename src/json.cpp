@@ -1,8 +1,8 @@
+#include <jansson_private.h>
 #include <amtl/am-string.h>
 
 #include "json.h"
 #include "json_utils.h"
-#include "jansson_private.h"
 
 using namespace nJansson;
 
