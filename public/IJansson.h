@@ -20,7 +20,7 @@
  *      12 low bits  - bugs \n
  *
  */
-#define SMINTERFACE_JANSSON_VERSION	    ((0 << 24) & (1 << 12) & 0)
+#define SMINTERFACE_JANSSON_VERSION	    ((1 << 24) & (0 << 12) & 0)
 
 namespace nJansson
 {
@@ -109,24 +109,64 @@ namespace nJansson
             return SMINTERFACE_JANSSON_VERSION;
         }
 
+        /**
+         * @brief Checking interface version compatibility
+         *
+         * @param version
+         *
+         * @return true if major equal
+         */
         bool IsVersionCompatible(unsigned int version) override {
             return (((GetInterfaceVersion() >> 24) & (version >> 24)) == 1);
         }
 
     public:
+
+        /**
+         *
+         * @return  Handle type manager (ref with IHandleType)
+         */
         virtual IHandleTypeManager* types() const =0;
 
     public:
-        // create from string
+
+        /**
+         * @brief Creating json wrapper via string
+         *
+         * @param str Json string
+         * @param flags Decoding flags
+         *
+         * @return wrapped json on success
+         *
+         * */
         virtual IJson *create(const char *str,  const size_t &flags) =0;
 
-        // create from file stream
+        /**
+         * @brief Creating json wrapper via file
+         * @param input     File pointer
+         * @param flags     Decoding flags
+         * @return wrapped json on success
+         */
         virtual IJson *create(FILE *input,   const size_t &flags) =0;
 
-        // create from sm file path
+        /**
+         * @brief Creating json wrapper via SourceMod formatted path
+         *
+         * @param fullPath SourceMod formatted path (libsys)
+         * @param flags decoding flags
+         * @param pUtils smutils pointer
+         * @return wrapped json on success
+         */
         virtual IJson *create(const char* fullPath,  const size_t& flags, SourceMod::ISourceMod* pUtils) =0;
 
     public:
+
+        /**
+         * @brief Safely memory freeing under the wrapper
+         *
+         * @param json
+         *
+         */
         virtual void close(IJson* json) =0;
     };
 
