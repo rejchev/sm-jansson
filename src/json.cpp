@@ -1,4 +1,3 @@
-#include <jansson_private.h>
 #include <amtl/am-string.h>
 
 #include "json.h"
@@ -51,7 +50,9 @@ bool Json::dump(char* buff, const size_t& maxl, const size_t &decodingFlags) con
 
     ke::SafeStrcpyN(buff, maxl, value, strlen(value) + 1);
 
-    jsonp_free((void *) value);
+    // TODO jansson/src/memory.c :: do_free
+    //
+    free((void *) value); // unsafe
 
     return true;
 }
