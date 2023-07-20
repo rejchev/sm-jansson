@@ -24,10 +24,10 @@ namespace nJansson {
                                      const SourceMod::HandleSecurity*,
                                      const SourceMod::HandleAccess* = nullptr);
 
-        static void FreeHandle(const Handle_t &,
-                               void *,
-                               const IHandleType *,
-                               const HandleSecurity*);
+        static void* FreeHandle(const Handle_t &,
+                                void *,
+                                const IHandleType *,
+                                const HandleSecurity*);
 
     public:
 

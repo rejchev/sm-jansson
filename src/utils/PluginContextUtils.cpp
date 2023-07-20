@@ -86,16 +86,20 @@ namespace nJansson {
         return true;
     }
 
-    void PluginContextUtils::FreeHandle(
+    void* PluginContextUtils::FreeHandle(
             const Handle_t &handle,
             void *object,
             const IHandleType *type,
             const HandleSecurity* sec) {
         if(handlesys->FreeHandle(handle, sec) == SourceMod::HandleError_None)
-            return;
+            return nullptr;
 
-        if(type->dispatch())
-            type->dispatch()->OnHandleDestroy(type->id(), object);
+        if(!type->dispatch())
+            return object;
+
+        type->dispatch()->OnHandleDestroy(type->id(), object);
+
+        return nullptr;
     }
 
     Handle_t PluginContextUtils::CreateHandle(

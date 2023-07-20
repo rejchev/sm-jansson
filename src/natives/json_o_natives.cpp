@@ -20,7 +20,8 @@ cell_t JsonObjectGetJson(IPluginContext *pContext, const cell_t *params) {
 
     Handle_t handle;
     if((handle = nJansson::PCU::CreateHandle(json->get(key), pType, &sec)) != BAD_HANDLE && params[3] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     return (cell_t) handle;
 }
@@ -44,8 +45,9 @@ cell_t JsonObjectGetInt(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     long long value = 0;
-    if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[3] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+    if(buffer->get(&value) && params[3] == 1)
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     pJansson->close(buffer);
 
@@ -71,16 +73,21 @@ cell_t JsonObjectGetInt64(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     long long value = 0;
-    if(buffer->type() == nJansson::jtInteger && buffer->get(&value) && params[5] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
-
-    pJansson->close(buffer);
-
-    pContext->StringToLocalUTF8(
+    if(!buffer->get(&value)
+    || pContext->StringToLocalUTF8(
             params[3],
             params[4],
             std::to_string(value).c_str(),
-            nullptr);
+            nullptr)) {
+
+        pJansson->close(buffer);
+        return 0;
+    }
+
+    pJansson->close(buffer);
+
+    if(params[5] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+        pJansson->close((nJansson::IJson*) json);
 
     return 1;
 }
@@ -105,8 +112,9 @@ cell_t JsonObjectGetBool(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     bool value = false;
-    if(buffer->type() == nJansson::jtBoolean && buffer->get(&value) && params[3] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+    if(buffer->get(&value) && params[3] == 1)
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     pJansson->close(buffer);
 
@@ -132,8 +140,9 @@ cell_t JsonObjectGetFloat(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     double value = 0;
-    if(buffer->type() == nJansson::jtReal && buffer->get(&value) && params[3] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+    if(buffer->get(&value) && params[3] == 1)
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     pJansson->close(buffer);
 
@@ -158,17 +167,18 @@ cell_t JsonObjectGetString(IPluginContext *pContext, const cell_t *params) {
     if((buffer = json->get(key)) == nullptr)
         return 0;
 
-    if(buffer->type() == nJansson::jtString)
+    const char *value;
+    if((value = buffer->get()) == nullptr
+    || pContext->StringToLocalUTF8(params[3], params[4], value, nullptr)) {
+
+        pJansson->close(buffer);
         return 0;
-
-    size_t wbt = 0;
-    pContext->StringToLocalUTF8(params[2], params[3], buffer->get(), &wbt);
-
-    // auto delete on success
-    if(wbt && params[4] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+    }
 
     pJansson->close(buffer);
+
+    if(params[5] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+        pJansson->close((nJansson::IJson*)json);
 
     return 1;
 }
@@ -187,14 +197,7 @@ cell_t JsonObjectSetJson(IPluginContext *pContext, const cell_t *params) {
     char* key;
     pContext->LocalToString(params[2], &key);
 
-    nJansson::IJson* buffer;
-    if((buffer = nJansson::PCU::ReadJsonHandle(params[3], pType, &sec)) == nullptr)
-        return 0;
-
-    if(buffer->type() == nJansson::jtInvalid) // :/
-        return 0;
-
-    return json->set(key, buffer);
+    return json->set(key, nJansson::PCU::ReadJsonHandle(params[3], pType, &sec));
 }
 
 cell_t JsonObjectSetInt(IPluginContext *pContext, const cell_t *params) {
@@ -305,15 +308,7 @@ cell_t JsonObjectGetType(IPluginContext *pContext, const cell_t *params) {
     char* key;
     pContext->LocalToString(params[2], &key);
 
-    nJansson::IJson* buffer;
-    if((buffer = json->get(key)) == nullptr)
-        return -1;
-
-    nJansson::JsonType type = buffer->type();
-
-    pJansson->close(buffer);
-
-    return type;
+    return json->type(key);
 }
 
 cell_t JsonObjectHasKey(IPluginContext *pContext, const cell_t *params) {
@@ -368,7 +363,8 @@ cell_t JsonObjectUpdate(IPluginContext *pContext, const cell_t *params) {
     bool success;
     if((success = json->update(buffer,(nJansson::JsonObjectUpdateType)params[3]))
     && params[4] == 1)
-        nJansson::PCU::FreeHandle(params[2], buffer, pType, &sec);
+        if(nJansson::PCU::FreeHandle(params[2], buffer, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)buffer);
 
     return success;
 }

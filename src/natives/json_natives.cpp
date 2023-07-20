@@ -112,12 +112,13 @@ cell_t JsonGetString(IPluginContext *pContext, const cell_t *params) {
     if((json = nJansson::PCU::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
         return 0;
 
-    size_t wbt =0;
-    pContext->StringToLocalUTF8(params[2], params[3], json->get(), &wbt);
+    const char* value;
+    if((value = json->get()) == nullptr
+    || pContext->StringToLocalUTF8(params[2], params[3], value, nullptr))
+        return 0;
 
-    // auto delete on success
-    if(wbt && params[4] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+    if(params[4] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+        pJansson->close((nJansson::IJson*)json);
 
     return 1;
 }
@@ -134,14 +135,16 @@ cell_t JsonGetInt64(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     long long value = 0;
+    if(!json->get(&value)
+    || pContext->StringToLocalUTF8(
+            params[2],
+            params[3],
+            std::to_string(value).c_str(),
+            nullptr))
+        return 0;
 
-    // auto delete on success
-    if(json->get(&value) && params[4] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
-
-    pContext->StringToLocalUTF8(
-        params[2], params[3], std::to_string(value).c_str(), nullptr
-    );
+    if(params[4] == 1 && nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+        pJansson->close((nJansson::IJson*) json);
 
     return 1;
 }
@@ -158,10 +161,9 @@ cell_t JsonGetInt(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     long long int value = 0;
-
-    // auto delete on success
     if(json->get(&value) && params[2] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     return (cell_t) value;
 }
@@ -178,10 +180,9 @@ cell_t JsonGetBool(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     bool value = false;
-
-    // auto delete on success
     if(json->get(&value) && params[2] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     return (cell_t)value;
 }
@@ -198,10 +199,9 @@ cell_t JsonGetFloat(IPluginContext *pContext, const cell_t *params) {
         return 0;
 
     double value = 0;
-
-    // auto delete on success
     if(json->get(&value) && params[2] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     return sp_ftoc((float)value);
 }
@@ -229,7 +229,8 @@ cell_t JsonDumpToFile(IPluginContext *pContext, const cell_t *params) {
 
     bool success;
     if((success = json->dump(fullPath, params[3]) == 0) && params[4] == 1)
-        nJansson::PCU::FreeHandle(params[1], json, pType, &sec);
+        if(nJansson::PCU::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
 
     return success;
 }

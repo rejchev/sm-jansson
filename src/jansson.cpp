@@ -20,7 +20,7 @@ IJson *Jansson::create(FILE *input, const size_t &flags)
 }
 
 IJson *Jansson::create(const char *fullPath, const size_t &flags, SourceMod::ISourceMod *utils) {
-    if(utils == nullptr || fullPath == nullptr)
+    if(fullPath == nullptr)
         return nullptr;
 
     json_t* object;
