@@ -1,23 +1,22 @@
 #ifndef SM_JANSSON_JSON_NATIVES_H
 #define SM_JANSSON_JSON_NATIVES_H
 
-#include <src/utils/PluginContextUtils.h>
-#include <extension.h>
+#include <ISourceMod.h>
 
-extern cell_t JsonCreate(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonCreateFromFile(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonDump(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonDumpToFile(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonEqual(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetType(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonValidState(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetString(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetInt(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetInt64(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetBool(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetFloat(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonClear(IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonSize(IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonCreate(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonCreateFromFile(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonDump(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonDumpToFile(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonEqual(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetType(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonValidState(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetString(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetInt(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetInt64(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetBool(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetFloat(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonClear(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonSize(SourcePawn::IPluginContext *pContext, const cell_t *params);
 
 
 extern const sp_nativeinfo_t JSON_NATIVES[];

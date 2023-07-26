@@ -12,12 +12,13 @@ for cxx in builder.targets:
     os.path.join(builder.sourcePath, 'src', 'json.cpp'),
     os.path.join(builder.sourcePath, 'src', 'json_utils.cpp'),
     os.path.join(builder.sourcePath, 'src', 'jansson.cpp'),
-    os.path.join(builder.sourcePath, 'src', 'types/CHandleType.cpp'),
-    os.path.join(builder.sourcePath, 'src', 'types/CHandleTypeManager.cpp'),
+    os.path.join(builder.sourcePath, 'src/types', 'CHandleType.cpp'),
+    os.path.join(builder.sourcePath, 'src/types', 'CHandleTypeManager.cpp'),
     os.path.join(builder.sourcePath, 'src/natives', 'json_natives.cpp'),
     os.path.join(builder.sourcePath, 'src/natives', 'json_o_natives.cpp'),
     os.path.join(builder.sourcePath, 'src/natives', 'json_a_natives.cpp'),
-    os.path.join(builder.sourcePath, 'src', 'utils/PluginContextUtils.cpp'),
+    os.path.join(builder.sourcePath, 'src/utils', 'handles.cpp'),
+    os.path.join(builder.sourcePath, 'src/utils', 'types.cpp'),
     os.path.join(Extension.sm_root, 'public', 'smsdk_ext.cpp'),
   ]
 

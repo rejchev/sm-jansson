@@ -7,18 +7,30 @@
 public void OnPluginStart()
 {
     Json b;
-    Json o = (new JsonBuilder("{}"))
-        .SetString("string", "dbc")
-        .SetFloat("float", 012.32)
-        .SetInt64("int64", "99999999999")
-        .SetInt("int", 232)
-        .SetBool("bool", true)
-        .Set("array", (b = (new JsonBuilder("[]"))
-            .PushString("asdada")
-            .PushInt(41)
-            .PushInt64("99999999999")
-            .Build()))
-        .Build();
+    JsonBuilder o;
+    
+    char error[256];
+    if((o = new JsonBuilder("{}", error, sizeof(error))) == null) {
+
+        if(error[0])
+            LogMessage("On json creating step error: %s", error);
+        else
+            LogMessage("On json handle creating step error");
+
+        return;
+    }
+
+    o.SetString("string", "dbc")
+    .SetFloat("float", 012.32)
+    .SetInt64("int64", "99999999999")
+    .SetInt("int", 232)
+    .SetBool("bool", true)
+    .Set("array", (b = (new JsonBuilder("[]"))
+        .PushString("asdada")
+        .PushInt(41)
+        .PushInt64("99999999999")
+        .Build()))
+    .Build();
 
     LogMessage("B type: %d", b.Type);
     LogMessage("O type; %d", o.Type);
@@ -51,7 +63,8 @@ public void OnPluginStart()
     if(b.Dump(buffer, sizeof(buffer), 0, true))
         LogMessage("Array: %s", buffer);
 
-    else delete b;
+    LogMessage("b is null: %d", b);
+
 
     if(o.Dump(buffer, sizeof(buffer), JsonPretty(4), true))
         LogMessage("Dump: %s", buffer);

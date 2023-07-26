@@ -9,11 +9,7 @@ namespace nJansson
     class Json : public IJson 
     {
     public:
-        Json(const char * = nullptr,  const size_t& = 0);
-        Json(FILE *,        const size_t& = 0);
-        Json(json_t*,       const JsonError_t&, bool = true);
-        Json(const Json&) = default;
-
+        Json(json_t*, bool = true);
         virtual ~Json();
 
     public:
@@ -30,7 +26,6 @@ namespace nJansson
         const char* get() override;
 
     public:
-        const JsonError_t& error() const override;
         JsonType    type() const override;
 
     protected:
@@ -91,12 +86,8 @@ namespace nJansson
     public:
         virtual json_t *json() const;
 
-    public:
-        static JsonError_t convertNativeErrorStruct(const json_error_t*);
-
     private:
         json_t *m_pJson;
-        JsonError_t m_JsonError;
     };
 }
 

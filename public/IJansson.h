@@ -20,7 +20,7 @@
  *      12 low bits  - bugs \n
  *
  */
-#define SMINTERFACE_JANSSON_VERSION	    ((1 << 24) & (0 << 12) & 0)
+#define SMINTERFACE_JANSSON_VERSION	    ((2 << 24) & (0 << 12) & 0)
 
 namespace nJansson
 {
@@ -135,29 +135,34 @@ namespace nJansson
          *
          * @param str Json string
          * @param flags Decoding flags
+         * @param pError Error pointer (may be nullptr)
          *
          * @return wrapped json on success
          *
          * */
-        virtual IJson *create(const char *str,  const size_t &flags) =0;
+        virtual IJson *create(const char *, const size_t &flags, JsonError_t* pError) =0;
 
         /**
          * @brief Creating json wrapper via file
          * @param input     File pointer
          * @param flags     Decoding flags
+         * @param pError Error pointer (may be nullptr)
+         *
          * @return wrapped json on success
          */
-        virtual IJson *create(FILE *input,   const size_t &flags) =0;
+        virtual IJson *create(FILE *input, const size_t &flags, JsonError_t* pError) =0;
 
         /**
          * @brief Creating json wrapper via SourceMod formatted path
          *
          * @param fullPath SourceMod formatted path (libsys)
          * @param flags decoding flags
+         * @param pError Error pointer (may be nullptr)
          * @param pUtils smutils pointer
+         *
          * @return wrapped json on success
          */
-        virtual IJson *create(const char* fullPath,  const size_t& flags, SourceMod::ISourceMod* pUtils) =0;
+        virtual IJson *create(const char*, const size_t& flags, JsonError_t* pError, SourceMod::ISourceMod* utils) =0;
 
     public:
 
@@ -237,8 +242,7 @@ namespace nJansson
         virtual void clear() =0;
 
     public:
-        virtual const JsonError_t& error() const =0;
-        virtual JsonType    type() const =0;
+        virtual JsonType type() const =0;
 
     public:
         virtual bool isOK() const =0;

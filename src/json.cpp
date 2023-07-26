@@ -5,29 +5,10 @@
 
 using namespace nJansson;
 
-Json::Json(const char *str, const size_t &flags) :
-    m_pJson(),
-    m_JsonError()
+Json::Json(json_t *json, bool increment) :
+    m_pJson(json)
 {
-    json_error_t error = {};
-    if((m_pJson = json_loads(str, flags, &error)) == nullptr)
-        m_JsonError = convertNativeErrorStruct(&error);
-}
-
-Json::Json(FILE *input, const size_t &flags) :
-    m_pJson(),
-    m_JsonError()
-{
-    json_error_t error = {};
-    if((m_pJson = json_loadf(input, flags, &error)) == nullptr)
-        m_JsonError = convertNativeErrorStruct(&error);
-}
-
-Json::Json(json_t *json, const JsonError_t& jsonError, bool increment) :
-    m_pJson(json),
-    m_JsonError(jsonError)
-{
-    if(m_pJson == nullptr || !jsonError.equal(JSON_ERROR_NULL))
+    if(m_pJson == nullptr)
         return;
 
     if(increment)
@@ -66,10 +47,6 @@ int Json::dump(const char *path, const size_t &flags) const {
 
 bool Json::equal(const IJson* json) const {
     return json_equal(this->json(), ((Json*)json)->json());
-}
-
-const JsonError_t& Json::error() const {
-    return m_JsonError;
 }
 
 json_t *Json::json() const {
@@ -147,7 +124,7 @@ IJson *Json::get(const char *key) const {
     if((pointer = get_t(key)) == nullptr)
         return nullptr;
 
-    return new Json(pointer, JSON_ERROR_NULL, true);
+    return new Json(pointer, true);
 }
 
 IJson *Json::get(const size_t &index) const {
@@ -156,7 +133,7 @@ IJson *Json::get(const size_t &index) const {
     if((pointer = get_t(index)) == nullptr)
         return nullptr;
 
-    return new Json(pointer, JSON_ERROR_NULL, true);
+    return new Json(pointer);
 }
 
 bool Json::set(const char *key, const IJson *value) {
@@ -267,7 +244,7 @@ JsonType Json::type(const char *key) const {
     if((pointer = get_t(key)) == nullptr)
         return jtInvalid;
 
-    return Json(pointer, JSON_ERROR_NULL).type();
+    return Json(pointer, false).type();
 }
 
 json_t *Json::get_t(const char *key) const {
@@ -284,7 +261,7 @@ JsonType Json::type(const size_t &index) const {
     if((pointer = get_t(index)) == nullptr)
         return jtInvalid;
 
-    return Json(pointer, JSON_ERROR_NULL).type();
+    return Json(pointer, false).type();
 }
 
 bool Json::exist(const char *key) const {
@@ -338,32 +315,22 @@ IJsonArray* Json::keys(const JsonType& type, const size_t& flags) const {
     if(this->type() != jtObject || !size())
         return nullptr;
 
-    const char* buffer;
-    Json *keys = new Json {"[]", flags };
+    json_t* pBuffer;
+    json_error_t error = {};
+    if((pBuffer = json_loads("[]", flags, &error)) == nullptr)
+        return nullptr;
 
+    const char* buffer;
     for(void* iter = json_object_iter(m_pJson);
         (buffer = json_object_iter_key(iter));
         iter = json_object_iter_next(m_pJson, iter))
         if(type == jtInvalid || this->type(buffer) == type)
-            keys->push(buffer);
+            json_array_append_new(pBuffer, json_string(buffer));
 
-    return keys;
+    return new Json(pBuffer, false);
 }
 
 bool Json::isOK() const {
-    return m_pJson != nullptr && m_JsonError.equal(JSON_ERROR_NULL);
-}
-
-JsonError_t Json::convertNativeErrorStruct(const json_error_t *error) {
-    JsonError_t buffer {
-        error->line,
-        error->column,
-        error->position
-    };
-
-    ke::SafeStrcpyN(buffer.source, PLATFORM_MAX_PATH, error->source, strlen(error->source) + 1);
-    ke::SafeStrcpyN(buffer.text, PLATFORM_MAX_PATH, error->text, strlen(error->text));
-
-    return buffer;
+    return m_pJson != nullptr;
 }
 

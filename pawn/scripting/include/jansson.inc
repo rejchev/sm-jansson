@@ -64,17 +64,25 @@ methodmap Json < Handle
     //
     // @param value      JSON string.
     // @param flags      Encoding flags.
-    // @return           JSON handle or NULL.
+    // @param error      Error buffer
+    // @param mlen       Error buffer max length
+    //
+    // @return           JSON handle or NULL (on error / create handle fail).
+    //
     // @error            Invalid syntax
-    public native Json(const char[] value, int flags = 0);
+    public native Json(const char[] value, int flags = 0, char[] error = NULL_STRING, int mlen = 0);
 
     // Create JSON handle from path
     //
     // @param path       File to read from.
     // @param flags      Encoding flags.
-    // @return           JSON handle or NULL
-    // @exception        Invalid syntax
-    public static native Json JsonF(const char[] path, int flags = 0);
+    // @param error      Error buffer
+    // @param mlen       Error buffer max length
+    //
+    // @return           JSON handle or NULL (on error / create handle fail)
+
+    // @error            Invalid syntax
+    public static native Json JsonF(const char[] path, int flags = 0, char[] error = NULL_STRING, int mlen = 0);
 
     // Writes the JSON string representation to a file.
     //
@@ -570,9 +578,9 @@ methodmap JsonArray < Json
 
 methodmap JsonBuilder < Json
 {
-    public JsonBuilder(const char[] str)
+    public JsonBuilder(const char[] str, char[] error = NULL_STRING, int mlen = 0)
     {
-        return view_as<JsonBuilder>(new Json(str));
+        return view_as<JsonBuilder>(new Json(str, 0, error, mlen));
     }
 
     public JsonBuilder SetString(const char[] k, const char[] v)
