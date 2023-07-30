@@ -1,5 +1,6 @@
 #include "json_natives.h"
 
+#include <cstdio>
 #include <extension.h>
 #include <src/utils/types.h>
 #include <src/utils/handles.h>
@@ -22,7 +23,7 @@ cell_t JsonCreate(IPluginContext *pContext, const cell_t *params) {
             pContext->LocalToString(params[3], &buffer);
 
         if(buffer != nullptr)
-            sprintf_s(buffer, params[4], "%s: %s [%d:%d]", error.source, error.text, error.line, error.column);
+            snprintf(buffer, params[4], "%s: %s [%d:%d]", error.source, error.text, error.line, error.column);
 
         return BAD_HANDLE;
     }
@@ -48,7 +49,7 @@ cell_t JsonCreateFromFile(IPluginContext *pContext, const cell_t *params) {
             pContext->LocalToString(params[3], &buffer);
 
         if(buffer != nullptr)
-            sprintf_s(buffer, params[4], "%s: %s [%d:%d]", error.source, error.text, error.line, error.column);
+            snprintf(buffer, params[4], "%s: %s [%d:%d]", error.source, error.text, error.line, error.column);
 
         return BAD_HANDLE;
     }
