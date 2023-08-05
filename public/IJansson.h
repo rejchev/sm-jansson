@@ -155,7 +155,7 @@ namespace nJansson
         /**
          * @brief Creating json wrapper via SourceMod formatted path
          *
-         * @param fullPath SourceMod formatted path (libsys)
+         * @param fullPath SourceMod rel path (libsys)
          * @param flags decoding flags
          * @param pError Error pointer (may be nullptr)
          * @param pUtils smutils pointer

@@ -23,7 +23,7 @@ cell_t JsonCreate(IPluginContext *pContext, const cell_t *params) {
             pContext->LocalToString(params[3], &buffer);
 
         if(buffer != nullptr)
-            snprintf(buffer, params[4], "%s: %s [%d:%d]", error.source, error.text, error.line, error.column);
+            snprintf(buffer, params[4], "%s [%d:%d]", error.text, error.line, error.column);
 
         return BAD_HANDLE;
     }
@@ -49,7 +49,7 @@ cell_t JsonCreateFromFile(IPluginContext *pContext, const cell_t *params) {
             pContext->LocalToString(params[3], &buffer);
 
         if(buffer != nullptr)
-            snprintf(buffer, params[4], "%s: %s [%d:%d]", error.source, error.text, error.line, error.column);
+            snprintf(buffer, params[4], "%s [%d:%d]", error.text, error.line, error.column);
 
         return BAD_HANDLE;
     }

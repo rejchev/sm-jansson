@@ -43,14 +43,17 @@ IJson *Jansson::create(FILE *input, const size_t &flags, JsonError_t* pError)
     return new Json(pJson, false);
 }
 
-IJson *Jansson::create(const char *fullPath, const size_t &flags, JsonError_t* pError, SourceMod::ISourceMod *utils) {
-    if(fullPath == nullptr)
+IJson *Jansson::create(const char *relPath, const size_t &flags, JsonError_t* pError, SourceMod::ISourceMod *utils) {
+    if(relPath == nullptr)
         return nullptr;
 
     json_t* object;
     json_error_t error = {};
-    
-    if((object = json_load_file(fullPath, flags, &error)) == nullptr) {
+
+    char path[PLATFORM_MAX_PATH];
+    utils->BuildPath(Path_SM, path, PLATFORM_MAX_PATH, "%s", relPath);
+
+    if((object = json_load_file(path, flags, &error)) == nullptr) {
 
         if(pError != nullptr)
             *pError = ToKnownError(&error);
