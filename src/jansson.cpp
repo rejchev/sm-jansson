@@ -51,7 +51,7 @@ IJson *Jansson::create(const char *relPath, const size_t &flags, JsonError_t* pE
     json_error_t error = {};
 
     char path[PLATFORM_MAX_PATH];
-    utils->BuildPath(Path_SM, path, PLATFORM_MAX_PATH, "%s", relPath);
+    utils->BuildPath(Path_Game, path, PLATFORM_MAX_PATH, "%s", relPath);
 
     if((object = json_load_file(path, flags, &error)) == nullptr) {
 
