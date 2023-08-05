@@ -42,7 +42,7 @@ cell_t JsonCreateFromFile(IPluginContext *pContext, const cell_t *params) {
 
     nJansson::IJson* json;
     nJansson::JsonError_t error = {};
-    if((json = pJansson->create(path, params[2], &error, smutils)) == nullptr) {
+    if((json = pJansson->create(Path_Game, path, params[2], &error)) == nullptr) {
 
         char* buffer = nullptr;
         if(params[3] && params[4])

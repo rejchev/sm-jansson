@@ -20,7 +20,7 @@
  *      12 low bits  - bugs \n
  *
  */
-#define SMINTERFACE_JANSSON_VERSION	    ((2 << 24) & (0 << 12) & 0)
+#define SMINTERFACE_JANSSON_VERSION	    ((3 << 24) & (0 << 12) & 0)
 
 namespace nJansson
 {
@@ -155,14 +155,14 @@ namespace nJansson
         /**
          * @brief Creating json wrapper via SourceMod formatted path
          *
-         * @param fullPath SourceMod rel path (libsys)
+         * @param type path type
+         * @param path path
          * @param flags decoding flags
          * @param pError Error pointer (may be nullptr)
-         * @param pUtils smutils pointer
          *
          * @return wrapped json on success
          */
-        virtual IJson *create(const char*, const size_t& flags, JsonError_t* pError, SourceMod::ISourceMod* utils) =0;
+        virtual IJson *create(const PathType&, const char*, const size_t& flags, JsonError_t* pError) =0;
 
     public:
 

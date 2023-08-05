@@ -1,3 +1,4 @@
+#include <smsdk_ext.h>
 #include <jansson.h>
 
 #include "jansson.h"
@@ -43,15 +44,15 @@ IJson *Jansson::create(FILE *input, const size_t &flags, JsonError_t* pError)
     return new Json(pJson, false);
 }
 
-IJson *Jansson::create(const char *relPath, const size_t &flags, JsonError_t* pError, SourceMod::ISourceMod *utils) {
-    if(relPath == nullptr)
+IJson *Jansson::create(const PathType& type, const char *path, const size_t &flags, JsonError_t* pError) {
+    if(path == nullptr)
         return nullptr;
 
     json_t* object;
     json_error_t error = {};
 
-    char path[PLATFORM_MAX_PATH];
-    utils->BuildPath(Path_Game, path, PLATFORM_MAX_PATH, "%s", relPath);
+    char filePath[PLATFORM_MAX_PATH];
+    smutils->BuildPath(type, filePath, PLATFORM_MAX_PATH, "%s", path);
 
     if((object = json_load_file(path, flags, &error)) == nullptr) {
 
