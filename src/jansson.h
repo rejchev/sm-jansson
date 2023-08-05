@@ -16,7 +16,7 @@ namespace nJansson
     public:
         IJson *create(const char *, const size_t &flags, JsonError_t* pError) override;
         IJson *create(FILE *input, const size_t &flags, JsonError_t* pError) override;
-        IJson *create(const PathType& type, const char*, const size_t& flags, JsonError_t* pError) override;
+        IJson *create(const SourceMod::PathType& type, const char*, const size_t& flags, JsonError_t* pError) override;
 
     public:
         void close(IJson* json) override;

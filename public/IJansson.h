@@ -162,7 +162,7 @@ namespace nJansson
          *
          * @return wrapped json on success
          */
-        virtual IJson *create(const PathType&, const char*, const size_t& flags, JsonError_t* pError) =0;
+        virtual IJson *create(const SourceMod::PathType&, const char*, const size_t& flags, JsonError_t* pError) =0;
 
     public:
 

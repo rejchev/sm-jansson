@@ -44,7 +44,7 @@ IJson *Jansson::create(FILE *input, const size_t &flags, JsonError_t* pError)
     return new Json(pJson, false);
 }
 
-IJson *Jansson::create(const PathType& type, const char *path, const size_t &flags, JsonError_t* pError) {
+IJson *Jansson::create(const SourceMod::PathType& type, const char *path, const size_t &flags, JsonError_t* pError) {
     if(path == nullptr)
         return nullptr;
 
