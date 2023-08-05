@@ -137,11 +137,11 @@ IJson *Json::get(const size_t &index) const {
 }
 
 bool Json::set(const char *key, const IJson *value) {
-    return set(key, ((value != nullptr) ? ((Json*)value)->json() : json_null()), json_object_set) == 0;
+    return set(key, ((value != nullptr) ? ((Json*)value)->json() : json_null()), json_object_set);
 }
 
 bool Json::set(const char *key, const char *value) {
-    return set(key, json_string(value), json_object_set_new) == 0;
+    return set(key, json_string(value), json_object_set_new);
 }
 
 bool Json::set(const char *key, json_t *value, int (*pSet)(json_t *, const char *, json_t *)) {
