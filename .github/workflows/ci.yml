@@ -9,17 +9,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        sourcemod-version: [1.11-dev]
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - ubuntu-20.04
+        sourcemod-version:
+          - 1.11-dev
         include:
           - os: ubuntu-latest
-            target-archs: x86,x86_64
+            target-archs: x86
 
           - os: windows-latest
-            target-archs: x86,x86_64
+            target-archs: x86
+
+          - os: ubuntu-20.04
+            target-archs: x86
 
     steps:
-      - name: Install Linux packages
+      - name: Install ${{ matrix.os }} packages
         if: runner.os == 'Linux'
         run: |
           sudo dpkg --add-architecture i386
@@ -71,7 +78,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ runner.os }}
+          name: ${{ matrix.os }}
           path: extension/build/package
 
 
@@ -80,6 +87,13 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - ubuntu-20.04
 
     steps:
       - name: Download artifacts
@@ -88,8 +102,7 @@ jobs:
       - name: Package
         run: |
           version=`echo $GITHUB_REF | sed "s/refs\/tags\///"`
-          7z a jansson-${version}.${{ github.run_number }}-linux.zip ./Linux/*
-          7z a jansson-${version}.${{ github.run_number }}-windows.zip ./Windows/*
+          7z a jansson-${version}.${{ github.run_number }}-${{ matrix.os }}.zip ./${{ matrix.os }}/*
 
       - name: Release
         uses: svenstaro/upload-release-action@v2
