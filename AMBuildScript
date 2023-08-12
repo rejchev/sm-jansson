@@ -210,12 +210,13 @@ class ExtensionConfig(object):
     cxx.cflags += ['/Oy-']
 
   def configure_linux(self, cxx):
-    cxx.defines += ['_LINUX', 'POSIX']
+    cxx.defines += ['_LINUX', 'POSIX', '_FILE_OFFSET_BITS=64']
     cxx.linkflags += ['-Wl,--exclude-libs,ALL', '-lm']
     if cxx.family == 'gcc':
       cxx.linkflags += ['-static-libgcc']
     elif cxx.family == 'clang':
-      cxx.linkflags += ['-lgcc_eh']
+          cxx.linkflags += ['-lgcc_eh']
+    cxx.linkflags += ['-static-libstdc++']
 
   def configure_mac(self, cxx):
     cxx.defines += ['OSX', '_OSX', 'POSIX']
