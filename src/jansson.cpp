@@ -54,7 +54,7 @@ IJson *Jansson::create(const SourceMod::PathType& type, const char *path, const 
     char filePath[PLATFORM_MAX_PATH];
     smutils->BuildPath(type, filePath, PLATFORM_MAX_PATH, "%s", path);
 
-    if((object = json_load_file(path, flags, &error)) == nullptr) {
+    if((object = json_load_file(filePath, flags, &error)) == nullptr) {
 
         if(pError != nullptr)
             *pError = ToKnownError(&error);
