@@ -17,6 +17,7 @@ extern cell_t JsonGetBool(SourcePawn::IPluginContext *pContext, const cell_t *pa
 extern cell_t JsonGetFloat(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonClear(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonSize(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonSizeOf(SourcePawn::IPluginContext *pContext, const cell_t *params);
 
 
 extern const sp_nativeinfo_t JSON_NATIVES[];

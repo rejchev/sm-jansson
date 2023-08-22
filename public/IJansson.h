@@ -20,7 +20,7 @@
  *      12 low bits  - bugs \n
  *
  */
-#define SMINTERFACE_JANSSON_VERSION	    ((3 << 24) & (0 << 12) & 0)
+#define SMINTERFACE_JANSSON_VERSION	    ((3 << 24) & (1 << 12) & 0)
 
 namespace nJansson
 {
@@ -225,6 +225,10 @@ namespace nJansson
     class IJson : public IJsonArray, public IJsonObject
     {
     public:
+
+        /// @brief must be freed via free()
+        virtual const char* dump(const size_t& flags) const =0;
+
         virtual bool dump(char* buff, const size_t& maxl, const size_t &decodingFlags) const =0;
         virtual int  dump(const char* path, const size_t& flags) const =0;
 

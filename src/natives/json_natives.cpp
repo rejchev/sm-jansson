@@ -291,10 +291,34 @@ cell_t JsonSize(IPluginContext *pContext, const cell_t *params) {
     return (cell_t)json->size();
 }
 
+cell_t JsonSizeOf(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJson* json;
+    if((json = nJansson::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
+        return 0;
+
+    cell_t size = 0;
+
+    const char* buffer;
+    if((buffer = json->dump(params[2])) != nullptr)
+        size = (cell_t)strlen(buffer);
+
+    if(buffer != nullptr)
+        free((void*) buffer);
+
+    return size;
+}
+
 const sp_nativeinfo_t JSON_NATIVES[] =
 {
         {"Json.Json",           JsonCreate},
         {"Json.JsonF",          JsonCreateFromFile},
+        {"Json.SizeOf",          JsonSizeOf},
         {"Json.Dump",           JsonDump},
         {"Json.ToFile",         JsonDumpToFile},
         {"Json.Equal",          JsonEqual},

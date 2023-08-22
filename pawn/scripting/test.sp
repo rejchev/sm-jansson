@@ -32,6 +32,20 @@ public void OnPluginStart()
         .Build()))
     .Build();
 
+
+    int size = Json.SizeOf(o, JsonPretty(4)) + 1;
+
+    LogMessage("SizeOf O: %d", size);
+
+    if(size > 1)
+    {
+        char[] dynamicString = new char[size];
+
+        if(o.Dump(dynamicString, size, JsonPretty(4)))
+            LogMessage("Dumping O after size get: \n%s", dynamicString);
+    }
+
+
     LogMessage("B type: %d", b.Type);
     LogMessage("O type; %d", o.Type);
 

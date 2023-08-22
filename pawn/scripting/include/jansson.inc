@@ -84,6 +84,14 @@ methodmap Json < Handle
     // @error            Invalid syntax
     public static native Json JsonF(const char[] path, int flags = 0, char[] error = NULL_STRING, int mlen = 0);
 
+    // Returns size of dumped json
+    //
+    // @param json       json object
+    // @param flags      flags
+    //
+    // @return           size
+    public static native int SizeOf(const Json json, int flags = 0);
+
     // Writes the JSON string representation to a file.
     //
     // @param file       File to write to.

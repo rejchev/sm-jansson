@@ -21,12 +21,10 @@ Json::~Json()
 }
 
 bool Json::dump(char* buff, const size_t& maxl, const size_t &decodingFlags) const {
-    if(!isOK())
-        return false;
 
     const char* value;
 
-    if((value = json_dumps(json(), decodingFlags)) == nullptr)
+    if((value = dump(decodingFlags)) == nullptr)
         return false;
 
     ke::SafeStrcpyN(buff, maxl, value, strlen(value) + 1);
@@ -334,3 +332,7 @@ bool Json::isOK() const {
     return m_pJson != nullptr;
 }
 
+const char *Json::dump(const size_t &flags) const
+{
+    return isOK() ? json_dumps(json(), flags) : nullptr;
+}
