@@ -11,10 +11,17 @@ extern cell_t JsonEqual(SourcePawn::IPluginContext *pContext, const cell_t *para
 extern cell_t JsonGetType(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonValidState(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonGetString(SourcePawn::IPluginContext *pContext, const cell_t *params);
+
 extern cell_t JsonGetInt(SourcePawn::IPluginContext *pContext, const cell_t *params);
-extern cell_t JsonGetInt64(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetIntEx(SourcePawn::IPluginContext *pContext, const cell_t *params);
+
 extern cell_t JsonGetBool(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetBoolEx(SourcePawn::IPluginContext *pContext, const cell_t *params);
+
 extern cell_t JsonGetFloat(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonGetFloatEx(SourcePawn::IPluginContext *pContext, const cell_t *params);
+
+extern cell_t JsonGetInt64(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonClear(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonSize(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonSizeOf(SourcePawn::IPluginContext *pContext, const cell_t *params);

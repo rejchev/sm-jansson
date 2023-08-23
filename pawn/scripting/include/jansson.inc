@@ -123,12 +123,28 @@ methodmap Json < Handle
     // @return              Value
     public native bool AsBool(bool freeHandle = false);
 
+    // Try view Json as bool (must be JsonType::Boolean).
+    //
+    // @param buffer        Bool Buffer (to receive value)
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              true on success
+    public native bool TryAsBool(bool& buffer, bool freeHandle = false);
+
     // View Json as int (must be JsonType::Integer).
     //
     // @param freeHandle    Auto delete current handle after call successfully end
     //
     // @return              Value
     public native int AsInt(bool freeHandle = false);
+
+    // Try view Json as int (must be JsonType::Integer).
+    //
+    // @param buffer        Int Buffer (to receive value)
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              true on success
+    public native bool TryAsInt(int& buffer, bool freeHandle = false);
 
     // View Json as int64 (must be JsonType::Integer).
     //
@@ -143,6 +159,14 @@ methodmap Json < Handle
     //
     // @return              Value
     public native float AsFloat(bool freeHandle = false);
+
+    // Try view Json as float (must be JsonType::Real).
+    //
+    // @param buffer        Float Buffer (to receive value)
+    // @param freeHandle    Auto delete current handle after call successfully end
+    //
+    // @return              true on success
+    public native bool TryAsFloat(float& buffer, bool freeHandle = false);
 
     // View Json as string (must be JsonType::String).
     //
@@ -212,10 +236,8 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        value = buffer.AsBool(true);
-
         bool success;
-        if(!(success = buffer == null))
+        if(!(success = buffer.TryAsBool(value, true)))
             delete buffer;
 
         return success;
@@ -243,10 +265,8 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        value = buffer.AsFloat(true);
-
         bool success;
-        if(!(success = buffer == null))
+        if(!(success = buffer.TryAsFloat(value, true)))
             delete buffer;
 
         return success;
@@ -276,10 +296,8 @@ methodmap JsonObject < Json
         if(!(buffer = this.Get(key, freeHandle)))
             return false;
 
-        value = buffer.AsInt(true);
-
         bool success;
-        if(!(success = buffer == null))
+        if(!(success = buffer.TryAsInt(value, true)))
             delete buffer;
 
         return success;
@@ -581,7 +599,6 @@ methodmap JsonArray < Json
 #define asJSONA(%0) view_as<JsonArray>(%0)
 
 #if defined JSON_INCLUDE_BUILDER
-
 #define asJSONB(%0) view_as<JsonBuilder>(%0)
 
 methodmap JsonBuilder < Json

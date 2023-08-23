@@ -194,6 +194,29 @@ cell_t JsonGetInt(IPluginContext *pContext, const cell_t *params) {
     return (cell_t) value;
 }
 
+cell_t JsonGetIntEx(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJson* json;
+    if((json = nJansson::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
+        return 0;
+
+    bool success;
+    long long int value = 0;
+    if((success = json->get(&value)) && params[3] == 1)
+        if(nJansson::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
+
+    if(success)
+        pContext->GetLocalParams()[2] = (cell_t)value;
+
+    return success;
+}
+
 cell_t JsonGetBool(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
@@ -213,6 +236,29 @@ cell_t JsonGetBool(IPluginContext *pContext, const cell_t *params) {
     return (cell_t)value;
 }
 
+cell_t JsonGetBoolEx(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJson* json;
+    if((json = nJansson::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
+        return 0;
+
+    bool success;
+    bool value = false;
+    if((success = json->get(&value)) && params[3] == 1)
+        if(nJansson::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
+
+    if(success)
+        pContext->GetLocalParams()[2] = (cell_t)value;
+
+    return success;
+}
+
 cell_t JsonGetFloat(IPluginContext *pContext, const cell_t *params) {
     const nJansson::IHandleType* pType;
     if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
@@ -230,6 +276,29 @@ cell_t JsonGetFloat(IPluginContext *pContext, const cell_t *params) {
             pJansson->close((nJansson::IJson*)json);
 
     return sp_ftoc((float)value);
+}
+
+cell_t JsonGetFloatEx(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJson* json;
+    if((json = nJansson::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
+        return 0;
+
+    bool success;
+    double value = 0;
+    if((success = json->get(&value)) && params[3] == 1)
+        if(nJansson::FreeHandle(params[1], json, pType, &sec) != nullptr)
+            pJansson->close((nJansson::IJson*)json);
+
+    if(success)
+        pContext->GetLocalParams()[2] = sp_ftoc((float)value);
+
+    return success;
 }
 
 // @param 1 - json object
@@ -322,11 +391,19 @@ const sp_nativeinfo_t JSON_NATIVES[] =
         {"Json.Dump",           JsonDump},
         {"Json.ToFile",         JsonDumpToFile},
         {"Json.Equal",          JsonEqual},
+
         {"Json.AsInt",         JsonGetInt},
-        { "Json.AsInt64", JsonGetInt64 },
+        {"Json.TryAsInt",         JsonGetIntEx},
+
+        {"Json.AsInt64", JsonGetInt64 },
         {"Json.AsString",      JsonGetString},
+
         {"Json.AsBool",        JsonGetBool},
+        {"Json.TryAsBool",         JsonGetBoolEx},
+
         {"Json.AsFloat",       JsonGetFloat},
+        {"Json.TryAsFloat",       JsonGetFloatEx},
+
         {"Json.Clear",          JsonClear},
         {"Json.Size.get",       JsonSize},
         {"Json.Type.get",       JsonGetType},
