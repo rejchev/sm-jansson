@@ -21,6 +21,7 @@ namespace nJansson
 
     public:
         bool equal(const IJson* json) const override;
+        IJson* find(const JsonType& type, bool (*cond)(const IJson*)) const override;
 
     public:
         bool get(long long *value) override;
@@ -88,6 +89,9 @@ namespace nJansson
 
     public:
         virtual json_t *json() const;
+
+    protected:
+        static JsonType innerTypeConversion(const json_type& type);
 
     private:
         json_t *m_pJson;
