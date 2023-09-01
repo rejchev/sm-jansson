@@ -57,6 +57,13 @@ enum JsonObjectUpdateType
     UpdRecursive
 };
 
+// Simple validator
+//
+// @param obj       Json obj [must not be freed]
+//
+// @return true on valid/false
+typedef JsonValidator = function bool(const Json obj);
+
 // Generic type for encoding JSON.
 methodmap Json < Handle
 {
@@ -91,6 +98,14 @@ methodmap Json < Handle
     //
     // @return           size
     public static native int SizeOf(const Json json, int flags = 0);
+
+    // Find first occurrence of interesting json (with type filter) [it must by jtObject or jtArray]
+    //
+    // @param condition Condition (see JsonValidator)
+    // @param type      Interesting json items type to find in (jtInvalid to find in all)
+    //
+    // @return Json or null
+    public native Json FindFirst(JsonValidator condition, JsonType type = jtInvalid);
 
     // Writes the JSON string representation to a file.
     //

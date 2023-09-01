@@ -78,7 +78,9 @@ Jansson::~Jansson() {
 }
 
 void Jansson::close(IJson *json) {
-    delete (Json*) json;
+
+    if(json != nullptr)
+        delete (Json*) json;
 }
 
 JsonError_t Jansson::ToKnownError(const json_error_t *error) {

@@ -21,7 +21,7 @@ namespace nJansson
 
     public:
         bool equal(const IJson* json) const override;
-        IJson* find(const JsonType& type, bool (*cond)(const IJson*)) const override;
+        IJson* find(const JsonType& type, const std::function<bool(const IJson*)>& condition) const override;
 
     public:
         bool get(long long *value) override;

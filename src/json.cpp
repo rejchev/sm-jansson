@@ -345,17 +345,15 @@ const char *Json::dump(const size_t &flags) const
     return isOK() ? json_dumps(json(), flags) : nullptr;
 }
 
-IJson *Json::find(const JsonType &type, bool (*cond)(const IJson *)) const
+IJson *Json::find(const JsonType &type, const std::function<bool(const IJson*)>& condition) const
 {
     const JsonType& selfType = this->type();
 
     if(selfType != jtObject && selfType != jtArray)
         return nullptr;
 
-    auto isObjectValid =[](
-            const JsonType& ctype,
-            bool (*cond)(const IJson*),
-            json_t* ptr) -> bool
+    auto simpleValidator = [] (
+            const JsonType& ctype, const std::function<bool(const IJson*)>& cond, json_t* ptr) -> bool
     {
         if(!ptr || (ctype != jtInvalid && innerTypeConversion(ptr->type) != ctype))
             return false;
@@ -378,7 +376,7 @@ IJson *Json::find(const JsonType &type, bool (*cond)(const IJson *)) const
             if(!(pBuffer = json_object_get(m_pJson, key)))
                 continue;
 
-            if(!isObjectValid(type, cond, pBuffer))
+            if(!simpleValidator(type, condition, pBuffer))
             {
                 json_decref(pBuffer);
                 pBuffer = nullptr;
@@ -392,7 +390,7 @@ IJson *Json::find(const JsonType &type, bool (*cond)(const IJson *)) const
             if(!(pBuffer = json_array_get(m_pJson, i)))
                 continue;
 
-            if(!isObjectValid(type, cond, pBuffer))
+            if(!simpleValidator(type, condition, pBuffer))
             {
                 json_decref(pBuffer);
                 pBuffer = nullptr;

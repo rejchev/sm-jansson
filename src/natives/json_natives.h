@@ -25,6 +25,7 @@ extern cell_t JsonGetInt64(SourcePawn::IPluginContext *pContext, const cell_t *p
 extern cell_t JsonClear(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonSize(SourcePawn::IPluginContext *pContext, const cell_t *params);
 extern cell_t JsonSizeOf(SourcePawn::IPluginContext *pContext, const cell_t *params);
+extern cell_t JsonFindFirst(SourcePawn::IPluginContext *pContext, const cell_t *params);
 
 
 extern const sp_nativeinfo_t JSON_NATIVES[];

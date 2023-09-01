@@ -8,6 +8,7 @@
 #include <ISourceMod.h>
 #include <vector>
 #include <cstring>
+#include <functional>
 
 #define SMINTERFACE_JANSSON_NAME        "IJansson"
 
@@ -234,7 +235,7 @@ namespace nJansson
 
     public:
         virtual bool equal(const IJson* json) const =0;
-        virtual IJson* find(const JsonType& type, bool (*)(const IJson*)) const =0;
+        virtual IJson* find(const JsonType& type, const std::function<bool(const IJson*)>& condition) const =0;
 
     public:
         virtual bool get(long long *value) =0;

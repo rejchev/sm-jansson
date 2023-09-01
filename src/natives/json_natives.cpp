@@ -383,6 +383,54 @@ cell_t JsonSizeOf(IPluginContext *pContext, const cell_t *params) {
     return size;
 }
 
+cell_t JsonFindFirst(IPluginContext *pContext, const cell_t *params) {
+    const nJansson::IHandleType* pType;
+    if((pType = nJansson::GetHandleType(pJansson, "Json")) == nullptr)
+        return 0;
+
+    HandleSecurity sec {pContext->GetIdentity(), myself->GetIdentity()};
+
+    nJansson::IJson* json;
+    if((json = nJansson::ReadJsonHandle(params[1], pType, &sec)) == nullptr)
+        return 0;
+
+    if(json->type() != nJansson::jtObject && json->type() != nJansson::jtArray)
+        return 0;
+
+    IPluginFunction* pFunc;
+    if(!(pFunc = pContext->GetFunctionById((funcid_t)params[2])))
+        return 0;
+
+    const auto& interestingType = (nJansson::JsonType&)params[3];
+
+    using JsonValidator = std::function<bool(const nJansson::IJson*)>;
+
+    JsonValidator funcCondition = {[&](const nJansson::IJson* ptr) -> bool
+    {
+        Handle_t handle;
+
+        if((handle = nJansson::CreateHandle((void*)ptr, pType, &sec)) == BAD_HANDLE)
+            return false;
+
+        bool result {};
+
+        pFunc->PushCell(interestingType);
+        pFunc->PushCell((cell_t)handle);
+        pFunc->Execute((cell_t*)&(result));
+
+        // Json object (ptr) is not allocated
+        nJansson::FreeHandle(handle, nullptr, pType, &sec);
+
+        return result;
+    }};
+
+    nJansson::IJson* pRes;
+    if((pRes = json->find(interestingType, funcCondition)) == nullptr)
+        return 0;
+
+    return (cell_t) nJansson::CreateHandle((void*)pRes, pType, &sec);
+}
+
 const sp_nativeinfo_t JSON_NATIVES[] =
 {
         {"Json.Json",           JsonCreate},
@@ -391,6 +439,7 @@ const sp_nativeinfo_t JSON_NATIVES[] =
         {"Json.Dump",           JsonDump},
         {"Json.ToFile",         JsonDumpToFile},
         {"Json.Equal",          JsonEqual},
+        {"Json.FindFirst",          JsonFindFirst},
 
         {"Json.AsInt",         JsonGetInt},
         {"Json.TryAsInt",         JsonGetIntEx},
