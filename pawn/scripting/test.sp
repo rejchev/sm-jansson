@@ -4,84 +4,94 @@
 
 #include <jansson>
 
-public void OnPluginStart()
+#define TEST_DUMP(%1,%2,%3) TestDump(%1(%2, sizeof(%2)), %3)
+#define TEST_FIND_FIRST(%1,%2,%3,%4) TestFindFirst(%1(%2, sizeof(%2)), %3, %4)
+
+public void OnMapStart()
 {
-    Json b;
-    JsonBuilder o;
-    
-    char error[256];
-    if((o = new JsonBuilder("{}", error, sizeof(error))) == null) {
+    char error[512];
 
-        if(error[0])
-            LogMessage("On json creating step error: %s", error);
-        else
-            LogMessage("On json handle creating step error");
+    if(!TEST_DUMP(MakeJsonObject, error, JsonPretty(4)|JsonFloatPrecision(7)) && error[0])
+        LogError(error);
 
-        return;
-    }
+    if(!TEST_DUMP(MakeJsonArray, error, JsonPretty(4)|JsonFloatPrecision(7)) && error[0])
+        LogError(error);
 
-    o.SetString("string", "dbc")
-    .SetFloat("float", 012.32)
-    .SetInt64("int64", "99999999999")
-    .SetInt("int", 232)
-    .SetBool("bool", true)
-    .Set("array", (b = (new JsonBuilder("[]"))
-        .PushString("asdada")
-        .PushInt(41)
-        .PushInt64("99999999999")
-        .Build()))
-    .Build();
+    if(!TEST_FIND_FIRST(MakeJsonObject, error, StringObjectExpected, JStringType) && error[0])
+        LogError(error);
 
-
-    int size = Json.SizeOf(o, JsonPretty(4)) + 1;
-
-    LogMessage("SizeOf O: %d", size);
-
-    if(size > 1)
-    {
-        char[] dynamicString = new char[size];
-
-        if(o.Dump(dynamicString, size, JsonPretty(4)))
-            LogMessage("Dumping O after size get: \n%s", dynamicString);
-    }
-
-
-    LogMessage("B type: %d", b.Type);
-    LogMessage("O type; %d", o.Type);
-
-    LogMessage("Simple int: %d", asJSONA(asJSONO(o).Get("array")).GetInt(1, true));
-
-    JsonArray keys = asJSONO(o).Keys();
-
-    LogMessage("Keys: %x", keys);
-
-    char buffer[1024];
-    if(keys)
-    {
-        for(int i = 0; i < keys.Size; i++)
-        {
-            if(!keys.GetString(i, buffer, sizeof(buffer)))
-                LogMessage("Fail on get string");
-
-            LogMessage("Key(%d): %s", i + 1, buffer);
-        }
-
+    if(!TEST_FIND_FIRST(MakeJsonArray, error, StringObjectExpected, JStringType) && error[0])
+        LogError(error);
         
-        delete keys;
-    }
+}
+
+bool TestDump(Json json, int flags = 0)
+{
+    if(!json)
+        return false;
+
+    int size;
     
-    if(asJSONA(asJSONO(o).Get("array")).GetInt64(2, buffer, sizeof(buffer), true))
-        LogMessage("int64: %s", buffer);
+    if((size = Json.SizeOf(json, flags) + 1) < 2) 
+    {
+        LogError("[TestDump]: Invalid size '%d'", size);
 
-    // char buffer[1024];
-    if(b.Dump(buffer, sizeof(buffer), 0, true))
-        LogMessage("Array: %s", buffer);
+        delete json;
+        return false;
+    }
 
-    LogMessage("b is null: %d", b);
+    char[] buffer = new char[size];
+    
+    bool success;
+    if(!(success = json.Dump(buffer, size, flags, true)))
+        delete json;
 
+    if(success)
+        LogMessage("[TestDump] done: \n%s", buffer);
 
-    if(o.Dump(buffer, sizeof(buffer), JsonPretty(4), true))
-        LogMessage("Dump: %s", buffer);
+    return success;
+}
 
-    else delete o;
+void TestFindFirst(Json json, JsonValidator cond, JsonType type = JInvalidType)
+{
+    if(!json) return;
+
+    Json buffer;
+
+    if(!(buffer = json.FindFirst(cond, type)))
+        LogMessage("[TestFindFirst]: item not found");
+
+    if(buffer)
+        LogMessage("[TestFindFirst] %x: type: %d", buffer, buffer.Type);
+
+    delete buffer;
+}
+
+stock Json MakeJsonArray(char[] error = NULL_STRING, int len = 0)
+{
+    return (new JsonBuilder("[]", error, len))
+        .PushString("Hello, Jansson!")
+        .PushFloat(3.4444)
+        .PushInt(3)
+        .PushInt64("123123213123123")
+        .PushBool(false)
+        .Push(null)
+        .Build();
+}
+
+stock Json MakeJsonObject(char[] error = NULL_STRING, int len = 0)
+{
+    return (new JsonBuilder("{}", error, len))
+        .SetString("version", "1.7.x")
+        .SetFloat("float", 3.4444)
+        .SetInt("integer", 3)
+        .SetInt64("int64", "12321321312321312")
+        .SetBool("bool", true)
+        .Set("null", null)
+        .Build();
+}
+
+stock bool StringObjectExpected(const Json json)
+{
+    return json.Type == JStringType;
 }
