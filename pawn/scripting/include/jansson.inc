@@ -105,7 +105,7 @@ methodmap Json < Handle
     // @param type      Interesting json items type to find in (jtInvalid to find in all)
     //
     // @return Json or null
-    public native Json FindFirst(JsonValidator condition, JsonType type = jtInvalid);
+    public native Json FindFirst(JsonValidator condition, JsonType type = JInvalidType);
 
     // Writes the JSON string representation to a file.
     //
