@@ -53,20 +53,17 @@ namespace nJansson {
     SourceMod::HandleType_t CHandleTypeManager::add(const IHandleType* pHType) {
 
         SourceMod::HandleType_t type = 0;
-        if(pHType == nullptr
-        || !g_pHandleSys->FindHandleType(pHType->name(), &type)
-        || type != pHType->id())
+
+        if(pHType == nullptr)
             return NO_HANDLE_TYPE;
 
-        const auto& hType = std::find_if(
-                m_vecTypes.begin(),
-                m_vecTypes.end(),
-                [&](const auto &item) {
-                    return item->id() == pHType->id();
-                });
+        if(!g_pHandleSys->FindHandleType(pHType->name(), &type))
+            return NO_HANDLE_TYPE;
 
-        if(hType == m_vecTypes.end())
-            m_vecTypes.push_back(pHType);
+        if(type != pHType->id() || find_t(type) != nullptr)
+            return NO_HANDLE_TYPE;
+
+        m_vecTypes.push_back(pHType);
 
         return type;
     }
