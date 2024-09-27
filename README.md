@@ -2,8 +2,8 @@
 <div align=center>
 
 [![CI](https://github.com/rejchev/sm-jansson/actions/workflows/ci.yml/badge.svg)](https://github.com/rejchev/sm-jansson/)
-[![Discord](https://img.shields.io/discord/494942123548868609?logo=discord&logoColor=%23959da5&color=%235865F2
-)](https://discord.gg/cFZ97Mzrjy)
+[![Discord](https://img.shields.io/discord/1159851636156530800?logo=discord&logoColor=%23959da5&color=%235865F2
+)](https://discord.gg/BAUwTKVJut)
 [![Downloads](https://img.shields.io/github/downloads/rejchev/sm-jansson/total?color=%2332c955)]()
 [![LICENSE](https://img.shields.io/github/license/rejchev/sm-jansson)](LICENSE)
 
