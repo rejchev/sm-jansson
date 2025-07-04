@@ -25,10 +25,10 @@ jobs:
             target-archs: x86
             compiler_cc: msvc
 
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             target-archs: x86
-            compiler_cc: clang-8
-            compiler_cxx: clang++-8
+            compiler_cc: clang-11
+            compiler_cxx: clang++-11
 
     steps:
       - name: Install ${{ matrix.os }} packages
@@ -109,7 +109,7 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-          - ubuntu-20.04
+          - ubuntu-22.04
 
     steps:
       - name: Download artifacts
