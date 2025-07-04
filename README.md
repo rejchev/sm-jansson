@@ -2,8 +2,6 @@
 <div align=center>
 
 [![CI](https://github.com/rejchev/sm-jansson/actions/workflows/ci.yml/badge.svg)](https://github.com/rejchev/sm-jansson/)
-[![Discord](https://img.shields.io/discord/1159851636156530800?logo=discord&logoColor=%23959da5&color=%235865F2
-)](https://discord.gg/BAUwTKVJut)
 [![Downloads](https://img.shields.io/github/downloads/rejchev/sm-jansson/total?color=%2332c955)]()
 [![LICENSE](https://img.shields.io/github/license/rejchev/sm-jansson)](LICENSE)
 
@@ -110,12 +108,9 @@ Header: [IJansson.h](https://github.com/rejchev/sm-jansson/blob/main/public/IJan
 More information: [SourceMod WiKi](https://wiki.alliedmods.net/Writing_Extensions)
 
 
-## License
+## Contacts
+- [Telegram](https://t.me/rejsoft)
 
-Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
-
-
-## How to contact me
-
-- [@On DiscordServer](https://discord.gg/ChTyPUG) - `rej.chev`
-- [@On GitHub](https://github.com/rejchev)
+## Donuts
+- BTC: ```1MFXSopgnJaZrcJ1t8Ydw9rHvKT13GLGsf```
+- USDT(TON): ```UQAuSiZ3Vbk6PNat69D_Nik-br63EI0kOmGsOXG3YDchmsJl```
