@@ -68,12 +68,12 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: extension
 
       - name: Checkout SourceMod
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: alliedmodders/sourcemod
           ref: ${{ matrix.sourcemod-version }}
@@ -81,7 +81,7 @@ jobs:
           submodules: recursive
 
       - name: Checkout AMBuild
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: alliedmodders/ambuild
           path: ambuild
