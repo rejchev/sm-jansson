@@ -3,11 +3,9 @@ name: CI
 on: 
   push: 
     branches:
-      - main
       - dev
   pull_request:
     branches:
-      - main
       - dev
   workflow_dispatch:
   
@@ -23,7 +21,7 @@ jobs:
           - windows-latest
           - ubuntu-22.04
         sourcemod-version:
-          - 1.11-dev
+          - 1.12-dev
         include:
           - os: ubuntu-latest
             target-archs: x86
