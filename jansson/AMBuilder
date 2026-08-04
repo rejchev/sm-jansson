@@ -19,17 +19,17 @@ for cxx in builder.targets:
 
   # Defined as JANSSON_SRC in jansson/CMakeLists.txt
   binary.sources += [
-    'dump.c',
-    'error.c',
-    'hashtable.c',
-    'hashtable_seed.c',
-    'load.c',
-    'memory.c',
-    'pack_unpack.c',
-    'strbuffer.c',
-    'strconv.c',
-    'utf.c',
-    'value.c',
+    'jansson/src/dump.c',
+    'jansson/src/error.c',
+    'jansson/src/hashtable.c',
+    'jansson/src/hashtable_seed.c',
+    'jansson/src/load.c',
+    'jansson/src/memory.c',
+    'jansson/src/pack_unpack.c',
+    'jansson/src/strbuffer.c',
+    'jansson/src/strconv.c',
+    'jansson/src/utf.c',
+    'jansson/src/value.c',
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
