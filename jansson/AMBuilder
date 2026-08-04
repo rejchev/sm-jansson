@@ -19,17 +19,17 @@ for cxx in builder.targets:
 
   # Defined as JANSSON_SRC in jansson/CMakeLists.txt
   binary.sources += [
-    'jansson/src/dump.c',
-    'jansson/src/error.c',
-    'jansson/src/hashtable.c',
-    'jansson/src/hashtable_seed.c',
-    'jansson/src/load.c',
-    'jansson/src/memory.c',
-    'jansson/src/pack_unpack.c',
-    'jansson/src/strbuffer.c',
-    'jansson/src/strconv.c',
-    'jansson/src/utf.c',
-    'jansson/src/value.c',
+    os.path.join(builder.sourcePath, 'jansson/src', 'dump.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'error.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'hashtable.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'hashtable_seed.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'load.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'memory.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'pack_unpack.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'strbuffer.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'strconv.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'utf.c'),
+    os.path.join(builder.sourcePath, 'jansson/src', 'value.c'),
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
