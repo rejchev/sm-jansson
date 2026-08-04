@@ -20,17 +20,17 @@ for cxx in builder.targets:
     binary.compiler.cflags += ['-Wno-attributes']
 
   binary.sources += [
-    os.path.join('jansson', 'src', 'dump.c'),
-    os.path.join('jansson', 'src', 'error.c'),
-    os.path.join('jansson', 'src', 'hashtable.c'),
-    os.path.join('jansson', 'src', 'hashtable_seed.c'),
-    os.path.join('jansson', 'src', 'load.c'),
-    os.path.join('jansson', 'src', 'memory.c'),
-    os.path.join('jansson', 'src', 'pack_unpack.c'),
-    os.path.join('jansson', 'src', 'strbuffer.c'),
-    os.path.join('jansson', 'src', 'strconv.c'),
-    os.path.join('jansson', 'src', 'utf.c'),
-    os.path.join('jansson', 'src', 'value.c'),
+    os.path.join('dump.c'),
+    os.path.join('error.c'),
+    os.path.join('hashtable.c'),
+    os.path.join('hashtable_seed.c'),
+    os.path.join('load.c'),
+    os.path.join('memory.c'),
+    os.path.join('pack_unpack.c'),
+    os.path.join('strbuffer.c'),
+    os.path.join('strconv.c'),
+    os.path.join('utf.c'),
+    os.path.join('value.c'),
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
