@@ -6,30 +6,34 @@ builder.SetBuildFolder('libjansson')
 rvalue = {}
 for cxx in builder.targets:
   binary = Extension.StaticLibrary(builder, cxx, 'jansson')
+  
+  jansson_root = os.path.join(builder.sourcePath, 'jansson')
+
   binary.compiler.includes += [
-    os.path.join(builder.sourcePath, 'jansson', 'include'),
-    os.path.join(builder.sourcePath, 'jansson', 'private_include'),
-    os.path.join(builder.sourcePath, 'jansson/jansson', 'src'),
+    os.path.join(builder.sourcePath, 'include'),
+    os.path.join(builder.sourcePath, 'private_include'),
+    os.path.join(jansson_root, 'src'),
   ]
+
   binary.compiler.defines += ['HAVE_CONFIG_H']
 
   if binary.compiler.family == 'clang':
     # https://llvm.org/bugs/show_bug.cgi?id=16428
     binary.compiler.cflags += ['-Wno-attributes']
 
-  # Defined as JANSSON_SRC in jansson/CMakeLists.txt
+  jansson_src = os.path.join(jansson_root, 'src')
   binary.sources += [
-    os.path.join(builder.sourcePath, 'jansson/src', 'dump.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'error.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'hashtable.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'hashtable_seed.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'load.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'memory.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'pack_unpack.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'strbuffer.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'strconv.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'utf.c'),
-    os.path.join(builder.sourcePath, 'jansson/src', 'value.c'),
+    os.path.join(jansson_src, 'dump.c'),
+    os.path.join(jansson_src, 'error.c'),
+    os.path.join(jansson_src, 'hashtable.c'),
+    os.path.join(jansson_src, 'hashtable_seed.c'),
+    os.path.join(jansson_src, 'load.c'),
+    os.path.join(jansson_src, 'memory.c'),
+    os.path.join(jansson_src, 'pack_unpack.c'),
+    os.path.join(jansson_src, 'strbuffer.c'),
+    os.path.join(jansson_src, 'strconv.c'),
+    os.path.join(jansson_src, 'utf.c'),
+    os.path.join(jansson_src, 'value.c'),
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
