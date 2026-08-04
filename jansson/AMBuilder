@@ -21,17 +21,17 @@ for cxx in builder.targets:
     binary.compiler.cflags += ['-Wno-attributes']
 
   binary.sources += [
-    os.path.join( 'src', 'dump.c'),
-    os.path.join( 'src', 'error.c'),
-    os.path.join( 'src', 'hashtable.c'),
-    os.path.join( 'src', 'hashtable_seed.c'),
-    os.path.join( 'src', 'load.c'),
-    os.path.join( 'src', 'memory.c'),
-    os.path.join( 'src', 'pack_unpack.c'),
-    os.path.join( 'src', 'strbuffer.c'),
-    os.path.join( 'src', 'strconv.c'),
-    os.path.join( 'src', 'utf.c'),
-    os.path.join( 'src', 'value.c'),
+    os.path.join('dump.c'),
+    os.path.join('error.c'),
+    os.path.join('hashtable.c'),
+    os.path.join('hashtable_seed.c'),
+    os.path.join('load.c'),
+    os.path.join('memory.c'),
+    os.path.join('pack_unpack.c'),
+    os.path.join('strbuffer.c'),
+    os.path.join('strconv.c'),
+    os.path.join('utf.c'),
+    os.path.join('value.c'),
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
