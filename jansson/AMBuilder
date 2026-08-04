@@ -7,11 +7,12 @@ rvalue = {}
 for cxx in builder.targets:
   binary = Extension.StaticLibrary(builder, cxx, 'jansson')
   
+  src_dir = os.path.join(builder.sourcePath, 'jansson', 'src')
+  
   binary.compiler.includes += [
-    os.path.join(builder.sourcePath),
-    os.path.join(builder.sourcePath, 'jansson', 'include'),
-    os.path.join(builder.sourcePath, 'jansson', 'private_include'),
-    os.path.join(builder.sourcePath, 'jansson', 'jansson', 'src'),
+    os.path.join(builder.sourcePath, 'include'),
+    os.path.join(builder.sourcePath, 'private_include'),
+    os.path.join(builder.sourcePath, 'jansson', 'src'),
   ]
 
   binary.compiler.defines += ['HAVE_CONFIG_H']
@@ -21,17 +22,17 @@ for cxx in builder.targets:
     binary.compiler.cflags += ['-Wno-attributes']
 
   binary.sources += [
-    os.path.join('dump.c'),
-    os.path.join('error.c'),
-    os.path.join('hashtable.c'),
-    os.path.join('hashtable_seed.c'),
-    os.path.join('load.c'),
-    os.path.join('memory.c'),
-    os.path.join('pack_unpack.c'),
-    os.path.join('strbuffer.c'),
-    os.path.join('strconv.c'),
-    os.path.join('utf.c'),
-    os.path.join('value.c'),
+    os.path.join(src_dir, 'dump.c'),
+    os.path.join(src_dir, 'error.c'),
+    os.path.join(src_dir, 'hashtable.c'),
+    os.path.join(src_dir, 'hashtable_seed.c'),
+    os.path.join(src_dir, 'load.c'),
+    os.path.join(src_dir, 'memory.c'),
+    os.path.join(src_dir, 'pack_unpack.c'),
+    os.path.join(src_dir, 'strbuffer.c'),
+    os.path.join(src_dir, 'strconv.c'),
+    os.path.join(src_dir, 'utf.c'),
+    os.path.join(src_dir, 'value.c'),
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
