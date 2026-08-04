@@ -23,17 +23,17 @@ for cxx in builder.targets:
 
   jansson_src = os.path.join(jansson_root, 'src')
   binary.sources += [
-    os.path.join('jansson', 'src', 'dump.c'),
-    os.path.join('jansson', 'src', 'error.c'),
-    os.path.join('jansson', 'src', 'hashtable.c'),
-    os.path.join('jansson', 'src', 'hashtable_seed.c'),
-    os.path.join('jansson', 'src', 'load.c'),
-    os.path.join('jansson', 'src', 'memory.c'),
-    os.path.join('jansson', 'src', 'pack_unpack.c'),
-    os.path.join('jansson', 'src', 'strbuffer.c'),
-    os.path.join('jansson', 'src', 'strconv.c'),
-    os.path.join('jansson', 'src', 'utf.c'),
-    os.path.join('jansson', 'src', 'value.c'),
+    'dump.c',
+    'error.c',
+    'hashtable.c',
+    'hashtable_seed.c',
+    'load.c',
+    'memory.c',
+    'pack_unpack.c',
+    'strbuffer.c',
+    'strconv.c',
+    'utf.c',
+    'value.c',
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
