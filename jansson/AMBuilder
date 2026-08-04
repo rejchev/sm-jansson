@@ -7,12 +7,12 @@ rvalue = {}
 for cxx in builder.targets:
   binary = Extension.StaticLibrary(builder, cxx, 'jansson')
   
-  jansson_root = os.path.join(builder.sourcePath, 'jansson')
+  jansson_root = os.path.join(builder.sourcePath)
 
   binary.compiler.includes += [
-    os.path.join('include'),
-    os.path.join('private_include'),
-    os.path.join('jansson', 'src'),
+    os.path.join(jansson_root, 'include'),
+    os.path.join(jansson_root, 'private_include'),
+    os.path.join(jansson_root, 'jansson', 'src'),
   ]
 
   binary.compiler.defines += ['HAVE_CONFIG_H']
@@ -21,19 +21,19 @@ for cxx in builder.targets:
     # https://llvm.org/bugs/show_bug.cgi?id=16428
     binary.compiler.cflags += ['-Wno-attributes']
 
-  jansson_src = os.path.join(jansson_root, 'src')
+  jansson_src = os.path.join(jansson_root, 'jansson', 'src')
   binary.sources += [
-    'dump.c',
-    'error.c',
-    'hashtable.c',
-    'hashtable_seed.c',
-    'load.c',
-    'memory.c',
-    'pack_unpack.c',
-    'strbuffer.c',
-    'strconv.c',
-    'utf.c',
-    'value.c',
+    os.path.join(jansson_root, 'dump.c'),
+    os.path.join(jansson_root, 'error.c'),
+    os.path.join(jansson_root, 'hashtable.c'),
+    os.path.join(jansson_root, 'hashtable_seed.c'),
+    os.path.join(jansson_root, 'load.c'),
+    os.path.join(jansson_root, 'memory.c'),
+    os.path.join(jansson_root, 'pack_unpack.c'),
+    os.path.join(jansson_root, 'strbuffer.c'),
+    os.path.join(jansson_root, 'strconv.c'),
+    os.path.join(jansson_root, 'utf.c'),
+    os.path.join(jansson_root, 'value.c'),
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
