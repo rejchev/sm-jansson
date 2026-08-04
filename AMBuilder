@@ -1,7 +1,7 @@
 # vim: set sts=2 ts=8 sw=2 tw=99 et ft=python:
 import os
 
-libjansson = builder.Build('jansson/src/AMBuilder')
+libjansson = builder.Build('jansson/AMBuilder')
 
 for cxx in builder.targets:
   binary = Extension.Library(builder, cxx, 'jansson.ext')
