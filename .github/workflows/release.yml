@@ -89,15 +89,13 @@ jobs:
 
       - name: Package extension
         working-directory: extension/build/package
-        run: |
-          version=`echo $GITHUB_REF | sed "s/refs\/tags\///"`
-          7z a jansson-${{ matrix.os }}.zip ./*
-
+        run: 7z a jansson-${{ matrix.os }}.zip ./*
+          
       - name: Attach extension
         uses: svenstaro/upload-release-action@v2
         with:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
             file: 'extension/build/package/jansson-${{ matrix.os }}.zip'
-            asset_name: jansson-$tag.${{ github.run_number }}-${{ matrix.os }}
+            asset_name: jansson-${{ matrix.os }}-$tag.${{ github.run_number }}.zip
             tag: ${{ github.ref }}
             file_glob: false
