@@ -85,12 +85,6 @@ jobs:
         with:
           packages: ./ambuild
 
-      - name: Listing
-        run: | 
-          ls -a
-          cd extension
-          ls -a
-
       - name: Build
         working-directory: extension
         shell: bash
