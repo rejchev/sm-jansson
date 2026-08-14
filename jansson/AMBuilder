@@ -8,10 +8,13 @@ for cxx in builder.targets:
   binary = Extension.StaticLibrary(builder, cxx, 'jansson')
   
   binary.compiler.includes += [
-    os.path.join(builder.sourcePath, 'include'),
-    os.path.join(builder.sourcePath, 'private_include'),
-    os.path.join(builder.sourcePath, 'jansson', 'src'),
+    os.path.join(builder.sourcePath, 'jansson', 'include'),
+    os.path.join(builder.sourcePath, 'jansson', 'private_include'),
+    os.path.join(builder.sourcePath, 'jansson', 'jansson', 'src'),
   ]
+
+  print(builder.sourcePath)
+  print(123)
 
   binary.compiler.defines += ['HAVE_CONFIG_H']
 
