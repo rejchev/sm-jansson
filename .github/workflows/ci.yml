@@ -19,7 +19,6 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-          - ubuntu-22.04
         sourcemod-version:
           - 1.12-dev
         include:
@@ -31,11 +30,6 @@ jobs:
           - os: windows-latest
             target-archs: x86
             compiler_cc: msvc
-
-          - os: ubuntu-22.04
-            target-archs: x86
-            compiler_cc: clang-11
-            compiler_cxx: clang++-11
 
     steps:
       - name: Install ${{ matrix.os }} packages
@@ -88,6 +82,9 @@ jobs:
         uses: BSFishy/pip-action@v1
         with:
           packages: ./ambuild
+
+      - name: Listing
+        run: ls -a
 
       - name: Build
         working-directory: extension
