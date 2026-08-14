@@ -95,6 +95,7 @@ jobs:
         shell: bash
         run: |
           echo ${{ github.run_number }}
+          ls -a
           mkdir build && cd build
           python ../configure.py --enable-optimize --targets=${{ matrix.target-archs }}
           ambuild
