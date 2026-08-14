@@ -55,9 +55,7 @@
 #define json_strtoint strtoll
 #define JSON_INTEGER_FORMAT "I64d"
 
-
-/* If locale.h and localeconv() are available, define to 1, otherwise to 0. */
-#define JSON_HAVE_LOCALECONV 1
+#define JSON_INTEGER_IS_LONG_LONG 0
 
 /* If __atomic builtins are available they will be used to manage
    reference counts of json_t. */

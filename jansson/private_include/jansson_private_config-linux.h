@@ -102,7 +102,7 @@
 #define PACKAGE_NAME "jansson"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "jansson 2.12"
+#define PACKAGE_STRING "jansson 2.15"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "jansson"
@@ -111,7 +111,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.12"
+#define PACKAGE_VERSION "2.15"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -124,7 +124,7 @@
 #define USE_WINDOWS_CRYPTOAPI 1
 
 /* Version number of package */
-#define VERSION "2.12"
+#define VERSION "2.15"
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
