@@ -13,9 +13,6 @@ for cxx in builder.targets:
     os.path.join(builder.sourcePath, 'jansson', 'jansson', 'src'),
   ]
 
-  print(builder.sourcePath)
-  print(123)
-
   binary.compiler.defines += ['HAVE_CONFIG_H']
 
   if binary.compiler.family == 'clang':
