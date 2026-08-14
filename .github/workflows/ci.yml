@@ -81,7 +81,7 @@ jobs:
           path: ambuild
 
       - name: Install AMBuild
-        run: python -m pip install ./ambuild
+        run: python -m pip install ./ambuild --no-build-isolation
 
       - name: Build
         working-directory: extension
