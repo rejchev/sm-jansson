@@ -4,7 +4,6 @@ on:
   push: 
     branches:
       - dev
-      - fix/build-1.12
   pull_request:
     branches:
       - dev
