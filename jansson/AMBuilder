@@ -23,17 +23,17 @@ for cxx in builder.targets:
     binary.compiler.cflags += ['-Wno-attributes']
 
   binary.sources += [
-    'jansson/src/dump.c',
-    'jansson/src/error.c',
-    'jansson/src/hashtable.c',
-    'jansson/src/hashtable_seed.c',
-    'jansson/src/load.c',
-    'jansson/src/memory.c',
-    'jansson/src/pack_unpack.c',
-    'jansson/src/strbuffer.c',
-    'jansson/src/strconv.c',
-    'jansson/src/utf.c',
-    'jansson/src/value.c',
+    'jansson/jansson/src/dump.c',
+    'jansson/jansson/src/error.c',
+    'jansson/jansson/src/hashtable.c',
+    'jansson/jansson/src/hashtable_seed.c',
+    'jansson/jansson/src/load.c',
+    'jansson/jansson/src/memory.c',
+    'jansson/jansson/src/pack_unpack.c',
+    'jansson/jansson/src/strbuffer.c',
+    'jansson/jansson/src/strconv.c',
+    'jansson/jansson/src/utf.c',
+    'jansson/jansson/src/value.c',
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
